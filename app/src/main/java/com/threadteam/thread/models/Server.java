@@ -12,7 +12,7 @@ public class Server {
             - user_data
             - subscribed_servers
     - servers -> view servers
-        - serverId
+        - serverId <- use serverId for loading information when user goes into a server-related activity
             - name
             - owner
     - members -> view members when in server
