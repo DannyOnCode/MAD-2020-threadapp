@@ -2,6 +2,7 @@ package com.threadteam.thread.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,7 @@ public class ChatActivity extends AppCompatActivity {
     private ChatMessageAdapter adapter;
 
     // VIEW OBJECTS
+    private Toolbar ChatNavbar;
     private RecyclerView ChatMessageRecyclerView;
     private EditText MessageEditText;
     private Button SendMsgButton;
@@ -31,6 +33,12 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Setup Navbar and enable upwards navigation
+        ChatNavbar = (Toolbar) findViewById(R.id.chatNavbar);
+        this.setSupportActionBar(ChatNavbar);
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         setContentView(R.layout.activity_chat);
 
         // BIND OBJECTS
