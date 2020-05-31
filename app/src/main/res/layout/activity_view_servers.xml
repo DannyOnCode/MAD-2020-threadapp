@@ -10,32 +10,30 @@
         android:id="@+id/viewServerRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/include"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/serverNavToolbar"
+        app:layout_constraintTop_toBottomOf="@+id/include2"
         tools:listitem="@layout/activity_partial_view_servers" />
 
-    <fragment
-        android:id="@+id/fragment"
-        android:name="com.threadteam.thread.bottomToolbar"
+    <include
+        android:id="@+id/include"
+        layout="@layout/activity_partial_bottomtoolbar"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:minHeight="56dp"
+        android:layout_height="88dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/serverNavToolbar"
-        android:layout_width="409dp"
+    </include>
+
+    <include
+        android:id="@+id/include2"
+        layout="@layout/activity_partial_topnavtoolbar"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#EEEEEE"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:title="My Servers" />
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
