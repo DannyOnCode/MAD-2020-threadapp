@@ -1,5 +1,7 @@
 package com.threadteam.thread.models;
 
+import android.widget.ImageView;
+
 public class User {
 
     // Template User class placeholder
