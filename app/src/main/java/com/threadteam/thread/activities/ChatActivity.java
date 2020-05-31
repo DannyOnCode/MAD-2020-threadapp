@@ -98,11 +98,34 @@ public class ChatActivity extends AppCompatActivity {
 
     private void sendMessage() {
         String message = MessageEditText.getText().toString();
+
+        // Stop newline spamming by doing some formatting
+        String messageLines[] = message.split("\n");
+        String formattedMessage = "";
+        int previousNewlines = 0;
+        for(String line: messageLines) {
+            String trimmedLine = line.trim();
+            if(previousNewlines > 2 && trimmedLine.length() == 0) {
+                continue;
+            } else if(trimmedLine.length() == 0) {
+                previousNewlines += 1;
+            } else {
+                previousNewlines = 0;
+            }
+            formattedMessage += trimmedLine + "\n";
+        }
+
+        // do a final trim
+        formattedMessage = formattedMessage.trim();
+
         MessageEditText.setText(null);
 
-        ChatMessage newMessage = new ChatMessage(username, message, new Timestamp(System.currentTimeMillis()));
-        adapter.chatMessageList.add(newMessage);
-        adapter.notifyDataSetChanged();
+        if(formattedMessage.length() > 0) {
+            ChatMessage newMessage = new ChatMessage(username, formattedMessage, new Timestamp(System.currentTimeMillis()));
+            adapter.chatMessageList.add(newMessage);
+            adapter.notifyDataSetChanged();
+        }
+
     }
 
     private List<ChatMessage> loadMessagesFromServer(Integer numMsg, Integer startIndex) {
