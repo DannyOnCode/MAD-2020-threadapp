@@ -10,7 +10,6 @@
         android:id="@+id/serverDivider"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_padding="16dp"
         android:layout_margin="16dp"
         android:text="SERVERS"
         android:textSize="10dp"
