@@ -3,9 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:title="profile"
+        android:id="@+id/profileItem"
+        android:icon="@drawable/round_face_white_36"
+        android:title="profileItem"
         app:showAsAction="always" />
     <item
-        android:title="chats"
+        android:id="@+id/serverItem"
+        android:icon="@drawable/round_chat_white_36"
+        android:title="serverItem"
         app:showAsAction="always" />
 </menu>
