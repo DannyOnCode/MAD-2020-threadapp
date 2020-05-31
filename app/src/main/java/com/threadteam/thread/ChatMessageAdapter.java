@@ -17,7 +17,7 @@ import java.util.List;
 public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHolder> {
 
     //DATA STORE
-    List<ChatMessage> chatMessageList;
+    public List<ChatMessage> chatMessageList;
 
     public ChatMessageAdapter(List<ChatMessage> chatMessages) {
         this.chatMessageList = chatMessages;
@@ -46,7 +46,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
 
         Timestamp ts = chatMessageList.get(position).get_timestamp();
         Date date = new Date(ts.getTime());
-        String formattedString = new SimpleDateFormat("d/MM/yyyy h:mm:a").format(date);
+        String formattedString = new SimpleDateFormat("d/MM/yyyy h:mma").format(date);
 
         holder.TimestampTextView.setText(formattedString);
     }

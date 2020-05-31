@@ -15,7 +15,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/include3"
+        app:layout_constraintTop_toBottomOf="@+id/chatNavBarInclude"
+        app:layout_constraintVertical_bias="0.0"
         app:reverseLayout="true"
         app:stackFromEnd="true"
         tools:listitem="@layout/activity_partial_chatmessage">
@@ -58,7 +59,7 @@
             android:paddingRight="12dp"
             android:paddingBottom="3dp"
             android:singleLine="true"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="#FFFFFF"
             android:textColorHint="#33FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/sendMsgButton"
@@ -69,7 +70,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <include
-        android:id="@+id/include3"
+        android:id="@+id/chatNavBarInclude"
         layout="@layout/activity_partial_topnavtoolbar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

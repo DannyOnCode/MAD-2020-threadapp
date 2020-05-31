@@ -26,7 +26,7 @@ public class ChatMessageViewHolder extends RecyclerView.ViewHolder {
         BaseChatItemConstraintLayout = (ConstraintLayout) itemView.findViewById(R.id.baseChatItemConstraintLayout);
         ChatItemCardView = (CardView) itemView.findViewById(R.id.chatItemCardView);
         ChatItemConstraintLayout = (ConstraintLayout) itemView.findViewById(R.id.chatItemConstraintLayout);
-        MessageTextView = (TextView) itemView.findViewById(R.id.messageEditText);
+        MessageTextView = (TextView) itemView.findViewById(R.id.messageTextView);
         SenderTextView = (TextView) itemView.findViewById(R.id.senderTextView);
         TimestampTextView = (TextView) itemView.findViewById(R.id.timestampTextView);
     }

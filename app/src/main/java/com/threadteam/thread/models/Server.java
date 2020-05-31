@@ -39,11 +39,11 @@ public class Server {
         this._desc = serverDesc;
     }
 
+    public Integer get_id() { return _id; }
+
     public String get_name() {
         return _name;
     }
 
-    public String get_desc() {
-        return _desc;
-    }
+    public String get_desc() { return _desc; }
 }

@@ -3,6 +3,7 @@ package com.threadteam.thread.activities;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,12 +20,15 @@ import com.threadteam.thread.ChatMessageAdapter;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.ChatMessage;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
 
     // DATA STORE
+    private String username = "User01"; //TODO: Somehow get username and store it in here. For testing purposes, a default value has been used.
     private List<ChatMessage> chatMessageList = new ArrayList<>();
     private ChatMessageAdapter adapter;
 
@@ -40,23 +44,15 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chat);
 
         // Setup Navbar and enable upwards navigation
-        TopNavToolbar = (Toolbar) findViewById(R.id.topNavToolbar);
-        BottomToolbar = (Toolbar) findViewById(R.id.bottomToolbar);
-        BottomToolbarAMV = (ActionMenuView) findViewById(R.id.bottomToolbarAMV);
+        View includeView = findViewById(R.id.chatNavBarInclude);
+        TopNavToolbar = (Toolbar) includeView.findViewById(R.id.topNavToolbar);
 
+        TopNavToolbar.setTitle("Chat");
         this.setSupportActionBar(TopNavToolbar);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        BottomToolbarAMV.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                return onOptionsItemSelected(item);
-            }
-        });
-
-        setContentView(R.layout.activity_chat);
 
         // BIND OBJECTS
         ChatMessageRecyclerView = (RecyclerView) findViewById(R.id.chatMessageRecyclerView);
@@ -71,6 +67,8 @@ public class ChatActivity extends AppCompatActivity {
         });
 
         chatMessageList = loadMessagesFromServer(25, 0);
+
+        // TEST CHAT MESSAGES
 
         adapter = new ChatMessageAdapter(chatMessageList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -99,7 +97,12 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void sendMessage() {
-        //TODO: Send message after send message button is clicked
+        String message = MessageEditText.getText().toString();
+        MessageEditText.setText(null);
+
+        ChatMessage newMessage = new ChatMessage(username, message, new Timestamp(System.currentTimeMillis()));
+        adapter.chatMessageList.add(newMessage);
+        adapter.notifyDataSetChanged();
     }
 
     private List<ChatMessage> loadMessagesFromServer(Integer numMsg, Integer startIndex) {
@@ -111,9 +114,4 @@ public class ChatActivity extends AppCompatActivity {
         //TODO: Load more data implementation
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.bottom_app_bar_menu, BottomToolbarAMV.getMenu());
-        return true;
-    }
 }
