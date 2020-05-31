@@ -8,7 +8,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import androidx.appcompat.widget.ActionMenuView;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -16,28 +19,42 @@ import com.threadteam.thread.ChatMessageAdapter;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.ChatMessage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ChatActivity extends AppCompatActivity {
 
     // DATA STORE
-    private List<ChatMessage> chatMessageList;
+    private List<ChatMessage> chatMessageList = new ArrayList<>();
     private ChatMessageAdapter adapter;
 
     // VIEW OBJECTS
-    private Toolbar ChatNavbar;
     private RecyclerView ChatMessageRecyclerView;
     private EditText MessageEditText;
     private Button SendMsgButton;
+
+    private Toolbar TopNavToolbar;
+    private Toolbar BottomToolbar;
+    private ActionMenuView BottomToolbarAMV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Setup Navbar and enable upwards navigation
-        ChatNavbar = (Toolbar) findViewById(R.id.chatNavbar);
-        this.setSupportActionBar(ChatNavbar);
+        TopNavToolbar = (Toolbar) findViewById(R.id.topNavToolbar);
+        BottomToolbar = (Toolbar) findViewById(R.id.bottomToolbar);
+        BottomToolbarAMV = (ActionMenuView) findViewById(R.id.bottomToolbarAMV);
+
+        this.setSupportActionBar(TopNavToolbar);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        BottomToolbarAMV.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return onOptionsItemSelected(item);
+            }
+        });
 
         setContentView(R.layout.activity_chat);
 
@@ -87,10 +104,16 @@ public class ChatActivity extends AppCompatActivity {
 
     private List<ChatMessage> loadMessagesFromServer(Integer numMsg, Integer startIndex) {
         //TODO: get numMsg messages from the server starting from startIndex and return it in List<ChatMessage> format
-        return null;
+        return new ArrayList<>();
     }
 
     private void loadMoreMessages() {
         //TODO: Load more data implementation
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bottom_app_bar_menu, BottomToolbarAMV.getMenu());
+        return true;
     }
 }

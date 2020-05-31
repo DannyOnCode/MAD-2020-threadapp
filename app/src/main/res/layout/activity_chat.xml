@@ -6,33 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".activities.ChatActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/chatNavbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="#EEEEEE"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:menu="@menu/chat_menu"
-        app:subtitleTextColor="#80000000"
-        app:title="ServerName"
-        app:titleTextAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:titleTextColor="#000000"
-        tools:subtitleTextAppearance="@style/TextAppearance.AppCompat.Small" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/chatMessageRecyclerView"
-        android:layout_width="409dp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:clipChildren="false"
         app:layout_constraintBottom_toTopOf="@+id/msgbarConstraintLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chatNavbar"
+        app:layout_constraintTop_toBottomOf="@+id/include3"
         app:reverseLayout="true"
         app:stackFromEnd="true"
         tools:listitem="@layout/activity_partial_chatmessage">
@@ -47,8 +30,7 @@
         android:minHeight="?attr/actionBarSize"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/chatMessageRecyclerView">
+        app:layout_constraintStart_toStartOf="parent">
 
         <Button
             android:id="@+id/sendMsgButton"
@@ -85,5 +67,14 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.5" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/include3"
+        layout="@layout/activity_partial_topnavtoolbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

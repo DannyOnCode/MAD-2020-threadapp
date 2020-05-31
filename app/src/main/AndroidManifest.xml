@@ -10,10 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.ViewProfileActivity"></activity>
-        <activity android:name=".activities.ViewServersActivity" />
         <activity android:name=".activities.ViewMembersActivity" />
         <activity android:name=".activities.ChatActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.ViewServersActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
