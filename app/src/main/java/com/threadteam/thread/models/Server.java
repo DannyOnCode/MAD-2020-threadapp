@@ -30,10 +30,20 @@ public class Server {
     private Integer _id;
     private Integer _ownerID;
     private String _name;
+    private String _desc;
 
-    public Server(Integer id, Integer ownerID, String serverName) {
+    public Server(Integer id, Integer ownerID, String serverName, String serverDesc) {
         this._id = id;
         this._ownerID = ownerID;
         this._name = serverName;
+        this._desc = serverDesc;
+    }
+
+    public String get_name() {
+        return _name;
+    }
+
+    public String get_desc() {
+        return _desc;
     }
 }
