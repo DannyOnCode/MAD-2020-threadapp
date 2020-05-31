@@ -37,11 +37,14 @@ public class ViewServersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_servers);
 
+        // SETUP TOOLBARS
+
         TopNavToolbar = (Toolbar) findViewById(R.id.topNavToolbar);
         BottomToolbar = (Toolbar) findViewById(R.id.bottomToolbar);
         BottomToolbarAMV = (ActionMenuView) findViewById(R.id.bottomToolbarAMV);
 
         this.setSupportActionBar(TopNavToolbar);
+        TopNavToolbar.setTitle("View Servers");
         BottomToolbarAMV.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
