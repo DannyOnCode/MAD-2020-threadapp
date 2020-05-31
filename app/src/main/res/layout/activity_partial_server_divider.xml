@@ -5,7 +5,7 @@
     android:id="@+id/baseChatItemConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
+    //Line To Divide profile and server
     <TextView
         android:id="@+id/serverDivider"
         android:layout_width="0dp"
