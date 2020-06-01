@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.threadteam.thread">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,9 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.ViewProfileActivity"/>
+        <activity android:name=".activities.EditProfileActivity"/>
+        <activity android:name=".activities.ViewProfileActivity" />
         <activity android:name=".activities.ViewMembersActivity" />
-        <activity android:name=".activities.ChatActivity" android:parentActivityName=".activities.ViewServersActivity"/>
+        <activity
+            android:name=".activities.ChatActivity"
+            android:parentActivityName=".activities.ViewServersActivity" />
         <activity android:name=".activities.ViewServersActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
