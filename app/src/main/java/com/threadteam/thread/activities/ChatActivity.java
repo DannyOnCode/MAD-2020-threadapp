@@ -8,11 +8,16 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import androidx.appcompat.widget.ActionMenuView;
+
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -41,6 +46,7 @@ public class ChatActivity extends AppCompatActivity {
     private Toolbar BottomToolbar;
     private ActionMenuView BottomToolbarAMV;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,7 +76,7 @@ public class ChatActivity extends AppCompatActivity {
 
         // TEST CHAT MESSAGES
 
-        adapter = new ChatMessageAdapter(chatMessageList);
+        adapter = new ChatMessageAdapter(chatMessageList, username);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         ChatMessageRecyclerView.setLayoutManager(layoutManager);
@@ -94,6 +100,21 @@ public class ChatActivity extends AppCompatActivity {
         };
 
         ChatMessageRecyclerView.addOnScrollListener(scrollListener);
+
+        ChatMessageRecyclerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) ChatActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                View view  = ChatActivity.this.getCurrentFocus();
+                if (view == null) {
+                    view = new View(ChatActivity.this);
+                }
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                return true;
+            }
+        });
     }
 
     private void sendMessage() {
@@ -126,6 +147,8 @@ public class ChatActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
         }
 
+        // Scroll down to latest post
+        ChatMessageRecyclerView.smoothScrollToPosition(adapter.chatMessageList.size()-1);
     }
 
     private List<ChatMessage> loadMessagesFromServer(Integer numMsg, Integer startIndex) {
@@ -135,6 +158,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private void loadMoreMessages() {
         //TODO: Load more data implementation
+        //TODO: Check all messages for @ whispers and omit accordingly
     }
 
 }

@@ -18,9 +18,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
 
     //DATA STORE
     public List<ChatMessage> chatMessageList;
+    public String currentUserUsername;
 
-    public ChatMessageAdapter(List<ChatMessage> chatMessages) {
+    public ChatMessageAdapter(List<ChatMessage> chatMessages, String username) {
         this.chatMessageList = chatMessages;
+        this.currentUserUsername = username;
     }
 
     @NonNull
