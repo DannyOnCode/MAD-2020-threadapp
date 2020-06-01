@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="activities.AddServerActivity">
 
     <include
         android:id="@+id/addServerNavbarInclude"
@@ -18,8 +19,11 @@
         android:id="@+id/baseAddServerNSV"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="56dp"
+        android:clipToPadding="true"
         android:fillViewport="true"
+        android:fitsSystemWindows="true"
+        android:isScrollContainer="false"
+        android:paddingBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +31,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/joinServerCardView"
@@ -209,14 +213,5 @@
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <include
-        android:id="@+id/addServerBottomToolbarInclude"
-        layout="@layout/activity_partial_bottomtoolbar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

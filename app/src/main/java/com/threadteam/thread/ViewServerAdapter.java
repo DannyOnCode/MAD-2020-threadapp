@@ -14,7 +14,7 @@ import java.util.List;
 public class ViewServerAdapter extends RecyclerView.Adapter<ViewServerViewHolder> {
 
     // DATA STORE
-    List<Server> serverList;
+    public List<Server> serverList;
 
     public ViewServerAdapter(List<Server> servers) { this.serverList = servers; }
 
