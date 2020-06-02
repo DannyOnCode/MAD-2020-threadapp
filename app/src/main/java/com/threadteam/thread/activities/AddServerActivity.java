@@ -13,10 +13,19 @@ import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.Server;
 
 public class AddServerActivity extends AppCompatActivity {
+
+    //FIREBASE
+    private FirebaseUser currentUser;
+    private DatabaseReference databaseRef;
 
     //VIEW OBJECTS
     private NestedScrollView BaseAddServerNSV;
@@ -65,20 +74,49 @@ public class AddServerActivity extends AppCompatActivity {
     }
 
     private void handleJoinServer() {
-        String joinServerId = JoinServerIdEditText.getText().toString();
+        final String joinServerId = JoinServerIdEditText.getText().toString();
         //TODO: look for server with id, if exists, add to user's subscribedServers and reload upon returning
+        ValueEventListener getServerForID = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Server joinServer = dataSnapshot.child("servers").child(joinServerId).getValue(Server.class);
+                if (joinServer != null) {
+                    databaseRef.child("users").child("subscribedServers").push().setValue(joinServerId);
+                } else {
+                    //TODO: Error message
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //TODO: Error message
+            }
+        };
+
+        databaseRef.addListenerForSingleValueEvent(getServerForID);
 
         setResult(RESULT_OK);
         finish();
     }
 
     private void handleMakeServer() {
-        int userId = 0; // TODO: Get user's id for make server
+
+        if (currentUser == null) {
+            //TODO: Error message
+            return;
+        }
+
+        String userId = currentUser.getUid();
         String makeServerName = MakeServerNameEditText.getText().toString();
         String makeServerDesc = MakeServerDescEditText.getText().toString();
+
+        //TODO: Validation
+
         Server newServer = new Server(userId, makeServerName, makeServerDesc);
 
-        //TODO: upload server to database and add to user's subscribedServers
+        String newServerId = databaseRef.child("servers").push().getKey();
+        databaseRef.child("servers").child(newServerId).setValue(newServer);
+        databaseRef.child("users").child(userId).child("subscribedServers").push().setValue(newServerId);
 
         setResult(RESULT_OK);
         finish();

@@ -1,7 +1,11 @@
 package com.threadteam.thread.models;
 
+import com.google.firebase.database.Exclude;
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.List;
 
+@IgnoreExtraProperties
 public class Server {
 
     /*
@@ -26,33 +30,41 @@ public class Server {
                 - timestamp
      */
 
-    // Instance-specific variables
-    private Integer _id;
-    private Integer _ownerID;
+    // Server identifier
+    @Exclude
+    private String _id;
+
+    // ServerID child attributes
+    private String _ownerID;
     private String _name;
     private String _desc;
 
-    public Server(Integer id, Integer ownerID, String serverName, String serverDesc) {
-        this._id = id;
-        this._ownerID = ownerID;
-        this._name = serverName;
-        this._desc = serverDesc;
-    }
+    // Empty constructor for Firebase Object
+    public Server() {}
 
     // For Server creation without id
-    public Server(Integer ownerID, String serverName, String serverDesc) {
+    public Server(String ownerID, String serverName, String serverDesc) {
         this._ownerID = ownerID;
         this._name = serverName;
         this._desc = serverDesc;
     }
 
-    public Integer get_id() { return _id; }
+    // Getter-Setters
+    public String get_ownerID() { return _ownerID; }
 
-    public void set_id(Integer _id) { this._id = _id; }
+    public void set_ownerID(String _ownerID) { this._ownerID = _ownerID; }
+
+    public String get_id() { return _id; }
+
+    public void set_id(String _id) { this._id = _id; }
 
     public String get_name() {
         return _name;
     }
 
+    public void set_name(String _name) { this._name = _name; }
+
     public String get_desc() { return _desc; }
+
+    public void set_desc(String _desc) { this._desc = _desc; }
 }

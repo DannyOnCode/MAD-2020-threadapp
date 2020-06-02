@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,6 +19,13 @@ import android.widget.Button;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
 import com.threadteam.thread.ViewServerAdapter;
@@ -30,6 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewServersActivity extends AppCompatActivity {
+
+    // FIREBASE
+    private FirebaseUser currentUser;
+    private DatabaseReference databaseRef;
 
     // DATA STORE
     private List<Server> serverList = new ArrayList<>();
@@ -77,12 +87,11 @@ public class ViewServersActivity extends AppCompatActivity {
         // BIND VIEW OBJECTS
         ViewServerRecyclerView = (RecyclerView) findViewById(R.id.viewServerRecyclerView);
 
-        serverList = getServersForUser();
+        // INITIALISE FIREBASE
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        databaseRef = FirebaseDatabase.getInstance().getReference();
 
-        // Test RecyclerView
-        serverList.add(new Server(0, 0, "MAD Team 7 Discussion", "we're ded lol"));
-        serverList.add(new Server(0, 0, "ICT KMS", "we're ded too lol"));
-        serverList.add(new Server(0, 0, "Serial Memers Chat", "come in for fun and memes you'll be dying to read"));
+        loadServersForUser();
 
         adapter = new ViewServerAdapter(serverList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -101,12 +110,45 @@ public class ViewServersActivity extends AppCompatActivity {
         );
     }
 
-    private List<Server> getServersForUser() {
-        return new ArrayList<>();
+    private void loadServersForUser() {
+        // Reset data
+        adapter.serverList.clear();
+
+        ValueEventListener getSubscriptions = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (currentUser == null) {
+                    //TODO: Error message
+                    return;
+                }
+
+                String currentUserID = currentUser.getUid();
+                for (DataSnapshot data : dataSnapshot.child("users").child(currentUserID).child("subscribedServers").getChildren()) {
+                    String serverId = (String) data.getValue();
+
+                    if (serverId != null) {
+                        Server server = dataSnapshot.child("servers").child(serverId).getValue(Server.class);
+                        adapter.serverList.add(server);
+                    } else {
+                        //TODO: Error message
+                    }
+
+                }
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //TODO: Error message
+                adapter.notifyDataSetChanged();
+            }
+        };
+
+        databaseRef.addListenerForSingleValueEvent(getSubscriptions);
     }
 
     private void handleTransitionIntoServer(Integer position) {
-        //TODO: Transition into chat view with serverid
         Intent transitionToChat = new Intent(ViewServersActivity.this, ChatActivity.class);
         transitionToChat.putExtra("SERVER_ID", serverList.get(position).get_id());
         startActivity(transitionToChat);
@@ -126,15 +168,14 @@ public class ViewServersActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
+        //TODO: handle bottom toolbar menu taps
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            // Disable for now since this'll override test server objects
-            //adapter.serverList = getServersForUser();
-            //adapter.notifyDataSetChanged();
+            loadServersForUser();
         }
     }
 }
