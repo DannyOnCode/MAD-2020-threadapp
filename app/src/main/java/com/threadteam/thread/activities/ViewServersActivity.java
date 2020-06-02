@@ -39,12 +39,13 @@ public class ViewServersActivity extends AppCompatActivity {
 
     // FIREBASE
     private FirebaseUser currentUser;
+    private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseRef;
+    private ValueEventListener subscriptionListener;
 
     // DATA STORE
     private List<Server> serverList = new ArrayList<>();
     private ViewServerAdapter adapter;
-    private int REQUEST_CODE = 1;
 
     // VIEW OBJECTS
     private RecyclerView ViewServerRecyclerView;
@@ -87,12 +88,6 @@ public class ViewServersActivity extends AppCompatActivity {
         // BIND VIEW OBJECTS
         ViewServerRecyclerView = (RecyclerView) findViewById(R.id.viewServerRecyclerView);
 
-        // INITIALISE FIREBASE
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        databaseRef = FirebaseDatabase.getInstance().getReference();
-
-        loadServersForUser();
-
         adapter = new ViewServerAdapter(serverList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -108,45 +103,73 @@ public class ViewServersActivity extends AppCompatActivity {
                     }
                 })
         );
-    }
 
-    private void loadServersForUser() {
-        // Reset data
-        adapter.serverList.clear();
+        //TODO: TEMPORARY SIGN IN PARAMETERS TO ACCESS TEST DUMMY ACC. DELETE BEFORE RELEASE!
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth.signInWithEmailAndPassword("test@test.com","test123");
 
-        ValueEventListener getSubscriptions = new ValueEventListener() {
+        // INITIALISE FIREBASE
+        currentUser = firebaseAuth.getCurrentUser();
+        databaseRef = FirebaseDatabase.getInstance().getReference();
+
+        // Adds a single server to adapter if servers.{serverId} exists. Single Value Event Type.
+        final ValueEventListener addServerOnce = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (currentUser == null) {
+                if (dataSnapshot.getValue() == null) {
                     //TODO: Error message
                     return;
                 }
 
-                String currentUserID = currentUser.getUid();
-                for (DataSnapshot data : dataSnapshot.child("users").child(currentUserID).child("subscribedServers").getChildren()) {
-                    String serverId = (String) data.getValue();
-
-                    if (serverId != null) {
-                        Server server = dataSnapshot.child("servers").child(serverId).getValue(Server.class);
-                        adapter.serverList.add(server);
-                    } else {
-                        //TODO: Error message
-                    }
-
-                }
+                Server server = dataSnapshot.getValue(Server.class);
+                adapter.serverList.add(server);
                 adapter.notifyDataSetChanged();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 //TODO: Error message
-                adapter.notifyDataSetChanged();
             }
         };
 
-        databaseRef.addListenerForSingleValueEvent(getSubscriptions);
+        // Main Value Event Listener which runs addServerOnce for all subscribed servers on user's
+        // subscribed servers changed.
+        subscriptionListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Reset adapter's data store to prepare for new data
+                adapter.serverList.clear();
+
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    if (data.getKey() == null) {
+                        //TODO: Error message
+                        return;
+                    }
+
+                    String serverId = data.getKey();
+                    databaseRef.child("servers").child(serverId).addListenerForSingleValueEvent(addServerOnce);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                //TODO: Error message
+            }
+        };
+
+        // Add a value event listener that only runs while this activity is still running
+        databaseRef.child("users").child(currentUser.getUid())
+                .child("_subscribedServers").addValueEventListener(subscriptionListener);
     }
+
+    @Override
+    protected void onStop() {
+        // Destroy Value Event Listeners when this activity stops.
+        databaseRef.removeEventListener(subscriptionListener);
+        super.onStop();
+    }
+
+    // CLASS METHODS
 
     private void handleTransitionIntoServer(Integer position) {
         Intent transitionToChat = new Intent(ViewServersActivity.this, ChatActivity.class);
@@ -156,8 +179,10 @@ public class ViewServersActivity extends AppCompatActivity {
 
     private void handleAddServer() {
         Intent transitionToAddServer = new Intent(ViewServersActivity.this, AddServerActivity.class);
-        startActivityForResult(transitionToAddServer, REQUEST_CODE);
+        startActivity(transitionToAddServer);
     }
+
+    // TOOLBAR OVERRIDE METHODS
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -171,11 +196,4 @@ public class ViewServersActivity extends AppCompatActivity {
         //TODO: handle bottom toolbar menu taps
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            loadServersForUser();
-        }
-    }
 }

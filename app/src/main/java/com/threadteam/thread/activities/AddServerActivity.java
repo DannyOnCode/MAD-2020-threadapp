@@ -1,6 +1,9 @@
 package com.threadteam.thread.activities;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -13,10 +16,12 @@ import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.Server;
@@ -25,6 +30,7 @@ public class AddServerActivity extends AppCompatActivity {
 
     //FIREBASE
     private FirebaseUser currentUser;
+    private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseRef;
 
     //VIEW OBJECTS
@@ -71,31 +77,78 @@ public class AddServerActivity extends AppCompatActivity {
                 handleMakeServer();
             }
         });
+
+        MakeServerNameEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    MakeServerNameEditText.setText(MakeServerNameEditText.getText().toString().trim());
+                }
+            }
+        });
+
+        MakeServerDescEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (!hasFocus) {
+                    MakeServerDescEditText.setText(MakeServerDescEditText.getText().toString().trim());
+                }
+            }
+        });
+
+        //INITIALISE FIREBASE
+        firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+        databaseRef = FirebaseDatabase.getInstance().getReference();
     }
 
     private void handleJoinServer() {
+
+        if (currentUser == null) {
+            //TODO: Error message
+            return;
+        }
+
+        final String userId = currentUser.getUid();
         final String joinServerId = JoinServerIdEditText.getText().toString();
-        //TODO: look for server with id, if exists, add to user's subscribedServers and reload upon returning
-        ValueEventListener getServerForID = new ValueEventListener() {
+
+        final ValueEventListener testUserNotSubscribed = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Server joinServer = dataSnapshot.child("servers").child(joinServerId).getValue(Server.class);
-                if (joinServer != null) {
-                    databaseRef.child("users").child("subscribedServers").push().setValue(joinServerId);
-                } else {
+                if(dataSnapshot.getValue() != null) {
+                    // User is subscribed already
                     //TODO: Error message
+                } else {
+                    // Subscribe user to server
+                    databaseRef.child("users").child(userId)
+                            .child("_subscribedServers").child(joinServerId).setValue(true);
                 }
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO: Error message
-            }
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
         };
 
-        databaseRef.addListenerForSingleValueEvent(getServerForID);
+        ValueEventListener testServerExists = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() == null) {
+                    // Server does not exist
+                    //TODO: Error message
+                } else {
+                    // Test user subscription
+                    databaseRef.child("users").child(userId).child("_subscribedServers")
+                            .child(joinServerId).addListenerForSingleValueEvent(testUserNotSubscribed);
+                }
+            }
 
-        setResult(RESULT_OK);
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        };
+
+        //TestServerExists -> TestUserIsNotSubscribed -> SubscribeUserToServer
+        databaseRef.addListenerForSingleValueEvent(testServerExists);
+
         finish();
     }
 
@@ -107,24 +160,29 @@ public class AddServerActivity extends AppCompatActivity {
         }
 
         String userId = currentUser.getUid();
-        String makeServerName = MakeServerNameEditText.getText().toString();
-        String makeServerDesc = MakeServerDescEditText.getText().toString();
+        String makeServerName = MakeServerNameEditText.getText().toString().trim();
+        String makeServerDesc = MakeServerDescEditText.getText().toString().trim();
 
-        //TODO: Validation
+        if(makeServerName.length() == 0) {
+            MakeServerNameEditText.setError("Your server name can't be empty!");
+            return;
+        }
 
         Server newServer = new Server(userId, makeServerName, makeServerDesc);
 
         String newServerId = databaseRef.child("servers").push().getKey();
+        if (newServerId == null) {
+            //TODO: Error message
+            return;
+        }
         databaseRef.child("servers").child(newServerId).setValue(newServer);
-        databaseRef.child("users").child(userId).child("subscribedServers").push().setValue(newServerId);
+        databaseRef.child("users").child(userId).child("_subscribedServers").child(newServerId).setValue(true);
 
-        setResult(RESULT_OK);
         finish();
     }
 
     @Override
     public void onBackPressed() {
-        setResult(RESULT_CANCELED);
         super.onBackPressed();
     }
 }

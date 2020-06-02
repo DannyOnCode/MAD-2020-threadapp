@@ -47,6 +47,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
+                android:maxLines="2"
                 android:text="Server description goes here."
                 android:textStyle="italic"
                 app:layout_constraintBottom_toBottomOf="parent"
