@@ -50,7 +50,7 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.editprofile);
+        setContentView(R.layout.activity_editprofile);
 
         mButtonChooseImage = (ImageView) findViewById(R.id.buttonSelectImage);
         mDisplayImage = (ImageView) findViewById(R.id.userProfilePictureEdit);
@@ -130,10 +130,16 @@ public class EditProfileActivity extends AppCompatActivity {
                             },500);
 
                             Toast.makeText(EditProfileActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
-                            String userID = mDatabaseRef.push().getKey();
-                            User user = new User(userID,mUserNameEdit.getText().toString().trim(),taskSnapshot.getUploadSessionUri().toString(),
-                                    mDescription.getText().toString().trim(),mStatusTitle.getText().toString().trim());
 
+                            //Replace this in future when authentication has been set up
+                            String userID = mDatabaseRef.push().getKey();
+                            User user = new User();
+                            user.set_username(mUserNameEdit.getText().toString().trim());
+                            user.set_aboutUsMessage(mDescription.getText().toString().trim());
+                            user.set_statusMessage(mStatusTitle.getText().toString().trim());
+                            user.set_profileImageURL(taskSnapshot.getUploadSessionUri().toString());
+
+                            //this Line will change.
                             mDatabaseRef.child(userID).setValue(user);
                         }
                     })

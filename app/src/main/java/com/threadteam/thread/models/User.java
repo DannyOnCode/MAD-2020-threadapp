@@ -3,6 +3,9 @@ package com.threadteam.thread.models;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
 
 
@@ -12,12 +15,13 @@ public class User {
     private String _profileImageURL;
     private String _aboutUsMessage;
     private String _statusMessage;
+    private List<Server> _subscribedServers = new ArrayList<Server>();
     // Template User class placeholder
     public User(){
 
     }
 
-    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage) {
+    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,List<Server> _subscribedServers) {
         if(_aboutUsMessage.trim().equals("")){
             _aboutUsMessage = "No Description";
         }
@@ -30,6 +34,7 @@ public class User {
         this._profileImageURL = _profileImageURL;
         this._aboutUsMessage = _aboutUsMessage;
         this._statusMessage = _statusMessage;
+        this._subscribedServers = _subscribedServers;
     }
     public String get_id() {
         return _id;
@@ -71,6 +76,11 @@ public class User {
         this._statusMessage = _statusMessage;
     }
 
+    public List<Server> get_subscribedServers() {
+        return _subscribedServers;
+    }
 
-
+    public void set_subscribedServers(List<Server> _subscribedServers) {
+        this._subscribedServers = _subscribedServers;
+    }
 }
