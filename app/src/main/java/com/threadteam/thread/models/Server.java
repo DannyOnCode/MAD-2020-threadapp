@@ -39,7 +39,16 @@ public class Server {
         this._desc = serverDesc;
     }
 
+    // For Server creation without id
+    public Server(Integer ownerID, String serverName, String serverDesc) {
+        this._ownerID = ownerID;
+        this._name = serverName;
+        this._desc = serverDesc;
+    }
+
     public Integer get_id() { return _id; }
+
+    public void set_id(Integer _id) { this._id = _id; }
 
     public String get_name() {
         return _name;

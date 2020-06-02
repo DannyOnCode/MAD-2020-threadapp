@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 
 import com.threadteam.thread.R;
+import com.threadteam.thread.models.Server;
 
 public class AddServerActivity extends AppCompatActivity {
 
@@ -64,13 +65,21 @@ public class AddServerActivity extends AppCompatActivity {
     }
 
     private void handleJoinServer() {
-        //TODO: handle joining of server
+        String joinServerId = JoinServerIdEditText.getText().toString();
+        //TODO: look for server with id, if exists, add to user's subscribedServers and reload upon returning
+
         setResult(RESULT_OK);
         finish();
     }
 
     private void handleMakeServer() {
-        //TODO: handle making of server
+        int userId = 0; // TODO: Get user's id for make server
+        String makeServerName = MakeServerNameEditText.getText().toString();
+        String makeServerDesc = MakeServerDescEditText.getText().toString();
+        Server newServer = new Server(userId, makeServerName, makeServerDesc);
+
+        //TODO: upload server to database and add to user's subscribedServers
+
         setResult(RESULT_OK);
         finish();
     }
