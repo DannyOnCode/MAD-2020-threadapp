@@ -6,20 +6,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
-        android:id="@+id/imageLayout"
-        android:layout_width="wrap_content"
+        android:id="@+id/titleBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
+        android:layout_alignParentTop="true">
+
+        <include
+            layout="@layout/activity_partial_topnavtoolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/imageLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleBar">
+
+
+        <ImageView
+            android:id="@+id/buttonSelectImage"
+            android:layout_width="38dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="102dp"
+            app:srcCompat="@drawable/ic_baseline_edit_24" />
 
         <ImageView
             android:id="@+id/userProfilePictureEdit"
             android:layout_width="120dp"
             android:layout_height="120dp"
-            android:src = "@drawable/profilepictureempty"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toStartOf="@+id/buttonSelectImage"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
-            android:layout_margin="10dp"/>
+            android:src="@drawable/profilepictureempty" />
+
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -40,12 +66,11 @@
                     android:text="Username"
                     android:textColor="@android:color/holo_purple"
                     android:textSize="15sp"/>
-
                 <EditText
                     android:id="@+id/userNameEdit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Enter your username" />
+                    android:hint="Enter your username"/>
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
@@ -77,6 +102,7 @@
 
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/lastEdit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -92,34 +118,38 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
-                    android:lines="8"
+                    android:lines="5"
                     android:hint="Enter here who you are"
                     android:gravity="top|left"
                     android:maxLines="10"
                     android:scrollbars="vertical"/>
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="15dp"
-                    android:background="@android:color/darker_gray"/>
+
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    />
 
             </LinearLayout>
 
         </LinearLayout>
+
         <LinearLayout
+            android:id="@+id/confirmAndCancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_below="@+id/detailsEdit"
-            android:gravity="center">
-
+            android:gravity="center"
+            >
             <Button
                 android:id="@+id/cancelButton"
-                android:layout_width="98dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Cancel"
                 android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:text="Cancel" />
+                android:layout_marginRight="30dp"/>
             <Button
                 android:id="@+id/confirmButton"
                 android:layout_width="wrap_content"
@@ -128,7 +158,17 @@
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"/>
         </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/btmNavBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
 
+            <include
+                layout="@layout/activity_partial_bottomtoolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
     </RelativeLayout>
 
 </RelativeLayout>

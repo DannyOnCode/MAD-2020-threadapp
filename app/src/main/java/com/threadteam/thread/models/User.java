@@ -7,9 +7,9 @@ public class User {
 
 
     // Instance-specific variables
-    private Integer _id;
+    private String _id;
     private String _username;
-    private String _profileImage;
+    private String _profileImageURL;
     private String _aboutUsMessage;
     private String _statusMessage;
     // Template User class placeholder
@@ -17,18 +17,25 @@ public class User {
 
     }
 
-    public User(Integer _id, String _username, String _profileImage, String _aboutUsMessage, String _statusMessage) {
+    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage) {
+        if(_aboutUsMessage.trim().equals("")){
+            _aboutUsMessage = "No Description";
+        }
+        if(_statusMessage.trim().equals("")){
+            _statusMessage = "No Status";
+        }
+
         this._id = _id;
         this._username = _username;
-        this._profileImage = _profileImage;
+        this._profileImageURL = _profileImageURL;
         this._aboutUsMessage = _aboutUsMessage;
         this._statusMessage = _statusMessage;
     }
-    public Integer get_id() {
+    public String get_id() {
         return _id;
     }
 
-    public void set_id(Integer _id) {
+    public void set_id(String _id) {
         this._id = _id;
     }
 
@@ -40,12 +47,12 @@ public class User {
         this._username = _username;
     }
 
-    public String get_profileImage() {
-        return _profileImage;
+    public String get_profileImageURL() {
+        return _profileImageURL;
     }
 
-    public void set_profileImage(String _profileImage) {
-        this._profileImage = _profileImage;
+    public void set_profileImageURL(String _profileImageURL) {
+        this._profileImageURL = _profileImageURL;
     }
 
     public String get_aboutUsMessage() {
@@ -63,7 +70,6 @@ public class User {
     public void set_statusMessage(String _statusMessage) {
         this._statusMessage = _statusMessage;
     }
-
 
 
 
