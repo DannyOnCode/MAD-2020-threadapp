@@ -64,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
                             Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(),ViewServersActivity.class));
+                            finish();
                         }
                         else{
                             Toast.makeText(LoginActivity.this, "Invalid Email or Password " , Toast.LENGTH_SHORT).show();
@@ -78,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(),RegisterActivity.class));
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             }
         });
     }

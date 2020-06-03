@@ -56,10 +56,10 @@ public class ChatActivity extends AppCompatActivity {
 
     // DATA STORE
     private String serverId;
-    private Integer messageNum = 5;
     private List<ChatMessage> chatMessageList = new ArrayList<>();
     private ChatMessageAdapter adapter;
     private Boolean scrollToLatestMessage = false;
+    private Integer SHARE_SERVER_MENU_ITEM = -1;
 
     // VIEW OBJECTS
     private String username;
@@ -77,7 +77,7 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Setup Navbar and enable upwards navigation
+        // SETUP TOOLBARS
         View includeView = findViewById(R.id.chatNavBarInclude);
         TopNavToolbar = (Toolbar) includeView.findViewById(R.id.topNavToolbar);
 
@@ -130,12 +130,12 @@ public class ChatActivity extends AppCompatActivity {
                 final LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if(llm == null) {
-                    //TODO: Error message
+                    Log.v(LogTAG, "Linear Layout Manager for ChatMessageRecyclerView not found! Aborting onScroll Listener initialisation!");
                     return;
                 }
 
                 if(llm.findLastVisibleItemPosition() == chatMessageList.size()-1) {
-                    loadMoreMessages();
+                    //TODO: Implement loading more messages rather than all at once
                 }
 
             }
@@ -146,6 +146,14 @@ public class ChatActivity extends AppCompatActivity {
         // INITIALISE FIREBASE
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
+
+        if(currentUser == null) {
+            Log.v(LogTAG, "User not signed in, returning to login activity!");
+            Intent backToLogin = new Intent(ChatActivity.this, LoginActivity.class);
+            startActivity(backToLogin);
+            return;
+        }
+
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
         // Get serverId from Intent
@@ -188,6 +196,8 @@ public class ChatActivity extends AppCompatActivity {
                 String sender = (String) dataSnapshot.child("_sender").getValue();
                 String message = (String) dataSnapshot.child("_message").getValue();
                 Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
+
+                //TODO: Implement message checking features here
 
                 ChatMessage chatMessage;
                 if (sender == null) {
@@ -305,7 +315,7 @@ public class ChatActivity extends AppCompatActivity {
         MessageEditText.setText(null);
 
         if(formattedMessage.length() > 0) {
-            Map chatMessageHashMap = new HashMap();
+            HashMap<String, Object> chatMessageHashMap = new HashMap<>();
             chatMessageHashMap.put("_sender", username);
             chatMessageHashMap.put("_message", formattedMessage.toString());
             chatMessageHashMap.put("timestamp", System.currentTimeMillis());
@@ -315,9 +325,17 @@ public class ChatActivity extends AppCompatActivity {
         scrollToLatestMessage = true;
     }
 
-    private void loadMoreMessages() {
-        //TODO: Load more data implementation
-        //TODO: Check all messages for @ whispers and omit accordingly
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(Menu.NONE, SHARE_SERVER_MENU_ITEM, Menu.NONE, "Share Server");
+        return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == SHARE_SERVER_MENU_ITEM) {
+            //TODO: Implement Share Server Id activity
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

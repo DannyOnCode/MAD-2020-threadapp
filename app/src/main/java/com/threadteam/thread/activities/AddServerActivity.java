@@ -108,11 +108,6 @@ public class AddServerActivity extends AppCompatActivity {
 
     private void handleJoinServer() {
 
-        if (currentUser == null) {
-            displayError("User is not signed in!");
-            return;
-        }
-
         final String userId = currentUser.getUid();
         final String joinServerId = JoinServerIdEditText.getText().toString();
 
@@ -150,17 +145,12 @@ public class AddServerActivity extends AppCompatActivity {
         };
 
         //TestServerExists -> TestUserIsNotSubscribed -> SubscribeUserToServer
-        databaseRef.addListenerForSingleValueEvent(testServerExists);
+        databaseRef.child("servers").child(joinServerId).addListenerForSingleValueEvent(testServerExists);
 
         finish();
     }
 
     private void handleMakeServer() {
-
-        if (currentUser == null) {
-            displayError("User is not signed in!");
-            return;
-        }
 
         String userId = currentUser.getUid();
         String makeServerName = MakeServerNameEditText.getText().toString().trim();

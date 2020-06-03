@@ -1,15 +1,22 @@
 package com.threadteam.thread.activities;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItem;
+import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -51,12 +58,12 @@ public class ViewServersActivity extends AppCompatActivity {
     // DATA STORE
     private List<Server> serverList = new ArrayList<>();
     private ViewServerAdapter adapter;
+    private final int LOG_OUT_MENU_ITEM_ID = -1;
 
     // VIEW OBJECTS
     private RecyclerView ViewServerRecyclerView;
     private ActionMenuView BottomToolbarAMV;
     private Toolbar TopNavToolbar;
-    private Toolbar BottomToolbar;
     private Button BottomToolbarButton;
 
     @Override
@@ -68,7 +75,6 @@ public class ViewServersActivity extends AppCompatActivity {
         View topNavView = findViewById(R.id.serversNavBarInclude);
         View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
         TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
-        BottomToolbar = (Toolbar) bottomToolbarView.findViewById(R.id.bottomToolbar);
         BottomToolbarAMV = (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
         BottomToolbarButton = (Button) bottomToolbarView.findViewById(R.id.bottomToolbarButton);
 
@@ -109,12 +115,17 @@ public class ViewServersActivity extends AppCompatActivity {
                 })
         );
 
-        //TODO: TEMPORARY SIGN IN PARAMETERS TO ACCESS TEST DUMMY ACC. DELETE BEFORE RELEASE!
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseAuth.signInWithEmailAndPassword("test@test.com","test123");
-
         // INITIALISE FIREBASE
+        firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
+
+        if(currentUser == null) {
+            Log.v(LogTAG, "User not signed in, returning to login activity!");
+            Intent backToLogin = new Intent(ViewServersActivity.this, LoginActivity.class);
+            startActivity(backToLogin);
+            return;
+        }
+
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
         // Adds a single server to adapter if servers.{serverId} exists.
@@ -188,7 +199,9 @@ public class ViewServersActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         // Destroy Child Event Listeners when this activity stops.
-        databaseRef.removeEventListener(subscriptionListener);
+        if (subscriptionListener != null) {
+            databaseRef.removeEventListener(subscriptionListener);
+        }
         super.onStop();
     }
 
@@ -212,16 +225,51 @@ public class ViewServersActivity extends AppCompatActivity {
 
     // TOOLBAR OVERRIDE METHODS
 
+    @SuppressLint("RestrictedApi")
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Make ViewProfile Button on menu bar look disabled
+        ActionMenuItemView viewServers = (ActionMenuItemView) findViewById(R.id.viewServersMenuItem);
+        viewServers.setEnabled(false);
+        Drawable disabled = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
+
+        if(disabled == null) {
+            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
+        } else {
+            disabled.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
+            viewServers.setIcon(disabled);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.bottom_app_bar_menu, BottomToolbarAMV.getMenu());
+        TopNavToolbar.getMenu().add(Menu.NONE, LOG_OUT_MENU_ITEM_ID, Menu.NONE, "Log Out");
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.viewServersMenuItem:
+                // DISABLED
+                return true;
+            case R.id.viewProfileMenuItem:
+                Intent goToViewProfile = new Intent(ViewServersActivity.this, ViewProfileActivity.class);
+                startActivity(goToViewProfile);
+                finish();
+                return true;
+            case LOG_OUT_MENU_ITEM_ID:
+                Intent logOutToSignIn = new Intent(ViewServersActivity.this, LoginActivity.class);
+                startActivity(logOutToSignIn);
+                finish();
+                return true;
+        }
+
         return super.onOptionsItemSelected(item);
-        //TODO: handle bottom toolbar menu taps
     }
 
 }
