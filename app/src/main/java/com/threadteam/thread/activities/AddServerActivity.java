@@ -187,7 +187,7 @@ public class AddServerActivity extends AppCompatActivity {
     }
 
     private void displayError(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         Log.v(LogTAG, message);
     }
 }

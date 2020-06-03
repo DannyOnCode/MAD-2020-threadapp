@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -45,7 +46,7 @@ public class ViewServersActivity extends AppCompatActivity {
     private FirebaseUser currentUser;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseRef;
-    private ValueEventListener subscriptionListener;
+    private ChildEventListener subscriptionListener;
 
     // DATA STORE
     private List<Server> serverList = new ArrayList<>();
@@ -116,16 +117,23 @@ public class ViewServersActivity extends AppCompatActivity {
         currentUser = firebaseAuth.getCurrentUser();
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
-        // Adds a single server to adapter if servers.{serverId} exists. Single Value Event Type.
+        // Adds a single server to adapter if servers.{serverId} exists.
         final ValueEventListener addServerOnce = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null) {
-                    Log.v(LogTAG, "Server for the serverId does not exist!");
+                    Log.v(LogTAG, "Server for the serverId does not exist! Aborting add server!");
                     return;
                 }
 
                 Server server = dataSnapshot.getValue(Server.class);
+
+                if (server == null) {
+                    Log.v(LogTAG, "Server could not be formed from dataSnapshot correctly! Aborting add server!");
+                    return;
+                }
+
+                server.set_id(dataSnapshot.getKey());
                 adapter.serverList.add(server);
                 adapter.notifyDataSetChanged();
             }
@@ -136,24 +144,35 @@ public class ViewServersActivity extends AppCompatActivity {
             }
         };
 
-        // Main Value Event Listener which runs addServerOnce for all subscribed servers on user's
-        // subscribed servers changed.
-        subscriptionListener = new ValueEventListener() {
+        // Main Child Event Listener that calls addServerOnce as a SingleValue Event to load all servers
+        // in user's subscribed servers
+        subscriptionListener = new ChildEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                //Reset adapter's data store to prepare for new data
-                adapter.serverList.clear();
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (dataSnapshot.getKey() == null) {
+                    Log.v(LogTAG, "ServerId returned null! Aborting retrieval of server details!");
+                    return;
+                }
 
-                for(DataSnapshot data : dataSnapshot.getChildren()) {
-                    if (data.getKey() == null) {
-                        Log.v(LogTAG, "ServerId returned null! Aborting retrieval of server details!");
+                String newServerId = dataSnapshot.getKey();
+                databaseRef.child("servers").child(newServerId).addListenerForSingleValueEvent(addServerOnce);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                for(Server server : adapter.serverList) {
+                    if(server.get_id().equals(dataSnapshot.getKey())) {
+                        adapter.serverList.remove(server);
                         return;
                     }
-
-                    String serverId = data.getKey();
-                    databaseRef.child("servers").child(serverId).addListenerForSingleValueEvent(addServerOnce);
                 }
             }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -161,14 +180,14 @@ public class ViewServersActivity extends AppCompatActivity {
             }
         };
 
-        // Add a value event listener that only runs while this activity is still running
+        // Add a child event listener that only runs while this activity is still running
         databaseRef.child("users").child(currentUser.getUid())
-                .child("_subscribedServers").addValueEventListener(subscriptionListener);
+                .child("_subscribedServers").addChildEventListener(subscriptionListener);
     }
 
     @Override
     protected void onStop() {
-        // Destroy Value Event Listeners when this activity stops.
+        // Destroy Child Event Listeners when this activity stops.
         databaseRef.removeEventListener(subscriptionListener);
         super.onStop();
     }
@@ -187,7 +206,7 @@ public class ViewServersActivity extends AppCompatActivity {
     }
 
     private void displayError(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         Log.v(LogTAG, message);
     }
 
