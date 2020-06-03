@@ -196,12 +196,24 @@ public class ViewServersActivity extends AppCompatActivity {
                 .child("_subscribedServers").addChildEventListener(subscriptionListener);
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     protected void onStop() {
         // Destroy Child Event Listeners when this activity stops.
         if (subscriptionListener != null) {
             databaseRef.removeEventListener(subscriptionListener);
         }
+
+        // Reset disabled ActionMenuItemView button back to normal state
+        ActionMenuItemView viewServers = (ActionMenuItemView) findViewById(R.id.viewServersMenuItem);
+        viewServers.setEnabled(true);
+        Drawable enabled = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
+        if(enabled == null) {
+            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
+        } else {
+            viewServers.setIcon(enabled);
+        }
+
         super.onStop();
     }
 
