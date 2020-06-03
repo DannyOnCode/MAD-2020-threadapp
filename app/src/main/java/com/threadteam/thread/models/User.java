@@ -3,32 +3,44 @@ package com.threadteam.thread.models;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class User {
 
 
     // Instance-specific variables
-    private Integer _id;
+    private String _id;
     private String _username;
-    private String _profileImage;
+    private String _profileImageURL;
     private String _aboutUsMessage;
     private String _statusMessage;
+    private List<Server> _subscribedServers = new ArrayList<Server>();
     // Template User class placeholder
     public User(){
 
     }
 
-    public User(Integer _id, String _username, String _profileImage, String _aboutUsMessage, String _statusMessage) {
+    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,List<Server> _subscribedServers) {
+        if(_aboutUsMessage.trim().equals("")){
+            _aboutUsMessage = "No Description";
+        }
+        if(_statusMessage.trim().equals("")){
+            _statusMessage = "No Status";
+        }
+
         this._id = _id;
         this._username = _username;
-        this._profileImage = _profileImage;
+        this._profileImageURL = _profileImageURL;
         this._aboutUsMessage = _aboutUsMessage;
         this._statusMessage = _statusMessage;
+        this._subscribedServers = _subscribedServers;
     }
-    public Integer get_id() {
+    public String get_id() {
         return _id;
     }
 
-    public void set_id(Integer _id) {
+    public void set_id(String _id) {
         this._id = _id;
     }
 
@@ -40,12 +52,12 @@ public class User {
         this._username = _username;
     }
 
-    public String get_profileImage() {
-        return _profileImage;
+    public String get_profileImageURL() {
+        return _profileImageURL;
     }
 
-    public void set_profileImage(String _profileImage) {
-        this._profileImage = _profileImage;
+    public void set_profileImageURL(String _profileImageURL) {
+        this._profileImageURL = _profileImageURL;
     }
 
     public String get_aboutUsMessage() {
@@ -64,7 +76,11 @@ public class User {
         this._statusMessage = _statusMessage;
     }
 
+    public List<Server> get_subscribedServers() {
+        return _subscribedServers;
+    }
 
-
-
+    public void set_subscribedServers(List<Server> _subscribedServers) {
+        this._subscribedServers = _subscribedServers;
+    }
 }

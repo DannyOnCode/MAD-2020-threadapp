@@ -13,6 +13,7 @@
         android:gravity="start"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
+        app:contentInsetStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,9 +21,9 @@
 
         <androidx.appcompat.widget.ActionMenuView
             android:id="@+id/bottomToolbarAMV"
-            android:layout_width="wrap_content"
+            android:layout_width="128dp"
             android:layout_height="?attr/actionBarSize"
-            android:gravity="left"
+            android:gravity="fill_horizontal|center_vertical"
             tools:layout_editor_absoluteX="16dp" />
 
     </androidx.appcompat.widget.Toolbar>

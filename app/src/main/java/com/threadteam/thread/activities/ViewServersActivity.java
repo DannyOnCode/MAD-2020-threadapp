@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,13 +12,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
 import com.threadteam.thread.ViewServerAdapter;
@@ -31,10 +40,17 @@ import java.util.List;
 
 public class ViewServersActivity extends AppCompatActivity {
 
+    private static final String LogTAG = "ThreadApp: ";
+
+    // FIREBASE
+    private FirebaseUser currentUser;
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseRef;
+    private ChildEventListener subscriptionListener;
+
     // DATA STORE
     private List<Server> serverList = new ArrayList<>();
     private ViewServerAdapter adapter;
-    private int REQUEST_CODE = 1;
 
     // VIEW OBJECTS
     private RecyclerView ViewServerRecyclerView;
@@ -77,13 +93,6 @@ public class ViewServersActivity extends AppCompatActivity {
         // BIND VIEW OBJECTS
         ViewServerRecyclerView = (RecyclerView) findViewById(R.id.viewServerRecyclerView);
 
-        serverList = getServersForUser();
-
-        // Test RecyclerView
-        serverList.add(new Server(0, 0, "MAD Team 7 Discussion", "we're ded lol"));
-        serverList.add(new Server(0, 0, "ICT KMS", "we're ded too lol"));
-        serverList.add(new Server(0, 0, "Serial Memers Chat", "come in for fun and memes you'll be dying to read"));
-
         adapter = new ViewServerAdapter(serverList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -99,14 +108,93 @@ public class ViewServersActivity extends AppCompatActivity {
                     }
                 })
         );
+
+        //TODO: TEMPORARY SIGN IN PARAMETERS TO ACCESS TEST DUMMY ACC. DELETE BEFORE RELEASE!
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth.signInWithEmailAndPassword("test@test.com","test123");
+
+        // INITIALISE FIREBASE
+        currentUser = firebaseAuth.getCurrentUser();
+        databaseRef = FirebaseDatabase.getInstance().getReference();
+
+        // Adds a single server to adapter if servers.{serverId} exists.
+        final ValueEventListener addServerOnce = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getValue() == null) {
+                    Log.v(LogTAG, "Server for the serverId does not exist! Aborting add server!");
+                    return;
+                }
+
+                Server server = dataSnapshot.getValue(Server.class);
+
+                if (server == null) {
+                    Log.v(LogTAG, "Server could not be formed from dataSnapshot correctly! Aborting add server!");
+                    return;
+                }
+
+                server.set_id(dataSnapshot.getKey());
+                adapter.serverList.add(server);
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.v(LogTAG, "DatabaseError! " + databaseError.toString());
+            }
+        };
+
+        // Main Child Event Listener that calls addServerOnce as a SingleValue Event to load all servers
+        // in user's subscribed servers
+        subscriptionListener = new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                if (dataSnapshot.getKey() == null) {
+                    Log.v(LogTAG, "ServerId returned null! Aborting retrieval of server details!");
+                    return;
+                }
+
+                String newServerId = dataSnapshot.getKey();
+                databaseRef.child("servers").child(newServerId).addListenerForSingleValueEvent(addServerOnce);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                for(Server server : adapter.serverList) {
+                    if(server.get_id().equals(dataSnapshot.getKey())) {
+                        adapter.serverList.remove(server);
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.v(LogTAG, "DatabaseError! " + databaseError.toString());
+            }
+        };
+
+        // Add a child event listener that only runs while this activity is still running
+        databaseRef.child("users").child(currentUser.getUid())
+                .child("_subscribedServers").addChildEventListener(subscriptionListener);
     }
 
-    private List<Server> getServersForUser() {
-        return new ArrayList<>();
+    @Override
+    protected void onStop() {
+        // Destroy Child Event Listeners when this activity stops.
+        databaseRef.removeEventListener(subscriptionListener);
+        super.onStop();
     }
+
+    // CLASS METHODS
 
     private void handleTransitionIntoServer(Integer position) {
-        //TODO: Transition into chat view with serverid
         Intent transitionToChat = new Intent(ViewServersActivity.this, ChatActivity.class);
         transitionToChat.putExtra("SERVER_ID", serverList.get(position).get_id());
         startActivity(transitionToChat);
@@ -114,8 +202,15 @@ public class ViewServersActivity extends AppCompatActivity {
 
     private void handleAddServer() {
         Intent transitionToAddServer = new Intent(ViewServersActivity.this, AddServerActivity.class);
-        startActivityForResult(transitionToAddServer, REQUEST_CODE);
+        startActivity(transitionToAddServer);
     }
+
+    private void displayError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+        Log.v(LogTAG, message);
+    }
+
+    // TOOLBAR OVERRIDE METHODS
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -126,15 +221,7 @@ public class ViewServersActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item);
+        //TODO: handle bottom toolbar menu taps
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
-            // Disable for now since this'll override test server objects
-            //adapter.serverList = getServersForUser();
-            //adapter.notifyDataSetChanged();
-        }
-    }
 }

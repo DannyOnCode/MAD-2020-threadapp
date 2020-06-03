@@ -20,9 +20,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
     public List<ChatMessage> chatMessageList;
     public String currentUserUsername;
 
-    public ChatMessageAdapter(List<ChatMessage> chatMessages, String username) {
+    public ChatMessageAdapter(List<ChatMessage> chatMessages) {
         this.chatMessageList = chatMessages;
-        this.currentUserUsername = username;
     }
 
     @NonNull
@@ -46,11 +45,15 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<ChatMessageViewHold
         holder.MessageTextView.setText(chatMessageList.get(position).get_message());
         holder.SenderTextView.setText(chatMessageList.get(position).get_sender());
 
-        Timestamp ts = chatMessageList.get(position).get_timestamp();
-        Date date = new Date(ts.getTime());
-        String formattedString = new SimpleDateFormat("d/MM/yyyy h:mma").format(date);
+        Long tsMillis = chatMessageList.get(position).getTimestampMillis();
 
-        holder.TimestampTextView.setText(formattedString);
+        String timeString = "Loading...";
+        if(tsMillis != null) {
+            Date date = new Date(tsMillis);
+            timeString = new SimpleDateFormat("d/MM/yyyy h:mma").format(date);
+        }
+
+        holder.TimestampTextView.setText(timeString);
     }
 
     @Override
