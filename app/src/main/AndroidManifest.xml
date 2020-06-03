@@ -13,7 +13,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".activities.EditProfileActivity" />
         <activity android:name=".activities.ViewProfileActivity" />
-        <activity android:name=".activities.AddServerActivity" />
+        <activity android:name=".activities.AddServerActivity"
+            android:parentActivityName=".activities.ViewServersActivity" />
         <activity
             android:name=".activities.ChatActivity"
             android:parentActivityName=".activities.ViewServersActivity" />

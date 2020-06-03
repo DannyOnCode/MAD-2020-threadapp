@@ -12,10 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -36,6 +38,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewServersActivity extends AppCompatActivity {
+
+    private static final String LogTAG = "ThreadApp: ";
 
     // FIREBASE
     private FirebaseUser currentUser;
@@ -117,7 +121,7 @@ public class ViewServersActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getValue() == null) {
-                    //TODO: Error message
+                    Log.v(LogTAG, "Server for the serverId does not exist!");
                     return;
                 }
 
@@ -128,7 +132,7 @@ public class ViewServersActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO: Error message
+                Log.v(LogTAG, "DatabaseError! " + databaseError.toString());
             }
         };
 
@@ -142,7 +146,7 @@ public class ViewServersActivity extends AppCompatActivity {
 
                 for(DataSnapshot data : dataSnapshot.getChildren()) {
                     if (data.getKey() == null) {
-                        //TODO: Error message
+                        Log.v(LogTAG, "ServerId returned null! Aborting retrieval of server details!");
                         return;
                     }
 
@@ -153,7 +157,7 @@ public class ViewServersActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //TODO: Error message
+                Log.v(LogTAG, "DatabaseError! " + databaseError.toString());
             }
         };
 
@@ -180,6 +184,11 @@ public class ViewServersActivity extends AppCompatActivity {
     private void handleAddServer() {
         Intent transitionToAddServer = new Intent(ViewServersActivity.this, AddServerActivity.class);
         startActivity(transitionToAddServer);
+    }
+
+    private void displayError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        Log.v(LogTAG, message);
     }
 
     // TOOLBAR OVERRIDE METHODS

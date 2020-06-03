@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,6 +29,8 @@ import com.threadteam.thread.R;
 import com.threadteam.thread.models.Server;
 
 public class AddServerActivity extends AppCompatActivity {
+
+    private static final String LogTAG = "ThreadApp: ";
 
     //FIREBASE
     private FirebaseUser currentUser;
@@ -105,7 +109,7 @@ public class AddServerActivity extends AppCompatActivity {
     private void handleJoinServer() {
 
         if (currentUser == null) {
-            //TODO: Error message
+            displayError("User is not signed in!");
             return;
         }
 
@@ -116,8 +120,7 @@ public class AddServerActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null) {
-                    // User is subscribed already
-                    //TODO: Error message
+                    displayError("User is already subscribed to this server!");
                 } else {
                     // Subscribe user to server
                     databaseRef.child("users").child(userId)
@@ -134,7 +137,7 @@ public class AddServerActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() == null) {
                     // Server does not exist
-                    //TODO: Error message
+                    displayError("No server exists for this ID!");
                 } else {
                     // Test user subscription
                     databaseRef.child("users").child(userId).child("_subscribedServers")
@@ -155,7 +158,7 @@ public class AddServerActivity extends AppCompatActivity {
     private void handleMakeServer() {
 
         if (currentUser == null) {
-            //TODO: Error message
+            displayError("User is not signed in!");
             return;
         }
 
@@ -171,18 +174,20 @@ public class AddServerActivity extends AppCompatActivity {
         Server newServer = new Server(userId, makeServerName, makeServerDesc);
 
         String newServerId = databaseRef.child("servers").push().getKey();
+
         if (newServerId == null) {
-            //TODO: Error message
+            Log.v(LogTAG, "Couldn't obtain serverId for new server! Aborting server creation!");
             return;
         }
+
         databaseRef.child("servers").child(newServerId).setValue(newServer);
         databaseRef.child("users").child(userId).child("_subscribedServers").child(newServerId).setValue(true);
 
         finish();
     }
 
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
+    private void displayError(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        Log.v(LogTAG, message);
     }
 }
