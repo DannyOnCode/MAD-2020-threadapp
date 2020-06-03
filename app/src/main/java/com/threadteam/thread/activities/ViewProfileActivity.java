@@ -144,10 +144,11 @@ public class ViewProfileActivity extends AppCompatActivity {
         // Reset disabled ActionMenuItemView button back to normal state
         ActionMenuItemView viewProfile = (ActionMenuItemView) findViewById(R.id.viewProfileMenuItem);
         viewProfile.setEnabled(true);
-        Drawable enabled = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
+        Drawable enabled = ContextCompat.getDrawable(this, R.drawable.round_face_white_36);
         if(enabled == null) {
             Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
         } else {
+            enabled.setColorFilter(null);
             viewProfile.setIcon(enabled);
         }
 
@@ -185,7 +186,7 @@ public class ViewProfileActivity extends AppCompatActivity {
             case R.id.viewServersMenuItem:
                 Intent goToViewServer = new Intent(ViewProfileActivity.this, ViewServersActivity.class);
                 startActivity(goToViewServer);
-                finish();
+                onStop();
                 return true;
             case R.id.viewProfileMenuItem:
                 // DISABLED
@@ -194,7 +195,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                 firebaseAuth.signOut();
                 Intent logOutToSignIn = new Intent(ViewProfileActivity.this, LoginActivity.class);
                 startActivity(logOutToSignIn);
-                finish();
+                onStop();
                 return true;
         }
 

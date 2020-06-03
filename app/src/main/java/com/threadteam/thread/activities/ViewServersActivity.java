@@ -211,6 +211,7 @@ public class ViewServersActivity extends AppCompatActivity {
         if(enabled == null) {
             Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
         } else {
+            enabled.setColorFilter(null);
             viewServers.setIcon(enabled);
         }
 
@@ -272,13 +273,13 @@ public class ViewServersActivity extends AppCompatActivity {
             case R.id.viewProfileMenuItem:
                 Intent goToViewProfile = new Intent(ViewServersActivity.this, ViewProfileActivity.class);
                 startActivity(goToViewProfile);
-                finish();
+                onStop();
                 return true;
             case LOG_OUT_MENU_ITEM_ID:
                 firebaseAuth.signOut();
                 Intent logOutToSignIn = new Intent(ViewServersActivity.this, LoginActivity.class);
                 startActivity(logOutToSignIn);
-                finish();
+                onStop();
                 return true;
         }
 
