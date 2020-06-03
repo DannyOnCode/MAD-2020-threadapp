@@ -22,7 +22,7 @@ public class ViewServerStatusCardViewHolder extends RecyclerView.ViewHolder {
         super(itemView);
 
         serverName = (TextView) itemView.findViewById(R.id.serverNameDisplay);
-        serverTitle = (TextView) itemView.findViewById(R.id.userNameDisplay);
+        serverTitle = (TextView) itemView.findViewById(R.id.serverTitleDisplay);
         serverLevel = (TextView) itemView.findViewById(R.id.levelDisplay);
         serverRedirectionCard = (CardView) itemView.findViewById(R.id.serverRedirect);
     }

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -17,8 +18,14 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
@@ -28,6 +35,8 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.User;
+
+import java.util.HashMap;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -46,6 +55,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
+    private FirebaseUser currentUser;
+    private FirebaseAuth firebaseAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +72,8 @@ public class EditProfileActivity extends AppCompatActivity {
         mDescription = (EditText) findViewById(R.id.aboutMeDesciptionEdit);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
 
-        mStorageRef = FirebaseStorage.getInstance().getReference("Users");
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("Users");
+        mStorageRef = FirebaseStorage.getInstance().getReference("users");
+        mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
 
 
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
@@ -75,7 +86,11 @@ public class EditProfileActivity extends AppCompatActivity {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                uploadUserData();
+                if( TextUtils.isEmpty(mUserNameEdit.getText())){
+                    mUserNameEdit.setError( "Username is required!" );}
+                else{
+                    uploadUserData();
+                }
             }
         });
 
@@ -114,50 +129,94 @@ public class EditProfileActivity extends AppCompatActivity {
 
     private void uploadUserData(){
         if(mImageUri != null){
-            StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
-            + "."+getFileExtension(mImageUri));
+            final StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
+                    + "."+getFileExtension(mImageUri));
 
-            fileReference.putFile(mImageUri)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Handler handler = new Handler();
-                            handler.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mProgressBar.setProgress(0);
-                                }
-                            },500);
+            fileReference.putFile(mImageUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>()
+            {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception
+                {
+                    if (!task.isSuccessful())
+                    {
+                        throw task.getException();
+                    }
+                    return fileReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>()
+            {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task)
+                {
+                    if (task.isSuccessful())
+                    {
+                        Uri downloadUri = task.getResult();
 
-                            Toast.makeText(EditProfileActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
+                        firebaseAuth = FirebaseAuth.getInstance();
+                        currentUser = firebaseAuth.getCurrentUser();
+                        String userID = currentUser.getUid();
+                        User user = new User();
+                        user.set_profileImageURL(downloadUri.toString());
+                        user.set_username(mUserNameEdit.getText().toString().trim());
+                        user.set_aboutUsMessage(mDescription.getText().toString().trim());
+                        user.set_statusMessage(mStatusTitle.getText().toString().trim());
 
-                            //Replace this in future when authentication has been set up
-                            String userID = mDatabaseRef.push().getKey();
-                            User user = new User();
-                            user.set_username(mUserNameEdit.getText().toString().trim());
-                            user.set_aboutUsMessage(mDescription.getText().toString().trim());
-                            user.set_statusMessage(mStatusTitle.getText().toString().trim());
-                            user.set_profileImageURL(taskSnapshot.getUploadSessionUri().toString());
+                        mDatabaseRef.child(userID).child("_username").setValue(user.get_username());
+                        mDatabaseRef.child(userID).child("_statusMessage").setValue(user.get_statusMessage());
+                        mDatabaseRef.child(userID).child("_aboutUsMessage").setValue(user.get_aboutUsMessage());
+                        mDatabaseRef.child(userID).child("_profileImageURL").setValue(user.get_profileImageURL(),new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        mProgressBar.setProgress(100);
+                                    }
+                                },500);
+                                startActivity(new Intent(EditProfileActivity.this, ViewProfileActivity.class));
+                                Toast.makeText(EditProfileActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
+                            }
+                        });
 
-                            //this Line will change.
-                            mDatabaseRef.child(userID).setValue(user);
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(EditProfileActivity.this,e.getMessage(),Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0 * taskSnapshot.getBytesTransferred()/taskSnapshot.getTotalByteCount());
-                            mProgressBar.setProgress((int) progress);
-                        }
-                    });
+
+
+                    } else
+                    {
+                        Toast.makeText(EditProfileActivity.this, "upload failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
         }else{
-            Toast.makeText(this,"No file selected",Toast.LENGTH_SHORT).show();
+            firebaseAuth = FirebaseAuth.getInstance();
+            currentUser = firebaseAuth.getCurrentUser();
+            String userID = currentUser.getUid();
+            User user = new User();
+            user.set_username(mUserNameEdit.getText().toString().trim());
+            user.set_aboutUsMessage(mDescription.getText().toString().trim());
+            user.set_statusMessage(mStatusTitle.getText().toString().trim());
+
+            HashMap<String, Object> profileDetailsHashMap = new HashMap<>();
+            profileDetailsHashMap.put("_username", user.get_username());
+            profileDetailsHashMap.put("_statusMessage", user.get_statusMessage());
+            profileDetailsHashMap.put("_aboutUsMessage", user.get_aboutUsMessage());
+
+            //this Line will change.
+            mDatabaseRef.child(userID).setValue(profileDetailsHashMap, new DatabaseReference.CompletionListener() {
+                @Override
+                public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mProgressBar.setProgress(100);
+                        }
+                    },500);
+                    Toast.makeText(EditProfileActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
+                }
+            });
+
+            Toast.makeText(this,"No Image selected",Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -3,6 +3,8 @@ package com.threadteam.thread.models;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,18 +12,22 @@ public class User {
 
 
     // Instance-specific variables
+    @Exclude
     private String _id;
+
     private String _username;
     private String _profileImageURL;
     private String _aboutUsMessage;
     private String _statusMessage;
-    private List<Server> _subscribedServers = new ArrayList<Server>();
+
+    @Exclude
+    private List<String> _subscribedServers = new ArrayList<String>();
     // Template User class placeholder
     public User(){
 
     }
 
-    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,List<Server> _subscribedServers) {
+    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,List<String> _subscribedServers) {
         if(_aboutUsMessage.trim().equals("")){
             _aboutUsMessage = "No Description";
         }
@@ -65,6 +71,9 @@ public class User {
     }
 
     public void set_aboutUsMessage(String _aboutUsMessage) {
+        if(_aboutUsMessage.trim().equals("")){
+            _aboutUsMessage = "No Description";
+        }
         this._aboutUsMessage = _aboutUsMessage;
     }
 
@@ -73,14 +82,17 @@ public class User {
     }
 
     public void set_statusMessage(String _statusMessage) {
+        if(_statusMessage.trim().equals("")){
+            _statusMessage = "No Status";
+        }
         this._statusMessage = _statusMessage;
     }
 
-    public List<Server> get_subscribedServers() {
+    public List<String> get_subscribedServers() {
         return _subscribedServers;
     }
 
-    public void set_subscribedServers(List<Server> _subscribedServers) {
+    public void set_subscribedServers(List<String> _subscribedServers) {
         this._subscribedServers = _subscribedServers;
     }
 }
