@@ -263,6 +263,7 @@ public class ViewServersActivity extends AppCompatActivity {
                 finish();
                 return true;
             case LOG_OUT_MENU_ITEM_ID:
+                firebaseAuth.signOut();
                 Intent logOutToSignIn = new Intent(ViewServersActivity.this, LoginActivity.class);
                 startActivity(logOutToSignIn);
                 finish();
