@@ -228,7 +228,7 @@ public class ViewServersActivity extends AppCompatActivity {
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        // Make ViewProfile Button on menu bar look disabled
+        // Make ViewServers Button on menu bar look disabled
         ActionMenuItemView viewServers = (ActionMenuItemView) findViewById(R.id.viewServersMenuItem);
         viewServers.setEnabled(false);
         Drawable disabled = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
