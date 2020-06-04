@@ -43,6 +43,7 @@ import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.Server;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ViewServersActivity extends AppCompatActivity {
@@ -146,6 +147,7 @@ public class ViewServersActivity extends AppCompatActivity {
 
                 server.set_id(dataSnapshot.getKey());
                 adapter.serverList.add(server);
+                Collections.sort(adapter.serverList);
                 adapter.notifyDataSetChanged();
             }
 
@@ -224,11 +226,13 @@ public class ViewServersActivity extends AppCompatActivity {
         Intent transitionToChat = new Intent(ViewServersActivity.this, ChatActivity.class);
         transitionToChat.putExtra("SERVER_ID", serverList.get(position).get_id());
         startActivity(transitionToChat);
+        onStop();
     }
 
     private void handleAddServer() {
         Intent transitionToAddServer = new Intent(ViewServersActivity.this, AddServerActivity.class);
         startActivity(transitionToAddServer);
+        onStop();
     }
 
     private void displayError(String message) {

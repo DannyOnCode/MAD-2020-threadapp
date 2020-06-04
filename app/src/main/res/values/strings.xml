@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">thread</string>
+    <string name="share_code_noCode">Hit GET CODE to generate a server share code! Keep this screen open while your friends key in the code.</string>
+    <string name="share_code_hasCode">Once your friends key in this code into Join Server, you\'ll be able to chat with them here!</string>
 </resources>
