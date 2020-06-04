@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
@@ -25,9 +26,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -36,13 +39,15 @@ import com.squareup.picasso.Picasso;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.User;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 
 public class EditProfileActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
-    ImageView mButtonChooseImage;
+    TextView mButtonChooseImage;
     ImageView mDisplayImage;
     EditText mUserNameEdit;
     EditText mStatusTitle;
@@ -63,7 +68,7 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editprofile);
 
-        mButtonChooseImage = (ImageView) findViewById(R.id.buttonSelectImage);
+        mButtonChooseImage = (TextView) findViewById(R.id.buttonSelectImage);
         mDisplayImage = (ImageView) findViewById(R.id.userProfilePictureEdit);
         mConfirmButton = (Button) findViewById(R.id.confirmButton);
         mCancelButton = (Button) findViewById(R.id.cancelButton);
@@ -74,6 +79,28 @@ public class EditProfileActivity extends AppCompatActivity {
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        currentUser = firebaseAuth.getCurrentUser();
+        String userID = currentUser.getUid();
+        mDatabaseRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String profileImage = (String) dataSnapshot.child("_profileImageURL").getValue();
+                Picasso.get()
+                        .load(profileImage)
+                        .fit()
+                        .placeholder(R.drawable.profilepictureempty)
+                        .error(R.drawable.profilepictureempty)
+                        .centerCrop()
+                        .into(mDisplayImage);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(EditProfileActivity.this,"No previous profile image",Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +124,8 @@ public class EditProfileActivity extends AppCompatActivity {
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent goToViewProfile = new Intent(EditProfileActivity.this, ViewProfileActivity.class);
+                startActivity(goToViewProfile);
             }
         });
 
