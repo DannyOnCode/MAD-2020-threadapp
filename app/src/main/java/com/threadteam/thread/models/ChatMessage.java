@@ -12,6 +12,7 @@ public class ChatMessage {
     private String _id;
 
     // Instance-specific variables
+    private String _senderUID;
     private String _sender;
     private String _message;
 
@@ -21,14 +22,16 @@ public class ChatMessage {
     // Empty constructor for Firebase
     public ChatMessage() {}
 
-    public ChatMessage(String sender, String message) {
+    public ChatMessage(String senderUID, String sender, String message) {
+        this._senderUID = senderUID;
         this._sender = sender;
         this._message = message;
 
         // Leave timestamp empty for server side generation
     }
 
-    public ChatMessage(String sender, String message, Long timestampMillis) {
+    public ChatMessage(String senderUID, String sender, String message, Long timestampMillis) {
+        this._senderUID = senderUID;
         this._sender = sender;
         this._message = message;
         this.timestampMillis = timestampMillis;
@@ -45,6 +48,10 @@ public class ChatMessage {
     public String get_sender() { return this._sender; }
 
     public void set_sender(String _sender) { this._sender = _sender; }
+
+    public String get_senderUID() { return _senderUID; }
+
+    public void set_senderUID(String _senderUID) { this._senderUID = _senderUID; }
 
     public Long getTimestampMillis() { return this.timestampMillis; }
 
