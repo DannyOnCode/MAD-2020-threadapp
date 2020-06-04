@@ -29,13 +29,11 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private Context mContext;
     // DATA STORE
     public User userData;
-    public Integer count = 0;
     DatabaseReference ref;
     final String TAG = "ViewProfile Page: ";
-    public ViewProfileAdapter(User user, Integer count) {
+    public ViewProfileAdapter(User user) {
 
         this.userData = userData;
-        this.count = count;
     }
 
     public int getItemViewType(int position) {
@@ -96,7 +94,7 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case 2:
                 final ViewServerStatusCardViewHolder serverStatusCardViewHolder = (ViewServerStatusCardViewHolder) holder;
                 //Problem is here
-                String serverDetails = userData.get_subscribedServers().get(count);
+                String serverDetails = userData.get_subscribedServers().get(position - 2);
                 ref = FirebaseDatabase.getInstance().getReference().child("servers").child(serverDetails);
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -115,7 +113,6 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         Log.v(TAG, "DatabaseError! " + databaseError.toString());
                     }
                 });
-                count += 1;
                 break;
         }
     }
