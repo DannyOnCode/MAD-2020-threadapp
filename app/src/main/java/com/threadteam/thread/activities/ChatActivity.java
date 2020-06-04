@@ -133,15 +133,14 @@ public class ChatActivity extends AppCompatActivity {
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                final LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
 
-                if(llm == null) {
-                    Log.v(LogTAG, "Linear Layout Manager for ChatMessageRecyclerView not found! Aborting onScroll Listener initialisation!");
-                    return;
-                }
+                if(dy < 0) {
+                    scrollToLatestMessage = false;
 
-                if(llm.findLastVisibleItemPosition() == chatMessageList.size()-1) {
-                    //TODO: Implement loading more messages rather than all at once
+                } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == adapter.chatMessageList.size()-1) {
+                    Log.v(LogTAG, "Scrolled to bottom!");
+                    scrollToLatestMessage = true;
                 }
 
             }
@@ -159,6 +158,7 @@ public class ChatActivity extends AppCompatActivity {
             startActivity(backToLogin);
             return;
         }
+        adapter.currentUserUID = currentUser.getUid();
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
@@ -176,6 +176,7 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 }
                 username = (String) dataSnapshot.getValue();
+                adapter.notifyDataSetChanged();
             }
 
             @Override
@@ -200,13 +201,17 @@ public class ChatActivity extends AppCompatActivity {
                 }
 
                 String sender = (String) dataSnapshot.child("_sender").getValue();
+                String senderUID = (String) dataSnapshot.child("_senderUID").getValue();
                 String message = (String) dataSnapshot.child("_message").getValue();
                 Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
 
                 //TODO: Implement message checking features here
 
                 ChatMessage chatMessage;
-                if (sender == null) {
+                if (senderUID == null) {
+                    Log.v(LogTAG, "Message " + dataSnapshot.getKey() + " senderUID is null! Aborting!");
+                    return;
+                } else if (sender == null) {
                     Log.v(LogTAG, "Message " + dataSnapshot.getKey() + " sender is null! Aborting!");
                     return;
                 } else if (message == null) {
@@ -214,9 +219,9 @@ public class ChatActivity extends AppCompatActivity {
                     return;
                 } else if (timestampMillis == null) {
                     Log.v(LogTAG, "Message " + dataSnapshot.getKey() + " timestamp is null!");
-                    chatMessage = new ChatMessage(sender, message);
+                    chatMessage = new ChatMessage(senderUID, sender, message);
                 } else {
-                    chatMessage = new ChatMessage(sender, message, timestampMillis);
+                    chatMessage = new ChatMessage(senderUID, sender, message, timestampMillis);
                 }
 
                 chatMessage.set_id(dataSnapshot.getKey());
@@ -226,7 +231,6 @@ public class ChatActivity extends AppCompatActivity {
                 if(scrollToLatestMessage) {
                     Log.v(LogTAG, "Scrolling to latest message!");
                     ChatMessageRecyclerView.smoothScrollToPosition(Math.max(0, adapter.chatMessageList.size() - 1));
-                    scrollToLatestMessage = false;
                 }
             }
 
@@ -323,6 +327,7 @@ public class ChatActivity extends AppCompatActivity {
 
         if(formattedMessage.length() > 0) {
             HashMap<String, Object> chatMessageHashMap = new HashMap<>();
+            chatMessageHashMap.put("_senderUID", currentUser.getUid());
             chatMessageHashMap.put("_sender", username);
             chatMessageHashMap.put("_message", formattedMessage.toString());
             chatMessageHashMap.put("timestamp", System.currentTimeMillis());
