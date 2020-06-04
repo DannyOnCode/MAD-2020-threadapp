@@ -42,7 +42,6 @@ import com.threadteam.thread.R;
 import com.threadteam.thread.models.ChatMessage;
 import com.threadteam.thread.models.Utils;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +64,7 @@ public class ChatActivity extends AppCompatActivity {
     private ChatMessageAdapter adapter;
     private Boolean scrollToLatestMessage = false;
     private Integer SHARE_SERVER_MENU_ITEM = -1;
+    private Integer queryLimit = 100;
     private String shareCode;
 
     // VIEW OBJECTS
@@ -139,7 +139,7 @@ public class ChatActivity extends AppCompatActivity {
                     scrollToLatestMessage = false;
 
                 } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == adapter.chatMessageList.size()-1) {
-                    Log.v(LogTAG, "Scrolled to bottom!");
+                    Log.v(LogTAG, "Scrolled to bottom of chat!");
                     scrollToLatestMessage = true;
                 }
 
@@ -226,7 +226,7 @@ public class ChatActivity extends AppCompatActivity {
 
                 chatMessage.set_id(dataSnapshot.getKey());
                 adapter.chatMessageList.add(chatMessage);
-                adapter.notifyDataSetChanged();
+                adapter.notifyItemInserted(chatMessageList.size());
 
                 if(scrollToLatestMessage) {
                     Log.v(LogTAG, "Scrolling to latest message!");
