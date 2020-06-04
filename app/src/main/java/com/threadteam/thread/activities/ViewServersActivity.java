@@ -179,6 +179,7 @@ public class ViewServersActivity extends AppCompatActivity {
                 for(Server server : adapter.serverList) {
                     if(server.get_id().equals(dataSnapshot.getKey())) {
                         adapter.serverList.remove(server);
+                        adapter.notifyDataSetChanged();
                         return;
                     }
                 }

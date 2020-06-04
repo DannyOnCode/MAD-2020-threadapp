@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -64,6 +66,7 @@ public class ChatActivity extends AppCompatActivity {
     private ChatMessageAdapter adapter;
     private Boolean scrollToLatestMessage = false;
     private Integer SHARE_SERVER_MENU_ITEM = -1;
+    private Integer LEAVE_SERVER_MENU_ITEM = -2;
     private Integer queryLimit = 100;
     private String shareCode;
 
@@ -205,8 +208,6 @@ public class ChatActivity extends AppCompatActivity {
                 String message = (String) dataSnapshot.child("_message").getValue();
                 Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
 
-                //TODO: Implement message checking features here
-
                 ChatMessage chatMessage;
                 if (senderUID == null) {
                     Log.v(LogTAG, "Message " + dataSnapshot.getKey() + " senderUID is null! Aborting!");
@@ -340,6 +341,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(Menu.NONE, SHARE_SERVER_MENU_ITEM, Menu.NONE, "Share Server");
+        menu.add(Menu.NONE, LEAVE_SERVER_MENU_ITEM, Menu.NONE, "Leave Server");
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -360,6 +362,12 @@ public class ChatActivity extends AppCompatActivity {
                     true);
             shareCodePopup.setTouchable(true);
             shareCodePopup.showAtLocation(BaseChatConstraintLayout, Gravity.CENTER, 0 ,0);
+            shareCodePopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss() {
+                    resetShareCode();
+                }
+            });
 
             //BIND VIEW OBJECTS
 
@@ -433,10 +441,87 @@ public class ChatActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     shareCodePopup.dismiss();
                     codeTimer.cancel();
-                    resetShareCode();
                 }
             });
+        } else if (item.getItemId() == LEAVE_SERVER_MENU_ITEM) {
+
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Leave Server?");
+
+            ValueEventListener getServerOwner = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.child("_ownerID").getValue() == null) {
+                        //TODO: Error
+                        return;
+                    }
+
+                    if(dataSnapshot.child("_ownerID").getValue().equals(currentUser.getUid())) {
+
+                        // User is server owner
+                        builder.setMessage("Are you sure you want to leave the server? As the owner, this will delete the server for everyone as well!");
+                        builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                final ValueEventListener getAllMembers = new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        for(DataSnapshot data : dataSnapshot.getChildren()) {
+                                            if(data.getKey() == null) {
+                                                Log.v(LogTAG, "Could not retrieve UserUID in members dir! Skipping!");
+                                                continue;
+                                            }
+
+                                            String userUID = data.getKey();
+                                            databaseRef.child("users").child(userUID).child("_subscribedServers").child(serverId).setValue(null);
+                                        }
+
+                                        // DELETE ALL SERVER DATA AFTER MEMBERS ARE GONE
+                                        databaseRef.child("servers").child(serverId).setValue(null);
+                                        databaseRef.child("messages").child(serverId).setValue(null);
+                                        databaseRef.child("members").child(serverId).setValue(null);
+
+                                        returnToViewServers();
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                };
+                                databaseRef.child("members").child(serverId).addListenerForSingleValueEvent(getAllMembers);
+                            }
+                        });
+
+                    } else {
+
+                        // User is just a subscriber
+                        builder.setMessage("Are you sure you want to leave the server? You'll have to re-enter another Server Share Code if you want to rejoin the server!");
+                        builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                databaseRef.child("users").child(currentUser.getUid()).child("_subscribedServers").child(serverId).setValue(null);
+                                databaseRef.child("members").child(serverId).child(currentUser.getUid()).setValue(null);
+                                returnToViewServers();
+                            }
+                        });
+
+                    }
+
+                    builder.setNeutralButton("Cancel", null);
+                    builder.create().show();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.v(LogTAG, "Database Error! " + databaseError.toString());
+                }
+            };
+            databaseRef.child("servers").child(serverId).addListenerForSingleValueEvent(getServerOwner);
         }
+
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -445,5 +530,11 @@ public class ChatActivity extends AppCompatActivity {
             databaseRef.child("shares").child(shareCode).setValue(null);
             shareCode = null;
         }
+    }
+
+    private void returnToViewServers() {
+        Intent returnToViewServers = new Intent(ChatActivity.this, ViewServersActivity.class);
+        startActivity(returnToViewServers);
+        onStop();
     }
 }

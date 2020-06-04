@@ -123,6 +123,7 @@ public class AddServerActivity extends AppCompatActivity {
                     // Subscribe user to server
                     databaseRef.child("users").child(userId)
                             .child("_subscribedServers").child(joinServerID).setValue(true);
+                    databaseRef.child("members").child(joinServerID).child(currentUser.getUid()).setValue(true);
                 }
             }
 
@@ -197,6 +198,7 @@ public class AddServerActivity extends AppCompatActivity {
 
         databaseRef.child("servers").child(newServerId).setValue(newServer);
         databaseRef.child("users").child(userId).child("_subscribedServers").child(newServerId).setValue(true);
+        databaseRef.child("members").child(newServerId).child(currentUser.getUid()).setValue(true);
 
         finish();
     }
