@@ -136,39 +136,17 @@ public class ViewProfileActivity extends AppCompatActivity {
 
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
-    protected void onStop() {
-        super.onStop();
-
-        // Reset disabled ActionMenuItemView button back to normal state
-        ActionMenuItemView viewProfile = (ActionMenuItemView) findViewById(R.id.viewProfileMenuItem);
-        viewProfile.setEnabled(true);
-        Drawable enabled = ContextCompat.getDrawable(this, R.drawable.round_face_white_36);
-        if(enabled == null) {
-            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
-        } else {
-            enabled.setColorFilter(null);
-            viewProfile.setIcon(enabled);
-        }
-
+    protected void onDestroy() {
+        toggleOwnMenuItemDisplay(true);
+        super.onDestroy();
     }
 
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Make ViewServers Button on menu bar look disabled
-        ActionMenuItemView viewProfile = (ActionMenuItemView) findViewById(R.id.viewProfileMenuItem);
-        viewProfile.setEnabled(false);
-        Drawable disabled = ContextCompat.getDrawable(this, R.drawable.round_face_white_36);
-
-        if(disabled == null) {
-            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
-        } else {
-            disabled.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
-            viewProfile.setIcon(disabled);
-        }
-
+        toggleOwnMenuItemDisplay(false);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -179,14 +157,21 @@ public class ViewProfileActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewServersMenuItem:
+
                 Intent goToViewServer = new Intent(ViewProfileActivity.this, ViewServersActivity.class);
+                goToViewServer.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(goToViewServer);
-                onStop();
+
+                // Reset disabled ActionMenuItemView button back to normal state
+                toggleOwnMenuItemDisplay(true);
+
+                ViewProfileActivity.this.finish();
                 return true;
             case R.id.viewProfileMenuItem:
                 // DISABLED
@@ -195,10 +180,33 @@ public class ViewProfileActivity extends AppCompatActivity {
                 firebaseAuth.signOut();
                 Intent logOutToSignIn = new Intent(ViewProfileActivity.this, LoginActivity.class);
                 startActivity(logOutToSignIn);
-                onStop();
+                finish();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void toggleOwnMenuItemDisplay(boolean isEnabled) {
+        // Make ViewServers Button on menu bar look disabled
+        ActionMenuItemView viewProfile = (ActionMenuItemView) findViewById(R.id.viewProfileMenuItem);
+
+        if(viewProfile == null) {
+            return;
+        }
+
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_face_white_36);
+
+        if(drawable == null) {
+            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
+        } else {
+            if(isEnabled) {
+                drawable.setColorFilter(null);
+            } else {
+                drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
+            }
+            viewProfile.setIcon(drawable);
+        }
     }
 }

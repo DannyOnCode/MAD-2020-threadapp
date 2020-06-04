@@ -201,24 +201,13 @@ public class ViewServersActivity extends AppCompatActivity {
 
     @SuppressLint("RestrictedApi")
     @Override
-    protected void onStop() {
-        // Destroy Child Event Listeners when this activity stops.
+    protected void onDestroy() {
+        // Destroy Child Event Listeners when this activity is about to be destroyed.
         if (subscriptionListener != null) {
             databaseRef.removeEventListener(subscriptionListener);
         }
-
-        // Reset disabled ActionMenuItemView button back to normal state
-        ActionMenuItemView viewServers = (ActionMenuItemView) findViewById(R.id.viewServersMenuItem);
-        viewServers.setEnabled(true);
-        Drawable enabled = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
-        if(enabled == null) {
-            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
-        } else {
-            enabled.setColorFilter(null);
-            viewServers.setIcon(enabled);
-        }
-
-        super.onStop();
+        toggleOwnMenuItemDisplay(true);
+        super.onDestroy();
     }
 
     // CLASS METHODS
@@ -247,17 +236,7 @@ public class ViewServersActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Make ViewServers Button on menu bar look disabled
-        ActionMenuItemView viewServers = (ActionMenuItemView) findViewById(R.id.viewServersMenuItem);
-        viewServers.setEnabled(false);
-        Drawable disabled = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
-
-        if(disabled == null) {
-            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
-        } else {
-            disabled.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
-            viewServers.setIcon(disabled);
-        }
-
+        toggleOwnMenuItemDisplay(false);
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -268,6 +247,7 @@ public class ViewServersActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -277,18 +257,46 @@ public class ViewServersActivity extends AppCompatActivity {
                 return true;
             case R.id.viewProfileMenuItem:
                 Intent goToViewProfile = new Intent(ViewServersActivity.this, ViewProfileActivity.class);
+                goToViewProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(goToViewProfile);
-                onStop();
+
+                // Reset disabled ActionMenuItemView button back to normal state
+                toggleOwnMenuItemDisplay(true);
+
+                ViewServersActivity.this.finish();
                 return true;
             case LOG_OUT_MENU_ITEM_ID:
                 firebaseAuth.signOut();
                 Intent logOutToSignIn = new Intent(ViewServersActivity.this, LoginActivity.class);
                 startActivity(logOutToSignIn);
-                onStop();
+                finish();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void toggleOwnMenuItemDisplay(boolean isEnabled) {
+        // Make ViewServers Button on menu bar look disabled
+        ActionMenuItemView viewServers = (ActionMenuItemView) findViewById(R.id.viewServersMenuItem);
+
+        if(viewServers == null) {
+            return;
+        }
+
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
+
+        if(drawable == null) {
+            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
+        } else {
+            if(isEnabled) {
+                drawable.setColorFilter(null);
+            } else {
+                drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
+            }
+            viewServers.setIcon(drawable);
+        }
     }
 
 }
