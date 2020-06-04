@@ -88,7 +88,7 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         profileView = (RecyclerView) findViewById(R.id.viewProfileRecyclerView);
 
-        final ViewProfileAdapter profileAdapter = new ViewProfileAdapter(null);
+        final ViewProfileAdapter profileAdapter = new ViewProfileAdapter(null,0);
         LinearLayoutManager pLayoutManager = new LinearLayoutManager(mContext);
         profileView.setLayoutManager(pLayoutManager);
         profileView.setAdapter(profileAdapter);
@@ -124,6 +124,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                 user.set_subscribedServers(serverList);
 
                 profileAdapter.userData = user;
+                profileAdapter.count = 0;
                 profileAdapter.notifyDataSetChanged();
 
             }

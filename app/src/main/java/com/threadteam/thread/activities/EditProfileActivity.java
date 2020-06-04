@@ -196,13 +196,9 @@ public class EditProfileActivity extends AppCompatActivity {
             user.set_aboutUsMessage(mDescription.getText().toString().trim());
             user.set_statusMessage(mStatusTitle.getText().toString().trim());
 
-            HashMap<String, Object> profileDetailsHashMap = new HashMap<>();
-            profileDetailsHashMap.put("_username", user.get_username());
-            profileDetailsHashMap.put("_statusMessage", user.get_statusMessage());
-            profileDetailsHashMap.put("_aboutUsMessage", user.get_aboutUsMessage());
-
-            //this Line will change.
-            mDatabaseRef.child(userID).setValue(profileDetailsHashMap, new DatabaseReference.CompletionListener() {
+            mDatabaseRef.child(userID).child("_username").setValue(user.get_username());
+            mDatabaseRef.child(userID).child("_statusMessage").setValue(user.get_statusMessage());
+            mDatabaseRef.child(userID).child("_aboutUsMessage").setValue(user.get_aboutUsMessage(),new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                     Handler handler = new Handler();
@@ -211,12 +207,13 @@ public class EditProfileActivity extends AppCompatActivity {
                         public void run() {
                             mProgressBar.setProgress(100);
                         }
-                    },500);
-                    Toast.makeText(EditProfileActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
+                    }, 500);
+                    startActivity(new Intent(EditProfileActivity.this, ViewProfileActivity.class));
+                    Toast.makeText(EditProfileActivity.this, "Updated successfully", Toast.LENGTH_LONG).show();
                 }
+
             });
 
-            Toast.makeText(this,"No Image selected",Toast.LENGTH_SHORT).show();
         }
     }
 }
