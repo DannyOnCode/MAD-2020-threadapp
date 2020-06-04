@@ -37,6 +37,9 @@ public class AddServerActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseRef;
 
+    //DATA STORE
+    private String joinServerID;
+
     //VIEW OBJECTS
     private NestedScrollView BaseAddServerNSV;
     private EditText JoinServerIdEditText;
@@ -109,7 +112,7 @@ public class AddServerActivity extends AppCompatActivity {
     private void handleJoinServer() {
 
         final String userId = currentUser.getUid();
-        final String joinServerId = JoinServerIdEditText.getText().toString();
+        joinServerID = JoinServerIdEditText.getText().toString();
 
         final ValueEventListener testUserNotSubscribed = new ValueEventListener() {
             @Override
@@ -119,7 +122,7 @@ public class AddServerActivity extends AppCompatActivity {
                 } else {
                     // Subscribe user to server
                     databaseRef.child("users").child(userId)
-                            .child("_subscribedServers").child(joinServerId).setValue(true);
+                            .child("_subscribedServers").child(joinServerID).setValue(true);
                 }
             }
 
@@ -127,7 +130,7 @@ public class AddServerActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError databaseError) { }
         };
 
-        ValueEventListener testServerExists = new ValueEventListener() {
+        final ValueEventListener testServerExists = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() == null) {
@@ -136,7 +139,24 @@ public class AddServerActivity extends AppCompatActivity {
                 } else {
                     // Test user subscription
                     databaseRef.child("users").child(userId).child("_subscribedServers")
-                            .child(joinServerId).addListenerForSingleValueEvent(testUserNotSubscribed);
+                            .child(joinServerID).addListenerForSingleValueEvent(testUserNotSubscribed);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) { }
+        };
+
+        ValueEventListener shareCodeLookup = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() == null) {
+                    // Server Share Code does not exist
+                    displayError("Server Share Code is invalid! Check that your friend still has the Share Code page open!");
+                } else {
+                    // Continue using normal pipeline
+                    joinServerID = (String) dataSnapshot.getValue();
+                    databaseRef.child("servers").child(joinServerID).addListenerForSingleValueEvent(testServerExists);
                 }
             }
 
@@ -145,7 +165,12 @@ public class AddServerActivity extends AppCompatActivity {
         };
 
         //TestServerExists -> TestUserIsNotSubscribed -> SubscribeUserToServer
-        databaseRef.child("servers").child(joinServerId).addListenerForSingleValueEvent(testServerExists);
+        if(joinServerID.length() == 6) {
+            // Handle Server Share Code
+            databaseRef.child("shares").child(joinServerID).addListenerForSingleValueEvent(shareCodeLookup);
+        } else {
+            databaseRef.child("servers").child(joinServerID).addListenerForSingleValueEvent(testServerExists);
+        }
 
         finish();
     }

@@ -6,7 +6,7 @@ import com.google.firebase.database.IgnoreExtraProperties;
 import java.util.List;
 
 @IgnoreExtraProperties
-public class Server {
+public class Server implements Comparable<Server> {
 
     /*
     DATA MODEL FOR THREAD APP ~ with reference from https://firebase.google.com/docs/database/android/structure-data
@@ -67,4 +67,15 @@ public class Server {
     public String get_desc() { return _desc; }
 
     public void set_desc(String _desc) { this._desc = _desc; }
+
+    @Override
+    public int compareTo(Server o) {
+        if(o.get_name().compareTo(this._name) > 0) {
+            return -1;
+        } else if (o.get_name().compareTo(this._name) < 0) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }

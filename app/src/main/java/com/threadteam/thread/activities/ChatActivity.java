@@ -13,7 +13,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -23,6 +26,8 @@ import androidx.appcompat.widget.ActionMenuView;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,18 +36,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.ChatMessageAdapter;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.ChatMessage;
+import com.threadteam.thread.models.Utils;
 
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -60,6 +65,7 @@ public class ChatActivity extends AppCompatActivity {
     private ChatMessageAdapter adapter;
     private Boolean scrollToLatestMessage = false;
     private Integer SHARE_SERVER_MENU_ITEM = -1;
+    private String shareCode;
 
     // VIEW OBJECTS
     private String username;
@@ -281,6 +287,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         databaseRef.removeEventListener(chatListener);
+        resetShareCode();
         super.onStop();
     }
 
@@ -331,11 +338,107 @@ public class ChatActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == SHARE_SERVER_MENU_ITEM) {
-            //TODO: Implement Share Server Id activity
+            ConstraintLayout BaseChatConstraintLayout = (ConstraintLayout) findViewById(R.id.baseChatConstraintLayout);
+
+            View popupView = LayoutInflater.from(this.getBaseContext()).inflate(
+                    R.layout.activity_shareserver, BaseChatConstraintLayout, false
+            );
+
+            final PopupWindow shareCodePopup = new PopupWindow(
+                    popupView,
+                    (int) (BaseChatConstraintLayout.getWidth() * 0.8),
+                    (int) (BaseChatConstraintLayout.getHeight() *0.8),
+                    true);
+            shareCodePopup.setTouchable(true);
+            shareCodePopup.showAtLocation(BaseChatConstraintLayout, Gravity.CENTER, 0 ,0);
+
+            //BIND VIEW OBJECTS
+
+            ConstraintLayout BaseShareCodeConstraintLayout = (ConstraintLayout) popupView
+                    .findViewById(R.id.baseShareCodeConstraintLayout);
+            Toolbar PopupToolbar = (Toolbar) popupView.findViewById(R.id.shareCodeToolbar);
+            final Button RefreshCodeButton = (Button) popupView.findViewById(R.id.refreshCodeButton);
+            final TextView ShareCodeTextView = (TextView) popupView.findViewById(R.id.shareCodeTextView);
+            final TextView ShareCodeDescTextView = (TextView) popupView.findViewById(R.id.shareCodeDescTextView);
+            final TextView CodeExpiryTextView = (TextView) popupView.findViewById(R.id.codeExpiryTextView);
+
+            PopupToolbar.setTitle("Share Server Code");
+            RefreshCodeButton.setText("GET CODE");
+            ShareCodeTextView.setText("------");
+
+            final CountDownTimer codeTimer = new CountDownTimer(10*60*1000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    long mins = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+                    long secs = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - (mins * 60);
+                    CodeExpiryTextView.setText(String.format(Locale.ENGLISH, "expires in %02d:%02d", mins, secs));
+                }
+
+                @Override
+                public void onFinish() {
+                    RefreshCodeButton.setText("GET CODE");
+                    ShareCodeTextView.setText("------");
+                    ShareCodeDescTextView.setText(R.string.share_code_noCode);
+                    CodeExpiryTextView.setText("expires in 00:00:00");
+
+                    resetShareCode();
+                }
+            };
+
+            final ValueEventListener sharesListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    while (dataSnapshot.getValue() != null) {
+                        shareCode = Utils.GenerateAlphanumericID(6);
+                    }
+
+                    databaseRef.child("shares").child(shareCode).setValue(serverId);
+
+                    ShareCodeTextView.setText(shareCode);
+                    RefreshCodeButton.setText("REFRESH");
+                    ShareCodeDescTextView.setText(R.string.share_code_hasCode);
+                    codeTimer.start();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    Log.v(LogTAG, "Database Error! " + databaseError.toString());
+                }
+            };
+
+            RefreshCodeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // FOR REFRESH
+                    resetShareCode();
+                    codeTimer.cancel();
+
+                    // GET CODE
+                    shareCode = Utils.GenerateAlphanumericID(6);
+                    databaseRef.child("shares").child(shareCode).addListenerForSingleValueEvent(sharesListener);
+                }
+            });
+
+            popupView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shareCodePopup.dismiss();
+                    codeTimer.cancel();
+                    resetShareCode();
+                }
+            });
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void resetShareCode() {
+        if(shareCode != null) {
+            databaseRef.child("shares").child(shareCode).setValue(null);
+            shareCode = null;
+        }
     }
 }
