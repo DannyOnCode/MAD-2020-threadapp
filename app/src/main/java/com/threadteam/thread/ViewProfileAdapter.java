@@ -32,9 +32,10 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public Integer count = 0;
     DatabaseReference ref;
     final String TAG = "ViewProfile Page: ";
-    public ViewProfileAdapter(User user) {
+    public ViewProfileAdapter(User user, Integer count) {
 
         this.userData = userData;
+        this.count = count;
     }
 
     public int getItemViewType(int position) {
@@ -94,6 +95,7 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 break;
             case 2:
                 final ViewServerStatusCardViewHolder serverStatusCardViewHolder = (ViewServerStatusCardViewHolder) holder;
+                //Problem is here
                 String serverDetails = userData.get_subscribedServers().get(count);
                 ref = FirebaseDatabase.getInstance().getReference().child("servers").child(serverDetails);
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {
