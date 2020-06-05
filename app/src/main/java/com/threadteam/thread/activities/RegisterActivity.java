@@ -115,7 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
                             user.set_aboutUsMessage(_aboutUsMessage);
                             user.set_statusMessage(_statusMessage);
                             String UserID  = fAuth.getCurrentUser().getUid();
-                            
+
                             reff.child(UserID).setValue(user);
                             Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(),ViewServersActivity.class));
