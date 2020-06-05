@@ -23,7 +23,7 @@
             android:id="@+id/chatItemOutConstraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent">
+            android:background="@color/colorPrimaryDark">
 
             <TextView
                 android:id="@+id/messageOutTextView"
@@ -33,6 +33,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
                 android:text="Hi everybody, please take note of the following pieces of information..."
+                android:textColor="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -48,6 +49,7 @@
                 android:fontFamily="sans-serif-black"
                 android:singleLine="true"
                 android:text="Orbitalsqwib"
+                android:textColor="#FFFFFF"
                 app:layout_constraintBottom_toTopOf="@+id/messageOutTextView"
                 app:layout_constraintEnd_toStartOf="@+id/timestampOutTextView"
                 app:layout_constraintStart_toStartOf="parent"
@@ -62,6 +64,7 @@
                 android:layout_marginBottom="4dp"
                 android:fontFamily="monospace"
                 android:text="5/29/2020 3:09AM"
+                android:textColor="#FFFFFF"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toTopOf="@+id/messageOutTextView"
                 app:layout_constraintEnd_toEndOf="parent"
