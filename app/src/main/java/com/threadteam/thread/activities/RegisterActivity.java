@@ -19,7 +19,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.threadteam.thread.R;
+import com.threadteam.thread.models.User;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText mUserName, mEmail, mPassword, mCfmPassword;
@@ -27,7 +30,11 @@ public class RegisterActivity extends AppCompatActivity {
     private TextView mLoginBtn;
     private FirebaseAuth fAuth;
     private ProgressBar progressBar;
+    private DatabaseReference reff;
+    private User user;
 
+    private String _aboutUsMessage;
+    private String _statusMessage;
 
 
     @Override
@@ -45,18 +52,20 @@ public class RegisterActivity extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBarReg);
 
-        //if(fAuth.getCurrentUser() != null){
-        //    startActivity(new Intent(getApplicationContext(),ViewServersActivity.class));
-        //    finish();
-        //}
+        _aboutUsMessage = "No Description";
+        _statusMessage = "No Status";
+
+        user = new User();
+        reff = FirebaseDatabase.getInstance().getReference().child("users");
 
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = mUserName.getText().toString().trim();
+                final String username = mUserName.getText().toString().trim();
                 String email = mEmail.getText().toString().trim();
                 String password =  mPassword.getText().toString().trim();
                 String cfmpassword = mCfmPassword.getText().toString().trim();
+
                 closeKeyboard();
 
                 if(TextUtils.isEmpty(username)){
@@ -102,8 +111,15 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
+                            user.set_username(username);
+                            user.set_aboutUsMessage(_aboutUsMessage);
+                            user.set_statusMessage(_statusMessage);
+                            String UserID  = fAuth.getCurrentUser().getUid();
+                            
+                            reff.child(UserID).setValue(user);
                             Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                             startActivity(new Intent(getApplicationContext(),ViewServersActivity.class));
+
                             finish();
                         }
                         else{
