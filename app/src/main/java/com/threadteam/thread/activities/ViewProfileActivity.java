@@ -25,6 +25,7 @@ import android.widget.Button;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,6 +47,8 @@ public class ViewProfileActivity extends AppCompatActivity {
     private DatabaseReference ref;
     private RecyclerView profileView;
 
+    private ValueEventListener userDataListener;
+
     private Toolbar TopNavToolbar;
     private ActionMenuView BottomToolbarAMV;
     private Button BottomToolbarButton;
@@ -56,8 +59,6 @@ public class ViewProfileActivity extends AppCompatActivity {
     Context mContext;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
 
@@ -102,7 +103,8 @@ public class ViewProfileActivity extends AppCompatActivity {
 
         String userID = currentUser.getUid();
         ref = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
-        ref.addValueEventListener(new ValueEventListener() {
+
+        userDataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = new User();
@@ -132,8 +134,16 @@ public class ViewProfileActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
                 Log.v(LogTAG,"The read failed: " + databaseError.getCode());
             }
-        });
+        };
 
+        ref.addValueEventListener(userDataListener);
+
+    }
+
+    @Override
+    protected void onStop() {
+        ref.removeEventListener(userDataListener);
+        super.onStop();
     }
 
     @Override
@@ -209,4 +219,6 @@ public class ViewProfileActivity extends AppCompatActivity {
             viewProfile.setIcon(drawable);
         }
     }
+
+
 }
