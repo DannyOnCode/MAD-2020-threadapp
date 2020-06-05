@@ -33,7 +33,7 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mUserName = findViewById(R.id.userName);
+        mUserName = findViewById(R.id.userNameReg);
         mEmail = findViewById(R.id.emailReg);
         mPassword = findViewById(R.id.passwordReg);
         mCfmPassword = findViewById(R.id.cfmPassword);
@@ -92,6 +92,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 progressBar.setVisibility(View.VISIBLE);
+                progressBar.getProgress();
 
                 //register user into firebase
                 fAuth.createUserWithEmailAndPassword(email,cfmpassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
