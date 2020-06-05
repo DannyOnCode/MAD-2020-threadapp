@@ -79,8 +79,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:paddingLeft="2dp"
                 android:text="Description"
-                android:textColor="@android:color/holo_purple"
+                android:textColor="@color/colorPrimary"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/statusMessageEdit" />
@@ -101,23 +102,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:paddingLeft="2dp"
                 android:text="Status"
-                android:textColor="@android:color/holo_purple"
+                android:textColor="@color/colorPrimary"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userNameEdit" />
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:text="Username"
-                android:textColor="@android:color/holo_purple"
-                android:textSize="15sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userProfilePictureEdit" />
 
             <EditText
                 android:id="@+id/userNameEdit"
@@ -136,8 +126,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="32dp"
+                android:paddingLeft="2dp"
                 android:text="Username"
-                android:textColor="@android:color/holo_purple"
+                android:textColor="@color/colorPrimary"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/userProfilePictureEdit" />
@@ -147,7 +138,7 @@
                 android:layout_width="0dp"
                 android:layout_height="5dp"
                 android:layout_marginTop="3dp"
-                android:background="#9943A8"
+                android:background="@color/colorPrimary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
