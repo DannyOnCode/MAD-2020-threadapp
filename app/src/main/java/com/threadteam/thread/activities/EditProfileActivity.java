@@ -119,8 +119,16 @@ public class EditProfileActivity extends AppCompatActivity {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if( TextUtils.isEmpty(mUserNameEdit.getText())){
-                    mUserNameEdit.setError( "Username is required!" );}
+                if(TextUtils.isEmpty(mUserNameEdit.getText())){
+                    mUserNameEdit.setError( "Username is required!" );
+                }
+                else if(mUserNameEdit.getText().length() < 2 ){
+                    mUserNameEdit.setError("Minimum of 3 characters is required");
+                }
+
+                else if (mUserNameEdit.getText().length() > 16){
+                    mUserNameEdit.setError("Maximum 16 characters only");
+                }
                 else{
                     uploadUserData();
                 }
