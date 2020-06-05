@@ -86,14 +86,20 @@ public class EditProfileActivity extends AppCompatActivity {
         mDatabaseRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String profileImage = (String) dataSnapshot.child("_profileImageURL").getValue();
+                String initialProfileImage = (String) dataSnapshot.child("_profileImageURL").getValue();
+                String initialUserName = (String) dataSnapshot.child("_username").getValue();
+                String initialStatusMessage = (String) dataSnapshot.child("_statusMessage").getValue();
+                String initialAboutMeMessage = (String) dataSnapshot.child("_aboutUsMessage").getValue();
                 Picasso.get()
-                        .load(profileImage)
+                        .load(initialProfileImage)
                         .fit()
                         .placeholder(R.drawable.profilepictureempty)
                         .error(R.drawable.profilepictureempty)
                         .centerCrop()
                         .into(mDisplayImage);
+                mUserNameEdit.setText(initialUserName);
+                mStatusTitle.setText(initialStatusMessage);
+                mDescription.setText(initialAboutMeMessage);
             }
 
             @Override
