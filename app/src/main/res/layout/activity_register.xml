@@ -196,7 +196,7 @@
                         android:id="@+id/progressBarReg"
                         style="@style/progressBarStyle"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="5dp"
                         android:indeterminate="true"
                         android:visibility="invisible"
                         app:layout_constraintBottom_toBottomOf="parent"

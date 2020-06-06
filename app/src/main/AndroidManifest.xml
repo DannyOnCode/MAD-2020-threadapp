@@ -12,9 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name=".activities.RegisterActivity" />
+        <activity android:name=".activities.RegisterActivity"
+            android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name=".activities.EditProfileActivity" />
+        <activity android:name=".activities.EditProfileActivity"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".activities.ViewProfileActivity" />
 
@@ -28,7 +30,8 @@
             android:name=".activities.ChatActivity"
             android:parentActivityName=".activities.ViewServersActivity" />
 
-        <activity android:name=".activities.LoginActivity">
+        <activity android:name=".activities.LoginActivity"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
