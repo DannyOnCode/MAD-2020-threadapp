@@ -3,7 +3,9 @@ package com.threadteam.thread.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -19,7 +21,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
@@ -67,6 +71,7 @@ public class EditProfileActivity extends AppCompatActivity {
     Button mCancelButton;
     Button mConfirmButton;
     ProgressBar mProgressBar;
+    CardView mCardView;
 
     private Uri mImageUri;
 
@@ -88,6 +93,7 @@ public class EditProfileActivity extends AppCompatActivity {
         mStatusTitle = (EditText) findViewById(R.id.statusMessageEdit);
         mDescription = (EditText) findViewById(R.id.aboutMeDesciptionEdit);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mCardView = (CardView) findViewById(R.id.retractKeyboard);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
@@ -155,6 +161,21 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+
+        mCardView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) EditProfileActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                View view  = EditProfileActivity.this.getCurrentFocus();
+                if (view == null) {
+                    view = new View(EditProfileActivity.this);
+                }
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                return false;
+            }
+        });
     }
 
     private void openFileChooser(){
