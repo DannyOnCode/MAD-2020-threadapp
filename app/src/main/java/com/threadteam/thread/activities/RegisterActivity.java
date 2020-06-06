@@ -2,11 +2,15 @@ package com.threadteam.thread.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
+import androidx.core.widget.NestedScrollView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -28,8 +32,12 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText _UserName, _Email, _Password, _CfmPassword;
     private Button  _RegisterBtn;
     private TextView _LoginBtn;
-    private FirebaseAuth fAuth;
+    private CardView _RegisterCard;
     private ProgressBar progressBar;
+    private NestedScrollView _REGISTERVIEW;
+
+
+    private FirebaseAuth fAuth;
     private DatabaseReference reff;
     private User user;
 
@@ -42,6 +50,9 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        _REGISTERVIEW = findViewById(R.id.registerVIEW);
+
+        _RegisterCard = findViewById(R.id.RegisterCard);
         _UserName = findViewById(R.id.userNameReg);
         _Email = findViewById(R.id.emailReg);
         _Password = findViewById(R.id.passwordReg);
@@ -130,6 +141,21 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+            }
+        });
+
+        _REGISTERVIEW.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) RegisterActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                View view  = RegisterActivity.this.getCurrentFocus();
+                if (view == null) {
+                    view = new View(RegisterActivity.this);
+                }
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                return false;
             }
         });
     }

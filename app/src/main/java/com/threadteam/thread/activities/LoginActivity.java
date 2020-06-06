@@ -4,12 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.widget.NestedScrollView;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -19,7 +22,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,12 +33,15 @@ public class LoginActivity extends AppCompatActivity {
     private TextView _RegisterBtn, _ForgotPwBtn, _CancelBtn;
     private FirebaseAuth fAuth;
     private ProgressBar progressBar;
-    private CardView _LoginCard;
+    private CardView _LoginCard, _ResetCard;
+    private NestedScrollView  _LOGINVIEW;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        _LOGINVIEW = findViewById(R.id.loginVIEW);
 
         _LoginCard = findViewById(R.id.cardView);
         _EmailLog = findViewById(R.id.emailLog);
@@ -44,7 +49,8 @@ public class LoginActivity extends AppCompatActivity {
         _LoginBtn = findViewById(R.id.loginBtn);
         _RegisterBtn = findViewById(R.id.regAcc);
         _ForgotPwBtn = findViewById(R.id.fgtPw);
-        
+
+        _ResetCard = findViewById((R.id.resetCard));
         _EmailReset = findViewById(R.id.emailReset);
         _ResetBtn = findViewById(R.id.resetBtn);
         _CancelBtn = findViewById(R.id.cancelBtn);
@@ -154,6 +160,23 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+
+        _LOGINVIEW.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) LoginActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                View view  = LoginActivity.this.getCurrentFocus();
+                if (view == null) {
+                    view = new View(LoginActivity.this);
+                }
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                return false;
+            }
+        });
+
+
 
 
     }
