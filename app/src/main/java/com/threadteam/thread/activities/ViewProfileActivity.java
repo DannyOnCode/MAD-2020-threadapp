@@ -95,7 +95,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         profileView.setAdapter(profileAdapter);
         profileView.setItemAnimator(new DefaultItemAnimator());
 
-        
+
         //Getting UserData
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
