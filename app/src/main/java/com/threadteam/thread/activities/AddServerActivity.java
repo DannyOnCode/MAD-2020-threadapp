@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -76,7 +77,7 @@ public class AddServerActivity extends AppCompatActivity {
 
         // BIND TOOLBARS
         View topNavView = findViewById(R.id.addServerNavbarInclude);
-        TopNavToolbar = topNavView.findViewById(R.id.topNavToolbar);
+        TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
 
         logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
 

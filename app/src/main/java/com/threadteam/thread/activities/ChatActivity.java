@@ -128,7 +128,7 @@ public class ChatActivity extends AppCompatActivity {
         //          THIS ENSURES THAT ANDROID CAN ALWAYS FIND THE CORRECT VIEW OBJECT.
 
         View includeView = findViewById(R.id.chatNavBarInclude);
-        TopNavToolbar = includeView.findViewById(R.id.topNavToolbar);
+        TopNavToolbar = (Toolbar) includeView.findViewById(R.id.topNavToolbar);
 
         logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
 
