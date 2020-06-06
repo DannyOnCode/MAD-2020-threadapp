@@ -78,11 +78,6 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (username.length() > 16){
-                    _UserName.setError("Maximum 16 characters only");
-                    return;
-                }
-
                 if(TextUtils.isEmpty(email)){
                     _Email.setError("Email is required");
                     return;

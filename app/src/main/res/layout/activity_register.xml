@@ -84,6 +84,7 @@
                         android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890"
                         android:ems="10"
                         android:hint="Enter Username"
+                        android:maxLength="16"
                         android:inputType="textFilter"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
