@@ -41,6 +41,9 @@ dependencies {
     //Added Picasso for image upload and retrieval
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    //adding CircleImageView
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'

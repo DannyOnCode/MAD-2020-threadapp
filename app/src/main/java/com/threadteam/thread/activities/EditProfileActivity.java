@@ -3,14 +3,27 @@ package com.threadteam.thread.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
+import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
@@ -41,20 +54,24 @@ import com.threadteam.thread.models.User;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.util.HashMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditProfileActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
 
-    TextView mButtonChooseImage;
-    ImageView mDisplayImage;
+    ImageView mButtonChooseImage;
+    CircleImageView mDisplayImage;
     EditText mUserNameEdit;
     EditText mStatusTitle;
     EditText mDescription;
     Button mCancelButton;
     Button mConfirmButton;
     ProgressBar mProgressBar;
+    CardView mCardView;
 
     private Uri mImageUri;
 
@@ -68,14 +85,15 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editprofile);
 
-        mButtonChooseImage = findViewById(R.id.buttonSelectImage);
-        mDisplayImage = findViewById(R.id.userProfilePictureEdit);
-        mConfirmButton = findViewById(R.id.confirmButton);
-        mCancelButton = findViewById(R.id.cancelButton);
-        mUserNameEdit = findViewById(R.id.userNameEdit);
-        mStatusTitle = findViewById(R.id.statusMessageEdit);
-        mDescription = findViewById(R.id.aboutMeDesciptionEdit);
-        mProgressBar = findViewById(R.id.progress_bar);
+        mButtonChooseImage = (ImageView) findViewById(R.id.buttonSelectImage);
+        mDisplayImage = (CircleImageView) findViewById(R.id.userProfilePictureEdit);
+        mConfirmButton = (Button) findViewById(R.id.confirmButton);
+        mCancelButton = (Button) findViewById(R.id.cancelButton);
+        mUserNameEdit = (EditText) findViewById(R.id.userNameEdit);
+        mStatusTitle = (EditText) findViewById(R.id.statusMessageEdit);
+        mDescription = (EditText) findViewById(R.id.aboutMeDesciptionEdit);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mCardView = (CardView) findViewById(R.id.retractKeyboard);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
@@ -143,6 +161,21 @@ public class EditProfileActivity extends AppCompatActivity {
             }
         });
 
+
+        mCardView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                InputMethodManager imm = (InputMethodManager) EditProfileActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                View view  = EditProfileActivity.this.getCurrentFocus();
+                if (view == null) {
+                    view = new View(EditProfileActivity.this);
+                }
+                if (imm != null) {
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+                return false;
+            }
+        });
     }
 
     private void openFileChooser(){
@@ -159,8 +192,15 @@ public class EditProfileActivity extends AppCompatActivity {
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
             && data != null && data.getData() != null){
             mImageUri = data.getData();
+            Picasso.get()
+                    .load(mImageUri)
+                    .fit()
+                    .placeholder(R.drawable.profilepictureempty)
+                    .error(R.drawable.profilepictureempty)
+                    .centerCrop()
+                    .into(mDisplayImage);
 
-            Picasso.get().load(mImageUri).into(mDisplayImage);
+
         }
     }
     private String getFileExtension(Uri uri){
@@ -258,4 +298,5 @@ public class EditProfileActivity extends AppCompatActivity {
 
         }
     }
+
 }

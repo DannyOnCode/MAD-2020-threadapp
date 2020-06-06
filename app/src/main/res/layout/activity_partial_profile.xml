@@ -25,12 +25,11 @@
                 android:id="@+id/aboutMeDesciption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:lines="8"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
                 android:maxLines="8"
-                android:paddingBottom="16dp"
-                android:text="SAMPLE TEXT SAMPLE TEXTSAMPLE TEXTSAMPLE TEXTSAMPLE TEXTSAMPLE TEXTSAMPLE TEXTSAMPLE TEXT"
-                android:textSize="18sp"
+                android:text="I like iPhones more than Androids lol"
+                android:textColor="@android:color/tertiary_text_light"
                 android:textStyle="italic"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/textView"
@@ -42,22 +41,27 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
-                android:paddingBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center"
                 android:text="ABOUT ME"
-                android:textSize="12sp"
+                android:textColor="@android:color/tertiary_text_light"
+                android:textSize="10sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/userProfilePictureEdit" />
+                app:layout_constraintTop_toBottomOf="@+id/titleDisplay" />
 
             <TextView
                 android:id="@+id/titleDisplay"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Status/Title here"
+                android:gravity="center"
+                android:text="qwertyuiop"
+                android:textColor="@android:color/secondary_text_light"
+                android:textSize="18sp"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="@+id/userNameDisplay"
                 app:layout_constraintStart_toStartOf="@+id/userNameDisplay"
@@ -67,38 +71,42 @@
                 android:id="@+id/userNameDisplay"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="24dp"
                 android:layout_marginTop="16dp"
-                android:layout_marginEnd="32dp"
+                android:layout_marginEnd="24dp"
                 android:layout_weight="1"
-                android:text="Username"
-                android:textSize="20sp"
+                android:gravity="center"
+                android:text="JohnAppleseed"
+                android:textColor="#000000"
+                android:textSize="24sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/userProfilePictureEdit"
-                app:layout_constraintTop_toTopOf="@+id/userProfilePictureEdit" />
-
-            <ImageView
-                android:id="@+id/userProfilePictureEdit"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_marginStart="32dp"
-                android:layout_marginTop="16dp"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                android:src="@drawable/profilepictureempty"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/view2" />
+                app:layout_constraintTop_toBottomOf="@+id/userProfilePictureEdit" />
 
             <View
                 android:id="@+id/view2"
                 android:layout_width="0dp"
-                android:layout_height="5dp"
-                android:layout_marginTop="3dp"
-                android:background="#9943A8"
+                android:layout_height="0dp"
+                android:layout_marginBottom="36dp"
+                android:background="@color/colorPrimary"
+                app:layout_constraintBottom_toBottomOf="@+id/userProfilePictureEdit"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userProfilePictureEdit"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/cornerforprofilepicture"
+                android:src="@drawable/profilepictureempty"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/profilepictureempty" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
