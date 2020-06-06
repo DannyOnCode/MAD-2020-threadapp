@@ -118,8 +118,7 @@ public class ChatActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-        logHandler.printDefaultLog(LogHandler.STATE_ON_START);
+        logHandler.printDefaultLog(LogHandler.STATE_ON_CREATE);
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
