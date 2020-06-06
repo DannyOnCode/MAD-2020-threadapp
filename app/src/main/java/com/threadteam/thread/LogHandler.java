@@ -41,9 +41,9 @@ public class LogHandler {
     public static final int TOOLBAR_SETUP = 1;
     public static final int VIEW_OBJECTS_BOUND = 2;
     public static final int VIEW_OBJECTS_SETUP = 3;
-    public static final int FIREBASE_INITIALISED = 4;
 
     // FIREBASE
+    public static final int FIREBASE_INITIALISED = 4;
     public static final int FIREBASE_LISTENERS_INITIALISED = 5;
     public static final int FIREBASE_USER_NOT_FOUND = 6;
     public static final int FIREBASE_USER_FOUND = 7;
@@ -125,6 +125,18 @@ public class LogHandler {
 
     public void printDatabaseResultLog(@NonNull String proceedingCode, @NonNull String valueName, @NonNull String listenerName, @NonNull String resultValue) {
         printLogWithMessage("Database returned " + resultValue + " for dataSnapshot" + proceedingCode + " (" + valueName + ") in " + listenerName + "!");
+    }
+
+    public void printActivityIntentLog(@NonNull String targetActivityName) {
+        printLogWithMessage("Transitioning from " + this.activityName + " to " + targetActivityName + "!");
+    }
+
+    public void printIntentExtrasLog(@NonNull String extraKey, @NonNull String extraValue) {
+        printLogWithMessage("Intent Payload has key-value pair: " + extraKey + " : " + extraValue + "!");
+    }
+
+    public void printGetExtrasResultLog(@NonNull String extraKey, @NonNull String extraValue) {
+        printLogWithMessage("Retrieved key-value pair: " + extraKey + " : " + extraValue + " from intent!");
     }
 
     public void printLogWithMessage(@NonNull String logMessage) {

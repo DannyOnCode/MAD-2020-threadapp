@@ -73,4 +73,17 @@ public class ChatMessage {
     public Long getTimestampMillis() { return this.timestampMillis; }
 
     public void setTimestampMillis(Long timestampMillis) { this.timestampMillis = timestampMillis; }
+
+    // METHOD OVERRIDES
+
+    @Override
+    public String toString() {
+        return "ChatMessage{" +
+                "_id='" + _id + '\'' +
+                ", _senderUID='" + _senderUID + '\'' +
+                ", _sender='" + _sender + '\'' +
+                ", _message='" + _message + '\'' +
+                ", timestampMillis=" + timestampMillis +
+                '}';
+    }
 }

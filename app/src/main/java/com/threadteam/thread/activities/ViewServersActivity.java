@@ -48,8 +48,7 @@ import java.util.Collections;
 //
 // DESCRIPTION
 // Handles showing of the servers a user is subscribed to
-// Handles the top and bottom custom toolbar implementation
-// for this Activity
+// Handles the top and bottom custom toolbar implementation for this Activity
 //
 // NAVIGATION
 // PARENT: NONE
@@ -59,7 +58,7 @@ import java.util.Collections;
 public class ViewServersActivity extends AppCompatActivity {
 
     // LOGGING
-    private LogHandler logHandler = new LogHandler("ViewServersActivity");
+    private LogHandler logHandler = new LogHandler("ViewServers Activity");
 
     // FIREBASE
     //
@@ -95,7 +94,7 @@ public class ViewServersActivity extends AppCompatActivity {
     private Toolbar TopNavToolbar;
     private Button BottomToolbarButton;
 
-    // ACTIVITY STATE MANAGEMENT
+    // ACTIVITY STATE MANAGEMENT METHODS
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -240,6 +239,8 @@ public class ViewServersActivity extends AppCompatActivity {
         subscriptionListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                logHandler.printLogWithMessage("Server added/loaded!");
+
                 if (dataSnapshot.getKey() == null) {
                     logHandler.printDatabaseResultLog(
                             ".getKey()",
@@ -264,11 +265,15 @@ public class ViewServersActivity extends AppCompatActivity {
                            .addListenerForSingleValueEvent(addServerOnce);
             }
 
+            // NOTE: This method is currently empty as there is no way to edit server name or details after
+            //       server creation. May need to be implemented in future versions.
+
             @Override
             public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                logHandler.printLogWithMessage("Server removed! Deleting chat message!");
                 for(Server server : adapter.serverList) {
                     if(server.get_id().equals(dataSnapshot.getKey())) {
                         adapter.serverList.remove(server);
@@ -299,7 +304,7 @@ public class ViewServersActivity extends AppCompatActivity {
     protected void onDestroy() {
         logHandler.printDefaultLog(LogHandler.STATE_ON_DESTROY);
 
-        // DESTROY CHILD EVENT LISTENERS ON ACTIVITY DESTROYED
+        // CANCEL CHILD EVENT LISTENERS ON ACTIVITY DESTROYED
         if (subscriptionListener != null) {
             databaseRef.removeEventListener(subscriptionListener);
         }
@@ -313,15 +318,24 @@ public class ViewServersActivity extends AppCompatActivity {
     // CLASS METHODS
 
     private void handleTransitionIntoServer(Integer position) {
+        logHandler.printLogWithMessage("User tapped on a server!");
+
         Intent transitionToChat = new Intent(ViewServersActivity.this, ChatActivity.class);
-        transitionToChat.putExtra("SERVER_ID", adapter.serverList.get(position).get_id());
+        String EXTRA_SERVER_ID_KEY = "SERVER_ID";
+        String EXTRA_SERVER_ID_VALUE = adapter.serverList.get(position).get_id();
+        transitionToChat.putExtra(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
         startActivity(transitionToChat);
+        logHandler.printActivityIntentLog("Chat Activity");
+        logHandler.printIntentExtrasLog(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
         onStop();
     }
 
     private void handleAddServer() {
+        logHandler.printLogWithMessage("User tapped on Add Server!");
+
         Intent transitionToAddServer = new Intent(ViewServersActivity.this, AddServerActivity.class);
         startActivity(transitionToAddServer);
+        logHandler.printActivityIntentLog("AddServer Activity");
         onStop();
     }
 
@@ -382,9 +396,12 @@ public class ViewServersActivity extends AppCompatActivity {
                 return false;
 
             case R.id.viewProfileMenuItem:
+                logHandler.printLogWithMessage("User tapped on ViewProfile Menu Item!");
+
                 Intent goToViewProfile = new Intent(ViewServersActivity.this, ViewProfileActivity.class);
                 goToViewProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(goToViewProfile);
+                logHandler.printActivityIntentLog("ViewProfile Activity");
 
                 // Reset disabled ActionMenuItemView button back to normal state
                 toggleOwnMenuItemDisplay(true);
@@ -393,9 +410,13 @@ public class ViewServersActivity extends AppCompatActivity {
                 return true;
 
             case LOG_OUT_MENU_ITEM_ID:
+                logHandler.printLogWithMessage("User tapped on Log Out Menu Item!");
+
                 firebaseAuth.signOut();
                 Intent logOutToSignIn = new Intent(ViewServersActivity.this, LoginActivity.class);
                 startActivity(logOutToSignIn);
+                logHandler.printActivityIntentLog("Login Activity");
+
                 finish();
                 return true;
         }
