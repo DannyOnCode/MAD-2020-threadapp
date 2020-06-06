@@ -87,7 +87,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             LogHandler.staticPrintLog(
                     "Binding OutgoingChatMessageViewHolder with data: " +
-                            senderUsername + ", " + chatMessageList + ", " + timeString
+                            senderUsername + ", " + message + ", " + timeString
             );
         } else {
             ((IncomingChatMessageViewHolder) holder).MessageTextView.setText(senderUsername);

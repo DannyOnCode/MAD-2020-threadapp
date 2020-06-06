@@ -31,7 +31,7 @@ import com.threadteam.thread.models.Server;
 public class AddServerActivity extends AppCompatActivity {
 
     // LOGGING
-    private LogHandler logHandler = new LogHandler("ViewServers Activity");
+    private LogHandler logHandler = new LogHandler("AddServers Activity");
 
     // FIREBASE
     //
@@ -49,7 +49,6 @@ public class AddServerActivity extends AppCompatActivity {
 
     // VIEW OBJECTS
     //
-    // BaseAddServerNSV:        HANDLES SCROLLING AND HIDING OF THE KEYBOARD ON TOUCH
     // JoinServerIdEditText:    ALLOWS USER TO ENTER THE SERVER ID OR SHARE CODE TO JOIN A SERVER.
     // JoinServerButton:        TRIGGERS JOIN SERVER LOGIC.
     // MakeServerNameEditText:  ALLOWS USER TO ENTER THE NAME FOR A NEW SERVER.
@@ -57,7 +56,6 @@ public class AddServerActivity extends AppCompatActivity {
     // JoinServerButton:        TRIGGERS CREATE SERVER LOGIC.
     // TopNavToolbar:           TOOLBAR OBJECT THAT HANDLES UPWARDS NAVIGATION AND THE TITLE
 
-    private NestedScrollView BaseAddServerNSV;
     private EditText JoinServerIdEditText;
     private Button JoinServerButton;
     private EditText MakeServerNameEditText;
@@ -89,7 +87,6 @@ public class AddServerActivity extends AppCompatActivity {
         logHandler.printDefaultLog(LogHandler.TOOLBAR_SETUP);
 
         // BIND VIEW OBJECTS
-        BaseAddServerNSV = findViewById(R.id.baseAddServerNSV);
         JoinServerIdEditText = findViewById(R.id.joinServerIdEditText);
         JoinServerButton = findViewById(R.id.joinServerButton);
         MakeServerNameEditText = findViewById(R.id.makeServerNameEditText);
@@ -99,21 +96,6 @@ public class AddServerActivity extends AppCompatActivity {
         logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
 
         // SETUP VIEW OBJECTS
-        BaseAddServerNSV.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) AddServerActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                View view  = AddServerActivity.this.getCurrentFocus();
-                if (view == null) {
-                    view = new View(AddServerActivity.this);
-                }
-                if (imm != null) {
-                    logHandler.printLogWithMessage("BaseAddServerNSV detected touch, hiding keyboard!");
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-                return false;
-            }
-        });
 
         JoinServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -170,6 +152,7 @@ public class AddServerActivity extends AppCompatActivity {
 
     private void handleJoinServer() {
         logHandler.printLogWithMessage("User tapped on Join Server; Attempting to join server...");
+        hideKeyboard();
 
         final String userId = currentUser.getUid();
         joinServerID = JoinServerIdEditText.getText().toString();
@@ -187,10 +170,10 @@ public class AddServerActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null) {
-                    logHandler.printDatabaseResultLog(".getValue()", "Subscribed Server ID", "testUserNotSubscribed", (String) dataSnapshot.getValue());
+                    logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "not null");
                     displayError("User is already subscribed to this server!");
                 } else {
-                    logHandler.printDatabaseResultLog(".getValue()", "Subscribed Server ID", "testUserNotSubscribed", "null");
+                    logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "null");
                     logHandler.printLogWithMessage("Subscribing user to server!");
 
                     // Subscribe user to server
@@ -291,17 +274,22 @@ public class AddServerActivity extends AppCompatActivity {
             databaseRef.child("shares")
                        .child(joinServerID)
                        .addListenerForSingleValueEvent(shareCodeLookup);
-        } else {
-            logHandler.printLogWithMessage("User entered a full ServerID!");
+
+        } else if (joinServerID.length() > 0) {
+            logHandler.printLogWithMessage("User entered a ServerID!");
 
             databaseRef.child("servers")
                        .child(joinServerID)
                        .addListenerForSingleValueEvent(testServerExists);
+        } else {
+            JoinServerIdEditText.setError("Server ID can't be empty!");
         }
     }
 
     private void handleMakeServer() {
         logHandler.printLogWithMessage("User tapped on Create Server; Attempting to create server...");
+        hideKeyboard();
+
 
         String userId = currentUser.getUid();
         String makeServerName = MakeServerNameEditText.getText().toString().trim();
@@ -341,5 +329,17 @@ public class AddServerActivity extends AppCompatActivity {
         returnToViewServers.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivityIfNeeded(returnToViewServers, 0);
         logHandler.printActivityIntentLog("ViewServers Activity");
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) AddServerActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view  = AddServerActivity.this.getCurrentFocus();
+        if (view == null) {
+            view = new View(AddServerActivity.this);
+        }
+        if (imm != null) {
+            logHandler.printLogWithMessage("Hiding keyboard!");
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

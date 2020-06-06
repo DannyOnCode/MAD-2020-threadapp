@@ -171,8 +171,9 @@ public class ChatActivity extends AppCompatActivity {
                 if (view == null) {
                     view = new View(ChatActivity.this);
                 }
-                if (imm != null) {
-                    logHandler.printLogWithMessage("RecyclerView detected touch, hiding keyboard!");
+                if (imm != null && imm.isActive()) {
+                    // Disabled this log due to tendency to flood logcat
+                    // logHandler.printLogWithMessage("RecyclerView detected touch, hiding keyboard!");
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
                 return false;
@@ -188,7 +189,8 @@ public class ChatActivity extends AppCompatActivity {
                 LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
 
                 if(dy < 0) {
-                    logHandler.printLogWithMessage("Scrolled up, setting scrollToLatestMessage = false!");
+                    // Disabled this log due to tendency to flood logcat
+                    // logHandler.printLogWithMessage("Scrolled up, setting scrollToLatestMessage = false!");
                     scrollToLatestMessage = false;
 
                 } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == adapter.chatMessageList.size()-1) {
