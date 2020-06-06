@@ -47,31 +47,30 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
-                        android:text="Register"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="thread."
+                        android:textColor="@color/colorPrimaryDark"
                         android:textSize="36sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:text="Register" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/subtextCreateProfile"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Create A New Profile"
+                        android:text="register with us."
                         android:textSize="18sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/titleRegister"
-                        tools:text="Create A New Profile" />
+                        app:layout_constraintTop_toBottomOf="@+id/titleRegister" />
 
                     <TextView
                         android:id="@+id/userNameRegTitle"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="32dp"
                         android:text=" Username"
                         android:textColor="@color/colorPrimary"
                         app:layout_constraintStart_toStartOf="parent"
