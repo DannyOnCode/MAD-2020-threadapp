@@ -3,7 +3,7 @@ package com.threadteam.thread.models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
-// SERVER CLASS
+// CHAT MESSAGE CLASS
 //
 // PROGRAMMER-IN-CHARGE:
 // EUGENE LONG, S10193060J
@@ -23,8 +23,8 @@ public class ChatMessage {
     @Exclude
     private String _id;
 
-    private String _senderUID;
-    private String _sender;
+    private String _senderID;
+    private String _senderUsername;
     private String _message;
 
     // TIMESTAMP FOR LOCAL USE. SHOULD NOT BE SYNCED WITH FIREBASE.
@@ -38,16 +38,16 @@ public class ChatMessage {
     public ChatMessage() {}
 
     public ChatMessage(String senderUID, String sender, String message) {
-        this._senderUID = senderUID;
-        this._sender = sender;
+        this._senderID = senderUID;
+        this._senderUsername = sender;
         this._message = message;
 
         // LEAVE TIMESTAMP EMPTY FOR SOLE-SERVER SIDE GENERATION
     }
 
     public ChatMessage(String senderUID, String sender, String message, Long timestampMillis) {
-        this._senderUID = senderUID;
-        this._sender = sender;
+        this._senderID = senderUID;
+        this._senderUsername = sender;
         this._message = message;
         this.timestampMillis = timestampMillis;
     }
@@ -62,13 +62,13 @@ public class ChatMessage {
 
     public void set_message(String _message) { this._message = _message; }
 
-    public String get_sender() { return this._sender; }
+    public String get_senderUsername() { return this._senderUsername; }
 
-    public void set_sender(String _sender) { this._sender = _sender; }
+    public void set_senderUsername(String _senderUsername) { this._senderUsername = _senderUsername; }
 
-    public String get_senderUID() { return _senderUID; }
+    public String get_senderID() { return _senderID; }
 
-    public void set_senderUID(String _senderUID) { this._senderUID = _senderUID; }
+    public void set_senderID(String _senderID) { this._senderID = _senderID; }
 
     public Long getTimestampMillis() { return this.timestampMillis; }
 
@@ -80,8 +80,8 @@ public class ChatMessage {
     public String toString() {
         return "ChatMessage{" +
                 "_id='" + _id + '\'' +
-                ", _senderUID='" + _senderUID + '\'' +
-                ", _sender='" + _sender + '\'' +
+                ", _senderUID='" + _senderID + '\'' +
+                ", _sender='" + _senderUsername + '\'' +
                 ", _message='" + _message + '\'' +
                 ", timestampMillis=" + timestampMillis +
                 '}';

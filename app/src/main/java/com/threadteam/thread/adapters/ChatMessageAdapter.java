@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.viewholders.IncomingChatMessageViewHolder;
 import com.threadteam.thread.viewholders.OutgoingChatMessageViewHolder;
@@ -15,6 +16,16 @@ import com.threadteam.thread.models.ChatMessage;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+
+// CHAT MESSAGE ADAPTER CLASS
+//
+// PROGRAMMER-IN-CHARGE:
+// EUGENE LONG, S10193060J
+//
+// DESCRIPTION
+// ADAPTER USED BY ChatMessageRecyclerView in ChatActivity
+// USES IncomingChatMessageViewHolder, OutgoingChatMessageViewHolder
 
 public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -22,13 +33,14 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     public List<ChatMessage> chatMessageList;
     public String currentUserUID;
 
+    // CONSTRUCTOR
     public ChatMessageAdapter(List<ChatMessage> chatMessages) {
         this.chatMessageList = chatMessages;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(chatMessageList.get(position).get_senderUID().equals(currentUserUID)) {
+        if(chatMessageList.get(position).get_senderID().equals(currentUserUID)) {
             return 0;
         } else {
             return 1;
@@ -62,17 +74,30 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         String timeString = "Loading...";
         if(tsMillis != null) {
             Date date = new Date(tsMillis);
-            timeString = new SimpleDateFormat("d/MM/yyyy h:mma").format(date);
+            timeString = new SimpleDateFormat("d/MM/yyyy h:mma", Locale.UK).format(date);
         }
 
+        String senderUsername = chatMessageList.get(position).get_senderUsername();
+        String message = chatMessageList.get(position).get_message();
+
         if(getItemViewType(position) == 0) {
-            ((OutgoingChatMessageViewHolder) holder).MessageTextView.setText(chatMessageList.get(position).get_message());
-            ((OutgoingChatMessageViewHolder) holder).SenderTextView.setText(chatMessageList.get(position).get_sender());
+            ((OutgoingChatMessageViewHolder) holder).MessageTextView.setText(senderUsername);
+            ((OutgoingChatMessageViewHolder) holder).SenderTextView.setText(message);
             ((OutgoingChatMessageViewHolder) holder).TimestampTextView.setText(timeString);
+
+            LogHandler.staticPrintLog(
+                    "Binding OutgoingChatMessageViewHolder with data: " +
+                            senderUsername + ", " + chatMessageList + ", " + timeString
+            );
         } else {
-            ((IncomingChatMessageViewHolder) holder).MessageTextView.setText(chatMessageList.get(position).get_message());
-            ((IncomingChatMessageViewHolder) holder).SenderTextView.setText(chatMessageList.get(position).get_sender());
+            ((IncomingChatMessageViewHolder) holder).MessageTextView.setText(senderUsername);
+            ((IncomingChatMessageViewHolder) holder).SenderTextView.setText(message);
             ((IncomingChatMessageViewHolder) holder).TimestampTextView.setText(timeString);
+
+            LogHandler.staticPrintLog(
+                    "Binding IncomingChatMessageViewHolder with data: " +
+                            senderUsername + ", " + chatMessageList + ", " + timeString
+            );
         }
     }
 
