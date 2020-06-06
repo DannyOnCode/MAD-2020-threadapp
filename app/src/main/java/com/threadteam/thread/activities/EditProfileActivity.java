@@ -68,14 +68,14 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editprofile);
 
-        mButtonChooseImage = (TextView) findViewById(R.id.buttonSelectImage);
-        mDisplayImage = (ImageView) findViewById(R.id.userProfilePictureEdit);
-        mConfirmButton = (Button) findViewById(R.id.confirmButton);
-        mCancelButton = (Button) findViewById(R.id.cancelButton);
-        mUserNameEdit = (EditText) findViewById(R.id.userNameEdit);
-        mStatusTitle = (EditText) findViewById(R.id.statusMessageEdit);
-        mDescription = (EditText) findViewById(R.id.aboutMeDesciptionEdit);
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mButtonChooseImage = findViewById(R.id.buttonSelectImage);
+        mDisplayImage = findViewById(R.id.userProfilePictureEdit);
+        mConfirmButton = findViewById(R.id.confirmButton);
+        mCancelButton = findViewById(R.id.cancelButton);
+        mUserNameEdit = findViewById(R.id.userNameEdit);
+        mStatusTitle = findViewById(R.id.statusMessageEdit);
+        mDescription = findViewById(R.id.aboutMeDesciptionEdit);
+        mProgressBar = findViewById(R.id.progress_bar);
 
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");

@@ -18,10 +18,10 @@ public class ViewProfileCardViewHolder extends RecyclerView.ViewHolder {
     public ViewProfileCardViewHolder(@NonNull View itemView) {
         super(itemView);
 
-        userImage = (ImageView) itemView.findViewById(R.id.userProfilePictureEdit);
-        userName = (TextView) itemView.findViewById(R.id.userNameDisplay);
-        titleStatus = (TextView) itemView.findViewById(R.id.titleDisplay);
-        aboutMeDesc = (TextView) itemView.findViewById(R.id.aboutMeDesciption);
+        userImage = itemView.findViewById(R.id.userProfilePictureEdit);
+        userName = itemView.findViewById(R.id.userNameDisplay);
+        titleStatus = itemView.findViewById(R.id.titleDisplay);
+        aboutMeDesc = itemView.findViewById(R.id.aboutMeDesciption);
     }
 
 }

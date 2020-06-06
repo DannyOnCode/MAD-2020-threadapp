@@ -15,12 +15,15 @@
         <activity android:name=".activities.RegisterActivity" />
 
         <activity android:name=".activities.EditProfileActivity" />
+
         <activity android:name=".activities.ViewProfileActivity" />
 
         <activity android:name=".activities.ViewServersActivity" />
+
         <activity android:name=".activities.AddServerActivity"
             android:parentActivityName=".activities.ViewServersActivity"
             android:windowSoftInputMode="adjustResize"/>
+
         <activity
             android:name=".activities.ChatActivity"
             android:parentActivityName=".activities.ViewServersActivity" />
@@ -32,6 +35,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

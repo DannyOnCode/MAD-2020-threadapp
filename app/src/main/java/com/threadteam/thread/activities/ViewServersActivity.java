@@ -75,9 +75,9 @@ public class ViewServersActivity extends AppCompatActivity {
         // SETUP TOOLBARS
         View topNavView = findViewById(R.id.serversNavBarInclude);
         View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
-        TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
-        BottomToolbarAMV = (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
-        BottomToolbarButton = (Button) bottomToolbarView.findViewById(R.id.bottomToolbarButton);
+        TopNavToolbar = topNavView.findViewById(R.id.topNavToolbar);
+        BottomToolbarAMV = bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+        BottomToolbarButton = bottomToolbarView.findViewById(R.id.bottomToolbarButton);
 
         this.setSupportActionBar(TopNavToolbar);
         TopNavToolbar.setTitle("View Servers");
@@ -98,7 +98,7 @@ public class ViewServersActivity extends AppCompatActivity {
         });
 
         // BIND VIEW OBJECTS
-        ViewServerRecyclerView = (RecyclerView) findViewById(R.id.viewServerRecyclerView);
+        ViewServerRecyclerView = findViewById(R.id.viewServerRecyclerView);
 
         adapter = new ViewServerAdapter(serverList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -279,7 +279,7 @@ public class ViewServersActivity extends AppCompatActivity {
     @SuppressLint("RestrictedApi")
     private void toggleOwnMenuItemDisplay(boolean isEnabled) {
         // Make ViewServers Button on menu bar look disabled
-        ActionMenuItemView viewServers = (ActionMenuItemView) findViewById(R.id.viewServersMenuItem);
+        ActionMenuItemView viewServers = findViewById(R.id.viewServersMenuItem);
 
         if(viewServers == null) {
             return;

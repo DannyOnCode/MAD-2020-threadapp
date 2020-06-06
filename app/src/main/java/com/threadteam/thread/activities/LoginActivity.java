@@ -22,9 +22,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.threadteam.thread.R;
 
 public class LoginActivity extends AppCompatActivity {
-    private EditText mEmail, mPassword;
-    private Button mLoginBtn;
-    private TextView mRegisterBtn;
+    private EditText _Email, _Password;
+    private Button _LoginBtn;
+    private TextView _RegisterBtn;
     private FirebaseAuth fAuth;
     private ProgressBar progressBar;
 
@@ -33,28 +33,33 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        mEmail = findViewById(R.id.emailLog);
-        mPassword = findViewById(R.id.passwordLog);
-        mLoginBtn = findViewById(R.id.loginBtn);
-        mRegisterBtn = findViewById(R.id.regAcc);
+        _Email = findViewById(R.id.emailLog);
+        _Password = findViewById(R.id.passwordLog);
+        _LoginBtn = findViewById(R.id.loginBtn);
+        _RegisterBtn = findViewById(R.id.regAcc);
 
         fAuth = FirebaseAuth.getInstance();
         progressBar = findViewById(R.id.progressBarLogin);
 
-        mLoginBtn.setOnClickListener(new View.OnClickListener() {
+        if(fAuth.getCurrentUser() != null){
+            startActivity(new Intent(getApplicationContext(), ViewServersActivity.class));
+            finish();
+        }
+
+        _LoginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 closeKeyboard();
-                String email = mEmail.getText().toString().trim();
-                String password = mPassword.getText().toString().trim();
+                String email = _Email.getText().toString().trim();
+                String password = _Password.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
-                    mEmail.setError("Email is required");
+                    _Email.setError("Email is required");
                     return;
                 }
 
                 if (TextUtils.isEmpty(password)) {
-                    mPassword.setError("Password is required");
+                    _Password.setError("Password is required");
                     return;
                 }
 
@@ -79,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
 
-        mRegisterBtn.setOnClickListener(new View.OnClickListener() {
+        _RegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));

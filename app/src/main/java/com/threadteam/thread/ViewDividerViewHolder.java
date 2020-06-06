@@ -15,8 +15,8 @@ public class ViewDividerViewHolder extends RecyclerView.ViewHolder {
 
     public ViewDividerViewHolder(@NonNull View itemView) {
         super(itemView);
-        serverDividing = (TextView) itemView.findViewById(R.id.serverDivider);
-        serverLine = (TextView) itemView.findViewById(R.id.serverDividerLine);
+        serverDividing = itemView.findViewById(R.id.serverDivider);
+        serverLine = itemView.findViewById(R.id.serverDividerLine);
 
     }
 

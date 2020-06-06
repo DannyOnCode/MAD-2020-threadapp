@@ -57,19 +57,19 @@ public class AddServerActivity extends AppCompatActivity {
 
         // SETUP TOOLBARS
         View topNavView = findViewById(R.id.addServerNavbarInclude);
-        TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+        TopNavToolbar = topNavView.findViewById(R.id.topNavToolbar);
 
         this.setSupportActionBar(TopNavToolbar);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         TopNavToolbar.setTitle("Add Server");
 
         // BIND VIEW OBJECTS
-        BaseAddServerNSV = (NestedScrollView) findViewById(R.id.baseAddServerNSV);
-        JoinServerIdEditText = (EditText) findViewById(R.id.joinServerIdEditText);
-        JoinServerButton = (Button) findViewById(R.id.joinServerButton);
-        MakeServerNameEditText = (EditText) findViewById(R.id.makeServerNameEditText);
-        MakeServerDescEditText = (EditText) findViewById(R.id.makeServerDescEditText);
-        MakeServerButton = (Button) findViewById(R.id.makeServerButton);
+        BaseAddServerNSV = findViewById(R.id.baseAddServerNSV);
+        JoinServerIdEditText = findViewById(R.id.joinServerIdEditText);
+        JoinServerButton = findViewById(R.id.joinServerButton);
+        MakeServerNameEditText = findViewById(R.id.makeServerNameEditText);
+        MakeServerDescEditText = findViewById(R.id.makeServerDescEditText);
+        MakeServerButton = findViewById(R.id.makeServerButton);
 
         JoinServerButton.setOnClickListener(new View.OnClickListener() {
             @Override

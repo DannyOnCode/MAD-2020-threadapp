@@ -22,11 +22,11 @@ public class ViewServerViewHolder extends RecyclerView.ViewHolder {
     public ViewServerViewHolder(@NonNull View itemView) {
         super(itemView);
 
-        BaseViewServerConstraintLayout = (ConstraintLayout) itemView.findViewById(R.id.baseViewServerConstraintLayout);
-        ViewServerCardView = (CardView) itemView.findViewById(R.id.viewServerCardView);
-        ViewServerConstraintLayout = (ConstraintLayout) itemView.findViewById(R.id.viewServerConstraintLayout);
-        ViewServerNameTextView = (TextView) itemView.findViewById(R.id.viewServerNameTextView);
-        ViewServerDescTextView = (TextView) itemView.findViewById(R.id.viewServerDescTextView);
+        BaseViewServerConstraintLayout = itemView.findViewById(R.id.baseViewServerConstraintLayout);
+        ViewServerCardView = itemView.findViewById(R.id.viewServerCardView);
+        ViewServerConstraintLayout = itemView.findViewById(R.id.viewServerConstraintLayout);
+        ViewServerNameTextView = itemView.findViewById(R.id.viewServerNameTextView);
+        ViewServerDescTextView = itemView.findViewById(R.id.viewServerDescTextView);
     }
 
 }

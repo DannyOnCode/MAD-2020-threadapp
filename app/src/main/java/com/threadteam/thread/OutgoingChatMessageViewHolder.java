@@ -21,11 +21,11 @@ public class OutgoingChatMessageViewHolder extends RecyclerView.ViewHolder {
     public OutgoingChatMessageViewHolder(@NonNull View itemView) {
         super(itemView);
 
-        BaseChatItemConstraintLayout = (ConstraintLayout) itemView.findViewById(R.id.baseChatItemOutConstraintLayout);
-        ChatItemCardView = (CardView) itemView.findViewById(R.id.chatItemOutCardView);
-        ChatItemConstraintLayout = (ConstraintLayout) itemView.findViewById(R.id.chatItemOutConstraintLayout);
-        MessageTextView = (TextView) itemView.findViewById(R.id.messageOutTextView);
-        SenderTextView = (TextView) itemView.findViewById(R.id.senderOutTextView);
-        TimestampTextView = (TextView) itemView.findViewById(R.id.timestampOutTextView);
+        BaseChatItemConstraintLayout = itemView.findViewById(R.id.baseChatItemOutConstraintLayout);
+        ChatItemCardView = itemView.findViewById(R.id.chatItemOutCardView);
+        ChatItemConstraintLayout = itemView.findViewById(R.id.chatItemOutConstraintLayout);
+        MessageTextView = itemView.findViewById(R.id.messageOutTextView);
+        SenderTextView = itemView.findViewById(R.id.senderOutTextView);
+        TimestampTextView = itemView.findViewById(R.id.timestampOutTextView);
     }
 }

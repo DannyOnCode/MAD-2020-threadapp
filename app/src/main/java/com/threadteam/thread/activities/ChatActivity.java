@@ -88,16 +88,16 @@ public class ChatActivity extends AppCompatActivity {
 
         // SETUP TOOLBARS
         View includeView = findViewById(R.id.chatNavBarInclude);
-        TopNavToolbar = (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+        TopNavToolbar = includeView.findViewById(R.id.topNavToolbar);
 
         TopNavToolbar.setTitle("Chat");
         this.setSupportActionBar(TopNavToolbar);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // BIND OBJECTS
-        ChatMessageRecyclerView = (RecyclerView) findViewById(R.id.chatMessageRecyclerView);
-        MessageEditText = (EditText) findViewById(R.id.messageEditText);
-        SendMsgButton = (Button) findViewById(R.id.sendMsgButton);
+        ChatMessageRecyclerView = findViewById(R.id.chatMessageRecyclerView);
+        MessageEditText = findViewById(R.id.messageEditText);
+        SendMsgButton = findViewById(R.id.sendMsgButton);
 
         SendMsgButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -349,7 +349,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == SHARE_SERVER_MENU_ITEM) {
-            ConstraintLayout BaseChatConstraintLayout = (ConstraintLayout) findViewById(R.id.baseChatConstraintLayout);
+            ConstraintLayout BaseChatConstraintLayout = findViewById(R.id.baseChatConstraintLayout);
 
             View popupView = LayoutInflater.from(this.getBaseContext()).inflate(
                     R.layout.activity_shareserver, BaseChatConstraintLayout, false
@@ -371,13 +371,13 @@ public class ChatActivity extends AppCompatActivity {
 
             //BIND VIEW OBJECTS
 
-            ConstraintLayout BaseShareCodeConstraintLayout = (ConstraintLayout) popupView
+            ConstraintLayout BaseShareCodeConstraintLayout = popupView
                     .findViewById(R.id.baseShareCodeConstraintLayout);
-            Toolbar PopupToolbar = (Toolbar) popupView.findViewById(R.id.shareCodeToolbar);
-            final Button RefreshCodeButton = (Button) popupView.findViewById(R.id.refreshCodeButton);
-            final TextView ShareCodeTextView = (TextView) popupView.findViewById(R.id.shareCodeTextView);
-            final TextView ShareCodeDescTextView = (TextView) popupView.findViewById(R.id.shareCodeDescTextView);
-            final TextView CodeExpiryTextView = (TextView) popupView.findViewById(R.id.codeExpiryTextView);
+            Toolbar PopupToolbar = popupView.findViewById(R.id.shareCodeToolbar);
+            final Button RefreshCodeButton = popupView.findViewById(R.id.refreshCodeButton);
+            final TextView ShareCodeTextView = popupView.findViewById(R.id.shareCodeTextView);
+            final TextView ShareCodeDescTextView = popupView.findViewById(R.id.shareCodeDescTextView);
+            final TextView CodeExpiryTextView = popupView.findViewById(R.id.codeExpiryTextView);
 
             PopupToolbar.setTitle("Share Server Code");
             RefreshCodeButton.setText("GET CODE");

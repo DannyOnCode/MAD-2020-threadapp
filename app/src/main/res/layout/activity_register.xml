@@ -183,7 +183,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:layout_marginBottom="32dp"
-                        android:text="Already have an account? Click Here!"
+                        android:text="Already have an account? Tap Here!"
                         android:textColor="@color/colorPrimary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
