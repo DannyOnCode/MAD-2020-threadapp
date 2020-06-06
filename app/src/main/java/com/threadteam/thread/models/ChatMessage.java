@@ -3,23 +3,38 @@ package com.threadteam.thread.models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.sql.Timestamp;
+// SERVER CLASS
+//
+// PROGRAMMER-IN-CHARGE:
+// EUGENE LONG, S10193060J
+//
+// DESCRIPTION
+// REPRESENTS A SINGLE CHAT MESSAGE, CONTAINING
+// ITS OWN UNIQUE ID, SENDER ID, SENDER NAME AND
+// MESSAGE TEXT.
 
 @IgnoreExtraProperties
 public class ChatMessage {
 
+    // DATA STORE
+
+    // UNIQUE IDENTIFIER, EXCLUDE FROM FIREBASE CHILD VALUES.
+    // SHOULD BE USED AS A KEY
     @Exclude
     private String _id;
 
-    // Instance-specific variables
     private String _senderUID;
     private String _sender;
     private String _message;
 
+    // TIMESTAMP FOR LOCAL USE. SHOULD NOT BE SYNCED WITH FIREBASE.
+    // FETCH FIREBASE'S timestamp CHILD VALUE FOR A MORE ACCURATE TIMESTAMP.
     @Exclude
     private Long timestampMillis;
 
-    // Empty constructor for Firebase
+    // CONSTRUCTORS
+
+    // FIREBASE REQUIRED BLANK CONSTRUCTOR
     public ChatMessage() {}
 
     public ChatMessage(String senderUID, String sender, String message) {
@@ -27,7 +42,7 @@ public class ChatMessage {
         this._sender = sender;
         this._message = message;
 
-        // Leave timestamp empty for server side generation
+        // LEAVE TIMESTAMP EMPTY FOR SOLE-SERVER SIDE GENERATION
     }
 
     public ChatMessage(String senderUID, String sender, String message, Long timestampMillis) {
@@ -36,6 +51,8 @@ public class ChatMessage {
         this._message = message;
         this.timestampMillis = timestampMillis;
     }
+
+    // GET/SET METHODS
 
     public String get_id() { return this._id; }
 

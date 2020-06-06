@@ -1,14 +1,13 @@
-package com.threadteam.thread;
+package com.threadteam.thread.viewholders;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.w3c.dom.Text;
+import com.threadteam.thread.R;
 
 public class ViewServerStatusCardViewHolder extends RecyclerView.ViewHolder {
 

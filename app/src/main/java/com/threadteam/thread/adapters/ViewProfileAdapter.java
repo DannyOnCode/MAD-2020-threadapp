@@ -1,14 +1,10 @@
-package com.threadteam.thread;
+package com.threadteam.thread.adapters;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,10 +15,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-import com.threadteam.thread.models.Server;
+import com.threadteam.thread.R;
+import com.threadteam.thread.viewholders.ViewDividerViewHolder;
+import com.threadteam.thread.viewholders.ViewProfileCardViewHolder;
+import com.threadteam.thread.viewholders.ViewServerStatusCardViewHolder;
 import com.threadteam.thread.models.User;
-
-import java.util.List;
 
 public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 

@@ -39,10 +39,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.threadteam.thread.ChatMessageAdapter;
+import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.ChatMessage;
-import com.threadteam.thread.models.Utils;
+import com.threadteam.thread.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -5,6 +5,16 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.List;
 
+// SERVER CLASS
+//
+// PROGRAMMER-IN-CHARGE:
+// EUGENE LONG, S10193060J
+//
+// DESCRIPTION
+// REPRESENTS A SERVER. CONTAINS METADATA SUCH AS
+// ITS OWN UNIQUE ID, OWNER NAME, SERVER NAME AND
+// SERVER DESCRIPTION.
+
 @IgnoreExtraProperties
 public class Server implements Comparable<Server> {
 
@@ -30,26 +40,30 @@ public class Server implements Comparable<Server> {
                 - timestamp
      */
 
-    // Server identifier
+    // DATA STORE
+
+    // UNIQUE IDENTIFIER, EXCLUDE FROM FIREBASE CHILD VALUES.
+    // SHOULD BE USED AS A KEY
     @Exclude
     private String _id;
 
-    // ServerID child attributes
     private String _ownerID;
     private String _name;
     private String _desc;
 
-    // Empty constructor for Firebase Object
+    // CONSTRUCTORS
+
+    // FIREBASE REQUIRED BLANK CONSTRUCTOR
     public Server() {}
 
-    // For Server creation without id
     public Server(String ownerID, String serverName, String serverDesc) {
         this._ownerID = ownerID;
         this._name = serverName;
         this._desc = serverDesc;
     }
 
-    // Getter-Setters
+    // GET/SET METHODS
+
     public String get_ownerID() { return _ownerID; }
 
     public void set_ownerID(String _ownerID) { this._ownerID = _ownerID; }
@@ -68,6 +82,8 @@ public class Server implements Comparable<Server> {
 
     public void set_desc(String _desc) { this._desc = _desc; }
 
+    // METHOD OVERRIDES
+
     @Override
     public int compareTo(Server o) {
         if(o.get_name().compareTo(this._name) > 0) {
@@ -77,5 +93,15 @@ public class Server implements Comparable<Server> {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public String toString() {
+        return "Server{" +
+                "_id='" + _id + '\'' +
+                ", _ownerID='" + _ownerID + '\'' +
+                ", _name='" + _name + '\'' +
+                ", _desc='" + _desc + '\'' +
+                '}';
     }
 }

@@ -1,13 +1,15 @@
-package com.threadteam.thread;
+package com.threadteam.thread.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.threadteam.thread.R;
+import com.threadteam.thread.viewholders.IncomingChatMessageViewHolder;
+import com.threadteam.thread.viewholders.OutgoingChatMessageViewHolder;
 import com.threadteam.thread.models.ChatMessage;
 
 import java.text.SimpleDateFormat;

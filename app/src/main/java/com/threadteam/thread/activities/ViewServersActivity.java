@@ -1,10 +1,8 @@
 package com.threadteam.thread.activities;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.ActionMenuItem;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.core.content.ContextCompat;
@@ -15,16 +13,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.ColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -38,47 +33,90 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
-import com.threadteam.thread.ViewServerAdapter;
+import com.threadteam.thread.adapters.ViewServerAdapter;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
+import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.models.Server;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+
+// VIEW SERVERS ACTIVITY
+//
+// PROGRAMMER-IN-CHARGE:
+// EUGENE LONG, S10193060J
+//
+// DESCRIPTION
+// Handles showing of the servers a user is subscribed to
+// Handles the top and bottom custom toolbar implementation
+// for this Activity
+//
+// NAVIGATION
+// PARENT: NONE
+// CHILDREN: ADD SERVER / SERVER CHAT
+// OTHER: VIEW PROFILE
 
 public class ViewServersActivity extends AppCompatActivity {
 
-    private static final String LogTAG = "ThreadApp: ";
+    // LOGGING
+    private LogHandler logHandler = new LogHandler("ViewServersActivity");
 
     // FIREBASE
+    //
+    // currentUser:             CURRENT USER FOR THE CURRENT SESSION
+    // firebaseAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION
+    // databaseRef:             FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION
+    // subscriptionListener:    CHILD EVENT LISTENER FOR RETRIEVING ALL USER'S JOINED/OWNED SERVERS
+
     private FirebaseUser currentUser;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference databaseRef;
     private ChildEventListener subscriptionListener;
 
     // DATA STORE
-    private List<Server> serverList = new ArrayList<>();
+    //
+    // adapter:                 ADAPTER FOR VIEW SERVER RECYCLER VIEW.
+    //                          HANDLES STORAGE OF DISPLAYED SERVER DATA AS WELL.
+    // LOG_OUT_MENU_ITEM_ID:    CONSTANT DECLARING ID FOR THE LOG OUT MENU ITEM.
+
     private ViewServerAdapter adapter;
     private final int LOG_OUT_MENU_ITEM_ID = -1;
 
     // VIEW OBJECTS
+    //
+    // ViewServerRecyclerView:  DISPLAYS ALL SERVERS A USER JOINED/OWNS. USES adapter AS ITS ADAPTER.
+    // BottomToolbarAMV:        HANDLES THE MENU FOR THE BOTTOM TOOLBAR.
+    // TopNavToolbar:           TOOLBAR OBJECT THAT HANDLES UPWARDS NAVIGATION AND THE TITLE
+    // BottomToolbarButton:     BOTTOM TOOLBAR MAIN ACTION BUTTON. USED TO HANDLE MAIN ACTIONS ON THIS
+    //                          ACTIVITY. BOUND TO NAVIGATING TO ADD SERVER ACTIVITY IN THIS INSTANCE.
+
     private RecyclerView ViewServerRecyclerView;
     private ActionMenuView BottomToolbarAMV;
     private Toolbar TopNavToolbar;
     private Button BottomToolbarButton;
 
+    // ACTIVITY STATE MANAGEMENT
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        logHandler.printDefaultLog(LogHandler.STATE_ON_START);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_servers);
 
-        // SETUP TOOLBARS
+        // BIND TOOLBARS
+        // NOTE:    IT IS IMPORTANT TO GET THE INCLUDE VIEWS BEFORE DOING FIND VIEW BY ID.
+        //          THIS ENSURES THAT ANDROID CAN ALWAYS FIND THE CORRECT VIEW OBJECT.
         View topNavView = findViewById(R.id.serversNavBarInclude);
         View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
-        TopNavToolbar = topNavView.findViewById(R.id.topNavToolbar);
-        BottomToolbarAMV = bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
-        BottomToolbarButton = bottomToolbarView.findViewById(R.id.bottomToolbarButton);
+        TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+        BottomToolbarAMV = (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+        BottomToolbarButton = (Button) bottomToolbarView.findViewById(R.id.bottomToolbarButton);
 
+        logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
+
+        // SETUP TOOLBARS
         this.setSupportActionBar(TopNavToolbar);
         TopNavToolbar.setTitle("View Servers");
         BottomToolbarAMV.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
@@ -97,10 +135,15 @@ public class ViewServersActivity extends AppCompatActivity {
             }
         });
 
-        // BIND VIEW OBJECTS
-        ViewServerRecyclerView = findViewById(R.id.viewServerRecyclerView);
+        logHandler.printDefaultLog(LogHandler.TOOLBAR_SETUP);
 
-        adapter = new ViewServerAdapter(serverList);
+        // BIND VIEW OBJECTS
+        ViewServerRecyclerView = (RecyclerView) findViewById(R.id.viewServerRecyclerView);
+
+        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
+
+        // SETUP VIEW OBJECTS
+        adapter = new ViewServerAdapter(new ArrayList<Server>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         ViewServerRecyclerView.setLayoutManager(layoutManager);
@@ -116,36 +159,65 @@ public class ViewServersActivity extends AppCompatActivity {
                 })
         );
 
+        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
+
         // INITIALISE FIREBASE
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
 
         if(currentUser == null) {
-            Log.v(LogTAG, "User not signed in, returning to login activity!");
+            logHandler.printDefaultLog(LogHandler.FIREBASE_USER_NOT_FOUND);
             Intent backToLogin = new Intent(ViewServersActivity.this, LoginActivity.class);
             startActivity(backToLogin);
             return;
         }
+        logHandler.printDefaultLog(LogHandler.FIREBASE_USER_FOUND);
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
 
-        // Adds a single server to adapter if servers.{serverId} exists.
+        logHandler.printDefaultLog(LogHandler.FIREBASE_INITIALISED);
+
+        // INITIALISE LISTENERS
+
+        // addServerOnce:   GETS AND ADDS A SINGLE SERVER TO adapter. SHOULD BE CALLED AS A SingleValueEvent FROM subscriptionListener.
+        //                  CORRECT INVOCATION CODE: databaseRef.child("servers")
+        //                                                      .child(serverId)
+        //                                                      .addListenerForSingleValueEvent(addServerOnce)
+        //                  SHOULD NOT BE USED INDEPENDENTLY.
+
         final ValueEventListener addServerOnce = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // CHECK THAT servers.child(serverId) DOES NOT HAVE A NULL VALUE (SERVER DOES EXIST)
                 if (dataSnapshot.getValue() == null) {
-                    Log.v(LogTAG, "Server for the serverId does not exist! Aborting add server!");
+                    logHandler.printDatabaseResultLog(
+                            ".getValue()",
+                            "Server Values",
+                            "addServerOnce",
+                            "null"
+                    );
                     return;
                 }
 
                 Server server = dataSnapshot.getValue(Server.class);
 
+                // CHECK THAT FIREBASE HAS SUCCESSFULLY CASTED THE VALUE OF THE dataSnapshot TO Server.
                 if (server == null) {
-                    Log.v(LogTAG, "Server could not be formed from dataSnapshot correctly! Aborting add server!");
+                    logHandler.printLogWithMessage("Failed to parse server values as Server object!");
                     return;
                 }
 
+                logHandler.printDatabaseResultLog(
+                        ".getValue()",
+                        "Server Values",
+                        "addServerOnce",
+                        server.toString()
+                );
+
+                // ADD ID BACK TO server FROM THE dataSnapshot's KEY.
                 server.set_id(dataSnapshot.getKey());
+
+                // ADD SERVER TO adapter, THEN SORT AND TELL adapter TO UPDATE VIEW BASED ON NEW DATA.
                 adapter.serverList.add(server);
                 Collections.sort(adapter.serverList);
                 adapter.notifyDataSetChanged();
@@ -153,22 +225,43 @@ public class ViewServersActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.v(LogTAG, "DatabaseError! " + databaseError.toString());
+                logHandler.printDatabaseErrorLog(databaseError);
             }
         };
 
-        // Main Child Event Listener that calls addServerOnce as a SingleValue Event to load all servers
-        // in user's subscribed servers
+        // subscriptionListener:    GETS ALL SUBSCRIBED (JOINED/OWNED) SERVERS FROM A USER AND CALLS addServerOnce FOR EACH SERVER ID.
+        //                          ALSO GETS CALLED IF SERVERS ARE ADDED/REMOVED/CHANGED AND UPDATES adapter ACCORDINGLY.
+        //                          CORRECT INVOCATION CODE: databaseRef.child("servers")
+        //                                                              .child(currentUser.getUid())
+        //                                                              .child("_subscribedServers")
+        //                                                              .addChildEventListener(subscriptionListener)
+        //                          SHOULD BE CANCELLED UPON ACTIVITY DESTROYED!
+
         subscriptionListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 if (dataSnapshot.getKey() == null) {
-                    Log.v(LogTAG, "ServerId returned null! Aborting retrieval of server details!");
+                    logHandler.printDatabaseResultLog(
+                            ".getKey()",
+                            "ServerID",
+                            "subscriptionListener",
+                            "null"
+                    );
                     return;
                 }
 
-                String newServerId = dataSnapshot.getKey();
-                databaseRef.child("servers").child(newServerId).addListenerForSingleValueEvent(addServerOnce);
+                String serverID = dataSnapshot.getKey();
+
+                logHandler.printDatabaseResultLog(
+                        ".getKey()",
+                        "ServerID",
+                        "subscriptionListener",
+                        serverID
+                );
+
+                databaseRef.child("servers")
+                           .child(serverID)
+                           .addListenerForSingleValueEvent(addServerOnce);
             }
 
             @Override
@@ -190,23 +283,30 @@ public class ViewServersActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.v(LogTAG, "DatabaseError! " + databaseError.toString());
+                logHandler.printDatabaseErrorLog(databaseError);
             }
         };
 
-        // Add a child event listener that only runs while this activity is still running
-        databaseRef.child("users").child(currentUser.getUid())
-                .child("_subscribedServers").addChildEventListener(subscriptionListener);
+        logHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
+
+        databaseRef.child("users")
+                   .child(currentUser.getUid())
+                   .child("_subscribedServers")
+                   .addChildEventListener(subscriptionListener);
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     protected void onDestroy() {
-        // Destroy Child Event Listeners when this activity is about to be destroyed.
+        logHandler.printDefaultLog(LogHandler.STATE_ON_DESTROY);
+
+        // DESTROY CHILD EVENT LISTENERS ON ACTIVITY DESTROYED
         if (subscriptionListener != null) {
             databaseRef.removeEventListener(subscriptionListener);
         }
+
+        // RESET VIEW SERVERS MENU ITEM
         toggleOwnMenuItemDisplay(true);
+
         super.onDestroy();
     }
 
@@ -214,7 +314,7 @@ public class ViewServersActivity extends AppCompatActivity {
 
     private void handleTransitionIntoServer(Integer position) {
         Intent transitionToChat = new Intent(ViewServersActivity.this, ChatActivity.class);
-        transitionToChat.putExtra("SERVER_ID", serverList.get(position).get_id());
+        transitionToChat.putExtra("SERVER_ID", adapter.serverList.get(position).get_id());
         startActivity(transitionToChat);
         onStop();
     }
@@ -225,14 +325,40 @@ public class ViewServersActivity extends AppCompatActivity {
         onStop();
     }
 
-    private void displayError(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-        Log.v(LogTAG, message);
+    // NAME:                toggleOwnMenuItemDisplay
+    // DESCRIPTION:         TOGGLES THE MENU ITEM'S VISUAL STATE FOR THE CURRENT ACTIVITY
+    // INPUTS:
+    // isEnabled:           WHEN TRUE, SETS THE MENU ITEM TO FULL OPACITY, OTHERWISE SETS IT TO 40%
+    // RETURN VALUE:        NULL
+
+    @SuppressLint("RestrictedApi")
+    private void toggleOwnMenuItemDisplay(Boolean isEnabled) {
+
+        ActionMenuItemView ViewServersAMIV = (ActionMenuItemView) findViewById(R.id.viewServersMenuItem);
+
+        if(ViewServersAMIV == null) {
+            logHandler.printLogWithMessage("Can't find Bottom Toolbar menu item for View Servers! Cancelling icon update!");
+            return;
+        }
+
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
+
+        if(drawable == null) {
+            logHandler.printLogWithMessage("Drawable for round_chat_white_36 not found! Cancelling icon update!");
+        } else {
+            if(isEnabled) {
+                drawable.setColorFilter(null);
+            } else {
+                drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
+            }
+            ViewServersAMIV.setIcon(drawable);
+
+            logHandler.printLogWithMessage("Successfully toggled menu item for View Servers to " + isEnabled.toString());
+        }
     }
 
     // TOOLBAR OVERRIDE METHODS
 
-    @SuppressLint("RestrictedApi")
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Make ViewServers Button on menu bar look disabled
@@ -247,14 +373,14 @@ public class ViewServersActivity extends AppCompatActivity {
         return true;
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
             case R.id.viewServersMenuItem:
                 // DISABLED
-                return true;
+                return false;
+
             case R.id.viewProfileMenuItem:
                 Intent goToViewProfile = new Intent(ViewServersActivity.this, ViewProfileActivity.class);
                 goToViewProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -263,8 +389,9 @@ public class ViewServersActivity extends AppCompatActivity {
                 // Reset disabled ActionMenuItemView button back to normal state
                 toggleOwnMenuItemDisplay(true);
 
-                ViewServersActivity.this.finish();
+                finish();
                 return true;
+
             case LOG_OUT_MENU_ITEM_ID:
                 firebaseAuth.signOut();
                 Intent logOutToSignIn = new Intent(ViewServersActivity.this, LoginActivity.class);
@@ -274,29 +401,6 @@ public class ViewServersActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressLint("RestrictedApi")
-    private void toggleOwnMenuItemDisplay(boolean isEnabled) {
-        // Make ViewServers Button on menu bar look disabled
-        ActionMenuItemView viewServers = findViewById(R.id.viewServersMenuItem);
-
-        if(viewServers == null) {
-            return;
-        }
-
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
-
-        if(drawable == null) {
-            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
-        } else {
-            if(isEnabled) {
-                drawable.setColorFilter(null);
-            } else {
-                drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
-            }
-            viewServers.setIcon(drawable);
-        }
     }
 
 }

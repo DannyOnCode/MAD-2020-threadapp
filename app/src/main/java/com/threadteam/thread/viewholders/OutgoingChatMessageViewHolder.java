@@ -1,4 +1,4 @@
-package com.threadteam.thread;
+package com.threadteam.thread.viewholders;
 
 import android.view.View;
 import android.widget.TextView;
@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.threadteam.thread.R;
 
 public class OutgoingChatMessageViewHolder extends RecyclerView.ViewHolder {
 

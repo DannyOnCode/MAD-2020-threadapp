@@ -1,11 +1,12 @@
-package com.threadteam.thread;
+package com.threadteam.thread.viewholders;
 
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.threadteam.thread.R;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 

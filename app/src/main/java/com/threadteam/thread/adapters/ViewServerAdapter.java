@@ -1,4 +1,4 @@
-package com.threadteam.thread;
+package com.threadteam.thread.adapters;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.threadteam.thread.R;
+import com.threadteam.thread.viewholders.ViewServerViewHolder;
 import com.threadteam.thread.models.Server;
 
 import java.util.List;
