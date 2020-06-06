@@ -28,6 +28,18 @@ import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.Server;
 
+// ADD SERVER ACTIVITY
+//
+// PROGRAMMER-IN-CHARGE:
+// EUGENE LONG, S10193060J
+//
+// DESCRIPTION
+// Allows users to create or join servers one at a time.
+//
+// NAVIGATION
+// PARENT: VIEW SERVERS
+// CHILDREN: N/A
+
 public class AddServerActivity extends AppCompatActivity {
 
     // LOGGING
