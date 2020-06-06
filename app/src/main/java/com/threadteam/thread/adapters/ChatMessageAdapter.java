@@ -81,8 +81,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         String message = chatMessageList.get(position).get_message();
 
         if(getItemViewType(position) == 0) {
-            ((OutgoingChatMessageViewHolder) holder).MessageTextView.setText(senderUsername);
-            ((OutgoingChatMessageViewHolder) holder).SenderTextView.setText(message);
+            ((OutgoingChatMessageViewHolder) holder).SenderTextView.setText(senderUsername);
+            ((OutgoingChatMessageViewHolder) holder).MessageTextView.setText(message);
             ((OutgoingChatMessageViewHolder) holder).TimestampTextView.setText(timeString);
 
             LogHandler.staticPrintLog(
@@ -90,8 +90,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                             senderUsername + ", " + message + ", " + timeString
             );
         } else {
-            ((IncomingChatMessageViewHolder) holder).MessageTextView.setText(senderUsername);
-            ((IncomingChatMessageViewHolder) holder).SenderTextView.setText(message);
+            ((IncomingChatMessageViewHolder) holder).SenderTextView.setText(senderUsername);
+            ((IncomingChatMessageViewHolder) holder).MessageTextView.setText(message);
             ((IncomingChatMessageViewHolder) holder).TimestampTextView.setText(timeString);
 
             LogHandler.staticPrintLog(
