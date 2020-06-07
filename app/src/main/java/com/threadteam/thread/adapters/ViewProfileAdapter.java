@@ -15,24 +15,45 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.viewholders.ViewDividerViewHolder;
 import com.threadteam.thread.viewholders.ViewProfileCardViewHolder;
 import com.threadteam.thread.viewholders.ViewServerStatusCardViewHolder;
 import com.threadteam.thread.models.User;
 
+// CHAT MESSAGE ADAPTER CLASS
+//
+// PROGRAMMER-IN-CHARGE:
+// EUGENE LONG, S10193060J
+//
+// DESCRIPTION
+// ADAPTER USED BY profileView RECYCLERVIEW in Profile Activity
+// USES ViewProfileCardView, ViewDividerViewHolder, ViewServerStatusCardViewHolder
+
 public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private Context mContext;
+    // LOGGING
+    private LogHandler logHandler = new LogHandler("ViewProfile Adaptor");
+
     // DATA STORE
+    //
+    // mContext:        CONTAINS CONTEXT FROM VIEW PROFILE ACTIVITY
+    // userData:        CONTAINS USER OBJECT FROM PROFILE ACTIVITY
+    private Context mContext;
     public User userData;
+
+    // FIREBASE
+    //
+    // databaseRef:     FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION.
     DatabaseReference ref;
-    final String TAG = "ViewProfile Page: ";
+
     public ViewProfileAdapter(User user) {
 
         this.userData = userData;
     }
 
+    //Get View Type for each position
     public int getItemViewType(int position) {
         if(position == 0){
             return position;
@@ -44,6 +65,7 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             return 2;
         }
     }
+    //Inflate RecyclerView with viewholder
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -66,29 +88,33 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         switch(holder.getItemViewType()) {
+
             case 0:
+                //Profile Card
                 ViewProfileCardViewHolder profileHolder = (ViewProfileCardViewHolder) holder;
-                try{
-                    Picasso.get().setLoggingEnabled(true);
+                if(userData.get_profileImageURL() != null){
                     Picasso.get()
                             .load(userData.get_profileImageURL())
                             .fit()
                             .error(R.drawable.profilepictureempty)
                             .centerCrop()
                             .into(profileHolder.userImage);
-                }
-                catch(Exception e){
+                    }
+                else{
                     profileHolder.userImage.setImageResource(R.drawable.profilepictureempty);
-                    Log.v(TAG,"No Profile Picture Found!");
+                    logHandler.printLogWithMessage("No Profile Image found");
                 }
+
                 profileHolder.userName.setText(userData.get_username());
                 profileHolder.titleStatus.setText(userData.get_statusMessage());
                 profileHolder.aboutMeDesc.setText(userData.get_aboutUsMessage());
                 break;
             case 1:
+                //Divider
                 ViewDividerViewHolder dividerHolder = (ViewDividerViewHolder) holder;
                 break;
             case 2:
+                //Server Card
                 final ViewServerStatusCardViewHolder serverStatusCardViewHolder = (ViewServerStatusCardViewHolder) holder;
                 //Problem is here
                 String serverDetails = userData.get_subscribedServers().get(position - 2);
@@ -107,7 +133,7 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-                        Log.v(TAG, "DatabaseError! " + databaseError.toString());
+                        logHandler.printDatabaseErrorLog(databaseError);
                     }
                 });
                 break;
@@ -119,6 +145,7 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if(userData == null){
             return 0;
         }
+        //2 for profile card and divider ViewHolder
         return 2 + userData.get_subscribedServers().size();
     }
 }

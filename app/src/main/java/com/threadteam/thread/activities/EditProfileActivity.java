@@ -44,6 +44,19 @@ import com.threadteam.thread.models.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+// VIEW PROFILE ACTIVITY
+//
+// PROGRAMMER-IN-CHARGE:
+// DANNY CHAN, S10196363F
+//
+// DESCRIPTION
+// Handles editing of profile details
+//
+// NAVIGATION
+// PARENT: VIEW PROFILE
+// CHILDREN: NONE
+// OTHER: NONE
+
 public class EditProfileActivity extends AppCompatActivity {
 
     // TODO: DOCUMENTATION TO BE CONTINUED
@@ -52,18 +65,18 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // DATA STORE
     //
-    // mImageUri:               STORE IMAGE URI FROM FILE IMAGE FOR UPLOADING TO FIREBASE
-    // PICK_IMAGE_REQUEST       CONSTANT REQUEST TO IDENTIFY IMAGE REQUEST
+    // mImageUri:               STORE IMAGE URI FROM FILE IMAGE FOR UPLOADING TO FIREBASE.
+    // PICK_IMAGE_REQUEST       CONSTANT REQUEST TO IDENTIFY IMAGE REQUEST.
     private Uri mImageUri;
     private static final int PICK_IMAGE_REQUEST = 1;
 
     // FIREBASE
     //
-    // currentUser:             CURRENT USER FOR THE CURRENT SESSION
-    // firebaseAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION
-    // mDatabaseRef:            FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION
-    // mStorageRef:             FIREBASE STORAGE REFERENCE FOR THE CURRENT SESSION
-    // currentData:             VALUE EVENT LISTENER FOR RETRIEVING CURRENT DATA OF USER
+    // currentUser:             CURRENT USER FOR THE CURRENT SESSION.
+    // firebaseAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION.
+    // mDatabaseRef:            FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION.
+    // mStorageRef:             FIREBASE STORAGE REFERENCE FOR THE CURRENT SESSION.
+    // currentData:             VALUE EVENT LISTENER FOR RETRIEVING CURRENT DATA OF USER.
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
     private FirebaseUser currentUser;
@@ -72,15 +85,14 @@ public class EditProfileActivity extends AppCompatActivity {
 
     // VIEW OBJECTS
     //
-    // mButtonChooseImage:      TRIGGERS PICKING IMAGE FROM DEVICE FILE
-    // mCancelButton:           TRIGGERS RETURN TO PROFILE PAGE
-    // mConfirmButton:          TRIGGERS UPLOAD TO FIREBASE WITH ALL NECESSARY INPUT DATA
-    // mDisplayImage:           DISPLAYS PROFILE PICTURE
-    // mUserNameEdit:           CONTAINS USERNAME DATA OF USER TO BE UPLOADED TO DATABASE
-    // mStatusTitle:            CONTAINS Status/Title DATA OF USER TO BE UPLOADED TO DATABASE
-    // mDescription:            CONTAINS ABOUT ME DESCRIPTION DATA OF USER TO BE UPLOADED TO DATABASE
-    // mProgressBar:            DISPLAYS THE UPLOAD PROGRESS ONCE mConfirmButton HAS BEEN CLICKED
-    // mCardView:               HOLDS THE ENTIRE EDIT PROFILE WHICH ALSO CONTAINS KEYBOARD CLOSE FUNCTION
+    // mButtonChooseImage:      TRIGGERS PICKING IMAGE FROM DEVICE FILE.
+    // mCancelButton:           TRIGGERS RETURN TO PROFILE PAGE.
+    // mConfirmButton:          TRIGGERS UPLOAD TO FIREBASE WITH ALL NECESSARY INPUT DATA.
+    // mDisplayImage:           DISPLAYS PROFILE PICTURE.
+    // mUserNameEdit:           CONTAINS USERNAME DATA OF USER TO BE UPLOADED TO DATABASE.
+    // mStatusTitle:            CONTAINS Status/Title DATA OF USER TO BE UPLOADED TO DATABASE.
+    // mDescription:            CONTAINS ABOUT ME DESCRIPTION DATA OF USER TO BE UPLOADED TO DATABASE.
+    // mProgressBar:            DISPLAYS THE UPLOAD PROGRESS ONCE mConfirmButton HAS BEEN CLICKED.
     ImageView mButtonChooseImage;
     Button mCancelButton;
     Button mConfirmButton;
@@ -89,7 +101,6 @@ public class EditProfileActivity extends AppCompatActivity {
     EditText mStatusTitle;
     EditText mDescription;
     ProgressBar mProgressBar;
-    CardView mCardView;
 
 
     // ACTIVITY STATE MANAGEMENT METHODS
@@ -108,7 +119,6 @@ public class EditProfileActivity extends AppCompatActivity {
         mStatusTitle = (EditText) findViewById(R.id.statusMessageEdit);
         mDescription = (EditText) findViewById(R.id.aboutMeDesciptionEdit);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        mCardView = (CardView) findViewById(R.id.retractKeyboard);
         //LOG
         logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
 
@@ -171,23 +181,6 @@ public class EditProfileActivity extends AppCompatActivity {
                 startActivity(goToViewProfile);
             }
         });
-
-        // Use CardView as scrim to dismiss keyboard
-        mCardView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) EditProfileActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                View view  = EditProfileActivity.this.getCurrentFocus();
-                if (view == null) {
-                    view = new View(EditProfileActivity.this);
-                }
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-                return false;
-            }
-        });
-
 
         // INITIALISE LISTENERS
 

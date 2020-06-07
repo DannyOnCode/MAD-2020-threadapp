@@ -30,6 +30,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ViewProfileAdapter;
 import com.threadteam.thread.models.User;
@@ -38,33 +39,72 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+// VIEW PROFILE ACTIVITY
+//
+// PROGRAMMER-IN-CHARGE:
+// DANNY CHAN, S10196363F
+//
+// DESCRIPTION
+// Handles showing of the Profile of a user
+// Handles the top and bottom custom toolbar implementation for this Activity
+//
+// NAVIGATION
+// PARENT: NONE
+// CHILDREN: EDIT PROFILE
+// OTHER: VIEW SERVER
 
 public class ViewProfileActivity extends AppCompatActivity {
+
+    // LOGGING
+    private LogHandler logHandler = new LogHandler("ViewProfile Activity");
+
+    //DATA STORE
+    //
+    // LOG_OUT_MENU_ITEM_ID:    CONSTANT DECLARING ID FOR THE LOG OUT MENU ITEM.
+    // mContext:                GET ACTIVITY CONTEXT.
+    private final int LOG_OUT_MENU_ITEM_ID = -1;
+    Context mContext;
+
+    // FIREBASE
+    //
+    // currentUser:             CURRENT USER FOR THE CURRENT SESSION.
+    // firebaseAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION.
+    // databaseRef:             FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION.
+    // userDataListener:        VALUE EVENT LISTENER FOR RETRIEVING USER DATA.
     private FirebaseUser currentUser;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference ref;
-    private RecyclerView profileView;
-
     private ValueEventListener userDataListener;
 
+    //VIEW OBJECT
+    //
+    // RecyclerView:            DISPLAYS PROFILE DETAILS AND JOINED SERVER. USES profileAdapter AS ADAPTER.
+    // BottomToolbarAMV:        HANDLES THE MENU FOR THE BOTTOM TOOLBAR.
+    // TopNavToolbar:           TOOLBAR OBJECT THAT HANDLES UPWARDS NAVIGATION AND THE TITLE.
+    // BottomToolbarButton:     BOTTOM TOOLBAR MAIN ACTION BUTTON. USED TO HANDLE MAIN ACTIONS ON THIS
+    //                          ACTIVITY. BOUND TO NAVIGATING TO ADD SERVER ACTIVITY IN THIS INSTANCE.
+    private RecyclerView profileView;
     private Toolbar TopNavToolbar;
     private ActionMenuView BottomToolbarAMV;
     private Button BottomToolbarButton;
-    private final int LOG_OUT_MENU_ITEM_ID = -1;
 
-
-    final String LogTAG = "ThreadApp: ";
-    Context mContext;
+    // ACTIVITY STATE MANAGEMENT METHODS
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_profile);
 
+
+        // BIND TOOLBARS
+        // NOTE:    IT IS IMPORTANT TO GET THE INCLUDE VIEWS BEFORE DOING FIND VIEW BY ID.
+        //          THIS ENSURES THAT ANDROID CAN ALWAYS FIND THE CORRECT VIEW OBJECT.
         View topNavView = findViewById(R.id.profileNavBarInclude);
         View bottomToolbarView = findViewById(R.id.profileBottomToolbarInclude);
         TopNavToolbar = topNavView.findViewById(R.id.topNavToolbar);
         BottomToolbarAMV = bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
         BottomToolbarButton = bottomToolbarView.findViewById(R.id.bottomToolbarButton);
+
+        logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
 
         this.setSupportActionBar(TopNavToolbar);
         TopNavToolbar.setTitle("View Profile");
@@ -85,23 +125,44 @@ public class ViewProfileActivity extends AppCompatActivity {
             }
         });
 
+        logHandler.printDefaultLog(LogHandler.TOOLBAR_SETUP);
+
+        // BIND VIEW OBJECTS
         profileView = findViewById(R.id.viewProfileRecyclerView);
 
+        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
+
+        // SETUP VIEW OBJECTS
         final ViewProfileAdapter profileAdapter = new ViewProfileAdapter(null);
         LinearLayoutManager pLayoutManager = new LinearLayoutManager(mContext);
         profileView.setLayoutManager(pLayoutManager);
         profileView.setAdapter(profileAdapter);
         profileView.setItemAnimator(new DefaultItemAnimator());
 
+        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
 
-        //Getting UserData
+        // INITIALISE FIREBASE
         firebaseAuth = FirebaseAuth.getInstance();
         currentUser = firebaseAuth.getCurrentUser();
-
+        if(currentUser == null) {
+            logHandler.printDefaultLog(LogHandler.FIREBASE_USER_NOT_FOUND);
+            Intent backToLogin = new Intent(ViewProfileActivity.this, LoginActivity.class);
+            startActivity(backToLogin);
+            return;
+        }
+        logHandler.printDefaultLog(LogHandler.FIREBASE_USER_FOUND);
 
         String userID = currentUser.getUid();
         ref = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
 
+
+        // INITIALISE LISTENERS
+
+        // userDataListener:    USED TO RETRIEVE USER DATA
+        //                      CORRECT INVOCATION CODE: databaseRef.child("servers")
+        //                                                          .child(serverId)
+        //                                                          .addListenerForSingleValueEvent(addServerOnce)
+        //                      SHOULD NOT BE USED INDEPENDENTLY.
         userDataListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -111,6 +172,11 @@ public class ViewProfileActivity extends AppCompatActivity {
                 String aboutMeMessages = (String) dataSnapshot.child("_aboutUsMessage").getValue();
                 String statusDescription = (String) dataSnapshot.child("_statusMessage").getValue();
 
+                logHandler.printDatabaseResultLog(".getValue()", "Current Profile Image", "userDataListener", profileImage);
+                logHandler.printDatabaseResultLog(".getValue()", "Current Username", "userDataListener", userName);
+                logHandler.printDatabaseResultLog(".getValue()", "Current Status/Title", "userDataListener", statusDescription);
+                logHandler.printDatabaseResultLog(".getValue()", "Current Description", "userDataListener", aboutMeMessages);
+
                 user.set_username(userName);
                 user.set_profileImageURL(profileImage);
                 user.set_aboutUsMessage(aboutMeMessages);
@@ -119,8 +185,9 @@ public class ViewProfileActivity extends AppCompatActivity {
                 List<String> serverList = new ArrayList<>();
                 for(DataSnapshot data : dataSnapshot.child("_subscribedServers").getChildren()){
                     serverList.add(data.getKey());
+                    logHandler.printDatabaseResultLog(".getKey()", "ServerID", "userDataListener", data.getKey());
                 }
-                Log.v(LogTAG, Arrays.toString(serverList.toArray()));
+
                 user.set_subscribedServers(serverList);
 
                 profileAdapter.userData = user;
@@ -130,9 +197,11 @@ public class ViewProfileActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.v(LogTAG,"The read failed: " + databaseError.getCode());
+                logHandler.printDatabaseErrorLog(databaseError);
             }
         };
+
+        logHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
 
         ref.addValueEventListener(userDataListener);
 
@@ -140,16 +209,22 @@ public class ViewProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
+        // CANCEL VALUE EVENT LISTENERS ON ACTIVITY STOP
+        logHandler.printDefaultLog(LogHandler.STATE_ON_STOP);
         ref.removeEventListener(userDataListener);
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
+        logHandler.printDefaultLog(LogHandler.STATE_ON_DESTROY);
         toggleOwnMenuItemDisplay(true);
         super.onDestroy();
     }
 
+    //CLASS METHODS
+
+    // TOOLBAR OVERRIDE METHODS
     @SuppressLint("RestrictedApi")
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
@@ -195,19 +270,26 @@ public class ViewProfileActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    // NAME:                toggleOwnMenuItemDisplay
+    // DESCRIPTION:         TOGGLES THE MENU ITEM'S VISUAL STATE FOR THE CURRENT ACTIVITY
+    // INPUTS:
+    // isEnabled:           WHEN TRUE, SETS THE MENU ITEM TO FULL OPACITY, OTHERWISE SETS IT TO 40%
+    // RETURN VALUE:        NULL
     @SuppressLint("RestrictedApi")
-    private void toggleOwnMenuItemDisplay(boolean isEnabled) {
+    private void toggleOwnMenuItemDisplay(Boolean isEnabled) {
         // Make ViewServers Button on menu bar look disabled
-        ActionMenuItemView viewProfile = findViewById(R.id.viewProfileMenuItem);
+        ActionMenuItemView viewProfile = (ActionMenuItemView) findViewById(R.id.viewProfileMenuItem);
 
         if(viewProfile == null) {
+            logHandler.printLogWithMessage("Can't find Bottom Toolbar menu item for View Profile! Cancelling icon update!");
             return;
         }
 
         Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_face_white_36);
 
         if(drawable == null) {
-            Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
+            logHandler.printLogWithMessage("Drawable for round_face_white_36 not found! Cancelling icon update!");
+            //Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
         } else {
             if(isEnabled) {
                 drawable.setColorFilter(null);
@@ -215,8 +297,8 @@ public class ViewProfileActivity extends AppCompatActivity {
                 drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
             }
             viewProfile.setIcon(drawable);
+
+            logHandler.printLogWithMessage("Successfully toggled menu item for View Servers to " + isEnabled.toString());
         }
     }
-
-
 }

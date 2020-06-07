@@ -8,10 +8,21 @@ import com.google.firebase.database.Exclude;
 import java.util.ArrayList;
 import java.util.List;
 
+// SERVER CLASS
+//
+// PROGRAMMER-IN-CHARGE:
+// EUGENE LONG, DANNY CHAN, THABITH, S10193060J, S10196363F, [THABITH IC HERE]
+//
+// DESCRIPTION
+// REPRESENTS A USER. CONTAINS METADATA SUCH AS
+// ITS OWN UNIQUE ID, USER NAME, USER PROFILE IMAGE,
+// USER ABOUT ME MESSAGE, USER STATUS/TITLE MESSAGE AND
+// SUBSCRIBED SERVER.
 public class User {
+    //DATA STORE
 
-
-    // Instance-specific variables
+    // UNIQUE IDENTIFIER, EXCLUDE FROM FIREBASE CHILD VALUES.
+    // SHOULD BE USED AS A KEY
     @Exclude
     private String _id;
 
@@ -22,7 +33,10 @@ public class User {
 
     @Exclude
     private List<String> _subscribedServers = new ArrayList<String>();
-    // Template User class placeholder
+
+    // CONSTRUCTORS
+
+    // FIREBASE REQUIRED BLANK CONSTRUCTOR
     public User(){
 
     }
@@ -42,6 +56,8 @@ public class User {
         this._statusMessage = _statusMessage;
         this._subscribedServers = _subscribedServers;
     }
+
+    // GET/SET METHODS
     public String get_id() {
         return _id;
     }
