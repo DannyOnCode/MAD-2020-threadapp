@@ -86,6 +86,8 @@
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="32dp"
                         android:background="@color/colorPrimary"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
                         android:text="RESET"
                         android:textColor="#FFFFFF"
                         app:layout_constraintEnd_toEndOf="parent"
