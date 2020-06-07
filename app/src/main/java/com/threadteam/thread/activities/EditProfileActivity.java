@@ -239,7 +239,7 @@ public class EditProfileActivity extends AppCompatActivity {
     }
 
 
-    //Process image selected
+    //Process selected image
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -328,7 +328,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     } else
                     {
-                        logHandler.printLogWithMessage("Upload failed at upload: " + task.getException().getMessage());
+                        logHandler.printLogWithMessage("Upload failed at uploadUserData: " + task.getException().getMessage());
                         Toast.makeText(EditProfileActivity.this, "upload failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -352,16 +352,21 @@ public class EditProfileActivity extends AppCompatActivity {
             mDatabaseRef.child(userID).child("_aboutUsMessage").setValue(user.get_aboutUsMessage(),new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mProgressBar.setProgress(100);
-                        }
-                    }, 500);
-                    startActivity(new Intent(EditProfileActivity.this, ViewProfileActivity.class));
-                    logHandler.printActivityIntentLog("View Profile Activity");
-                    Toast.makeText(EditProfileActivity.this, "Updated successfully", Toast.LENGTH_LONG).show();
+                    try{
+                        Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mProgressBar.setProgress(100);
+                            }
+                        }, 500);
+                        startActivity(new Intent(EditProfileActivity.this, ViewProfileActivity.class));
+                        logHandler.printActivityIntentLog("View Profile Activity");
+                        Toast.makeText(EditProfileActivity.this, "Updated successfully", Toast.LENGTH_LONG).show();
+                    }catch (Exception e){
+                        logHandler.printDatabaseErrorLog(databaseError);
+                    }
+
                 }
 
             });

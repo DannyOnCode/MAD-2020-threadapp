@@ -122,6 +122,7 @@ public class ViewProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent goToEditProfile = new Intent(ViewProfileActivity.this, EditProfileActivity.class);
                 startActivity(goToEditProfile);
+                logHandler.printActivityIntentLog("Edit Profile Activity");
             }
         });
 
@@ -147,6 +148,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         if(currentUser == null) {
             logHandler.printDefaultLog(LogHandler.FIREBASE_USER_NOT_FOUND);
             Intent backToLogin = new Intent(ViewProfileActivity.this, LoginActivity.class);
+            logHandler.printActivityIntentLog("Login Activity");
             startActivity(backToLogin);
             return;
         }
@@ -250,6 +252,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                 Intent goToViewServer = new Intent(ViewProfileActivity.this, ViewServersActivity.class);
                 goToViewServer.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
                 startActivity(goToViewServer);
+                logHandler.printActivityIntentLog("View Server Activity");
 
                 // Reset disabled ActionMenuItemView button back to normal state
                 toggleOwnMenuItemDisplay(true);
@@ -263,6 +266,7 @@ public class ViewProfileActivity extends AppCompatActivity {
                 firebaseAuth.signOut();
                 Intent logOutToSignIn = new Intent(ViewProfileActivity.this, LoginActivity.class);
                 startActivity(logOutToSignIn);
+                logHandler.printActivityIntentLog("Login Activity");
                 finish();
                 return true;
         }
