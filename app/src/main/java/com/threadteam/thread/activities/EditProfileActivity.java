@@ -121,7 +121,7 @@ public class EditProfileActivity extends AppCompatActivity {
         logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
 
         // SETUP TOOLBARS
-        TopNavToolbar.setTitle("Chat");
+        TopNavToolbar.setTitle("Edit Profile");
         this.setSupportActionBar(TopNavToolbar);
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

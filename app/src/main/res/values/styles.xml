@@ -3,7 +3,6 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="android:textViewStyle">@style/DMMonoTextStyle</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
@@ -11,10 +10,6 @@
 
     <style name="progressBarStyle" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:indeterminateDrawable">@drawable/progress_bar_drawable</item>
-    </style>
-
-    <style name="DMMonoTextStyle" parent="android:Widget.TextView">
-        <item name="android:fontFamily">@font/dmmono_medium</item>
     </style>
 
     <style name="RobotoTextEditStyle" parent="Widget.AppCompat.EditText">

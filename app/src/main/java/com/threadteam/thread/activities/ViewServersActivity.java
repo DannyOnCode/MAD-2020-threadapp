@@ -23,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -97,7 +98,7 @@ public class ViewServersActivity extends AppCompatActivity {
     private RecyclerView ViewServerRecyclerView;
     private ActionMenuView BottomToolbarAMV;
     private Toolbar TopNavToolbar;
-    private FloatingActionButton MainActionFAB;
+    private ImageButton MainActionFAB;
 
     // ACTIVITY STATE MANAGEMENT METHODS
 
@@ -115,7 +116,7 @@ public class ViewServersActivity extends AppCompatActivity {
         View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
         TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
         BottomToolbarAMV = (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
-        MainActionFAB = (FloatingActionButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
+        MainActionFAB = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
 
         logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
 

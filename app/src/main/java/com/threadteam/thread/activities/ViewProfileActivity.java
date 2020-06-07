@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageButton;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -84,7 +85,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     private RecyclerView profileView;
     private Toolbar TopNavToolbar;
     private ActionMenuView BottomToolbarAMV;
-    private FloatingActionButton MainActionFAB;
+    private ImageButton MainActionFAB;
 
     // ACTIVITY STATE MANAGEMENT METHODS
     @Override
