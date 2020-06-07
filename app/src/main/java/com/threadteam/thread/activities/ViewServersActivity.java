@@ -2,10 +2,13 @@ package com.threadteam.thread.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +26,8 @@ import android.widget.Button;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.material.bottomappbar.BottomAppBar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -86,13 +91,13 @@ public class ViewServersActivity extends AppCompatActivity {
     // ViewServerRecyclerView:  DISPLAYS ALL SERVERS A USER JOINED/OWNS. USES adapter AS ITS ADAPTER.
     // BottomToolbarAMV:        HANDLES THE MENU FOR THE BOTTOM TOOLBAR.
     // TopNavToolbar:           TOOLBAR OBJECT THAT HANDLES UPWARDS NAVIGATION AND THE TITLE
-    // BottomToolbarButton:     BOTTOM TOOLBAR MAIN ACTION BUTTON. USED TO HANDLE MAIN ACTIONS ON THIS
+    // MainActionFAB:           BOTTOM TOOLBAR MAIN ACTION BUTTON. USED TO HANDLE MAIN ACTIONS ON THIS
     //                          ACTIVITY. BOUND TO NAVIGATING TO ADD SERVER ACTIVITY IN THIS INSTANCE.
 
     private RecyclerView ViewServerRecyclerView;
     private ActionMenuView BottomToolbarAMV;
     private Toolbar TopNavToolbar;
-    private Button BottomToolbarButton;
+    private FloatingActionButton MainActionFAB;
 
     // ACTIVITY STATE MANAGEMENT METHODS
 
@@ -110,7 +115,7 @@ public class ViewServersActivity extends AppCompatActivity {
         View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
         TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
         BottomToolbarAMV = (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
-        BottomToolbarButton = (Button) bottomToolbarView.findViewById(R.id.bottomToolbarButton);
+        MainActionFAB = (FloatingActionButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
 
         logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
 
@@ -125,11 +130,12 @@ public class ViewServersActivity extends AppCompatActivity {
         });
 
         Drawable icon = ContextCompat.getDrawable(this, R.drawable.round_add_white_24);
-        BottomToolbarButton.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
-        BottomToolbarButton.setOnClickListener(new View.OnClickListener() {
+        MainActionFAB.setImageDrawable(icon);
+        MainActionFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleAddServer();
+                Intent goToEditProfile = new Intent(ViewServersActivity.this, AddServerActivity.class);
+                startActivity(goToEditProfile);
             }
         });
 

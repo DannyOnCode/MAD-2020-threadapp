@@ -11,23 +11,11 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="56dp"
-        app:layout_constraintBottom_toBottomOf="@+id/serversBottomToolbarInclude"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/serversNavBarInclude"
         tools:listitem="@layout/activity_partial_view_servers" />
-
-    <include
-        android:id="@+id/serversBottomToolbarInclude"
-        layout="@layout/activity_partial_bottomtoolbar"
-        android:layout_width="0dp"
-        android:layout_height="88dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-    </include>
 
     <include
         android:id="@+id/serversNavBarInclude"
@@ -37,4 +25,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/serversBottomToolbarInclude"
+        layout="@layout/activity_partial_bottomappbar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

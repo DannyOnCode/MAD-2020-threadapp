@@ -137,7 +137,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="32dp"
-                        android:fontFamily="@font/poppins_bold"
+                        android:fontFamily="@font/dmmono_medium_italic"
                         android:text="thread."
                         android:textColor="@color/colorPrimaryDark"
                         android:textSize="36sp"
@@ -150,6 +150,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="-10dp"
+                        android:fontFamily="@font/dmmono_light_italic"
                         android:text="welcome back."
                         android:textSize="18sp"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -169,6 +170,7 @@
 
                     <EditText
                         android:id="@+id/emailLog"
+                        style="@style/Widget.AppCompat.AutoCompleteTextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="32dp"
@@ -212,6 +214,8 @@
                         android:layout_marginTop="32dp"
                         android:layout_marginEnd="32dp"
                         android:background="@color/colorPrimary"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
                         android:text="LOGIN"
                         android:textColor="#FFFFFF"
                         android:textSize="14sp"
