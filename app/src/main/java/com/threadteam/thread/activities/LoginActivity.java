@@ -161,20 +161,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-        _LOGINVIEW.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) LoginActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                View view  = LoginActivity.this.getCurrentFocus();
-                if (view == null) {
-                    view = new View(LoginActivity.this);
-                }
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-                return false;
-            }
-        });
 
 
 
