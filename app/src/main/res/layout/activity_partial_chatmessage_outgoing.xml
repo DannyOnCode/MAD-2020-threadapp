@@ -32,6 +32,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="16dp"
+                android:fontFamily="@font/roboto_mono"
                 android:text="Hi everybody, please take note of the following pieces of information..."
                 android:textColor="#FFFFFF"
                 app:layout_constraintBottom_toBottomOf="parent"
