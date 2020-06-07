@@ -144,20 +144,6 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        _REGISTERVIEW.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) RegisterActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                View view  = RegisterActivity.this.getCurrentFocus();
-                if (view == null) {
-                    view = new View(RegisterActivity.this);
-                }
-                if (imm != null) {
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                }
-                return false;
-            }
-        });
     }
 
     private void closeKeyboard() {
