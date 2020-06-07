@@ -12,31 +12,46 @@ Customize your avatar and earn your level as you chat (to be implemented)
 Through this application we have used Firebase RealTime Database
 RealTime Database Data Tree
 
-threadapp
-  - users
-      -userId
-          - username
-          - statusMessage
-          - profileImageURL
-          - aboutMeMessage
-          - subscribed_servers
-  - servers
-      -serverId
-          - name
-          - owner
-          - description
-  - shares
-      -shareCode
-  - members
-      -serverId
-          - memberId
-  - messages
-      -serverId
-          - messageId
-              - sender
-              - senderUID
-              - messageText
-              - timestamp
+```json
+"thread" : {
+    "users" : {
+          "userId" : {
+              "statusMessage" : "status message here",
+              "profileImageURL" : "profile image URL here",
+              "aboutMeMessage" : "description here",
+              "subscribed_servers" : ["server ids here"]
+            }
+        },
+    "servers" : {
+          "serverId" : {
+                "name" : "server name here",
+                "owner" : "owner id here",
+                "description" : "server description here"
+             }
+        },
+    "shares" : {
+          "shareCode" : "server code here"
+        },
+    "members" : {
+          "serverId" : {
+                 "memberId" : "user id here"
+              }
+        },
+    "messages" : {
+           "serverId" : {
+                  "messageId" : {
+                        "sender" : "sender name here",
+                        "senderUID" : "sender uid here",
+                        "messageText" : "text message here",
+                        "timestamp" : "time messaged was sent here"
+                     }
+              }
+        }
+        
+}
+```
+
+
               
               
 How to Use
@@ -45,11 +60,11 @@ How to Use
 3) View Profile & View Server pages can be navigated through the bottom navigation bar
 
 4) View Server Page
-4.1) Tap on the floating action button to Join / Create a server!
-4.2) Tap on the server card when you want to start your conversation!
-4.3) Tap on "Share" to generate a code and give it to people when they want to join the server!
+  - Tap on the floating action button to Join / Create a server!
+  - Tap on the server card when you want to start your conversation!
+  - Tap on "Share" to generate a code and give it to people when they want to join the server!
 
 5) View Profile Page
-5.1) Tap on the floating action button to edit your profile!
-5.2 Click Confirm to return to your profile and enjoy your new customized profile
+  - Tap on the floating action button to edit your profile!
+  - Click Confirm to return to your profile and enjoy your new customized profile
 
