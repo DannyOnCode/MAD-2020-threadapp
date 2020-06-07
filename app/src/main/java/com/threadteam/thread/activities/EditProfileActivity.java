@@ -3,6 +3,7 @@ package com.threadteam.thread.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.cardview.widget.CardView;
 
 import android.app.Activity;
@@ -101,14 +102,30 @@ public class EditProfileActivity extends AppCompatActivity {
     EditText mStatusTitle;
     EditText mDescription;
     ProgressBar mProgressBar;
+    Toolbar TopNavToolbar;
 
 
     // ACTIVITY STATE MANAGEMENT METHODS
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editprofile);
+
+        // BIND TOOLBARS
+        // NOTE:    IT IS IMPORTANT TO GET THE INCLUDE VIEWS BEFORE DOING FIND VIEW BY ID.
+        //          THIS ENSURES THAT ANDROID CAN ALWAYS FIND THE CORRECT VIEW OBJECT.
+
+        View includeView = findViewById(R.id.editProfileInclude);
+        TopNavToolbar = (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+
+        logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
+
+        // SETUP TOOLBARS
+        TopNavToolbar.setTitle("Edit Profile");
+        this.setSupportActionBar(TopNavToolbar);
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        logHandler.printDefaultLog(LogHandler.TOOLBAR_SETUP);
 
         // BIND VIEW OBJECTS
         mButtonChooseImage = (ImageView) findViewById(R.id.buttonSelectImage);

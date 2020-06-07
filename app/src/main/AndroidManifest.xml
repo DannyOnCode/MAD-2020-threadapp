@@ -16,6 +16,7 @@
             android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".activities.EditProfileActivity"
+            android:parentActivityName=".activities.ViewProfileActivity"
             android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".activities.ViewProfileActivity" />
