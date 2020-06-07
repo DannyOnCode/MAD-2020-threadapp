@@ -10,6 +10,7 @@ Customize your avatar and earn your level as you chat (to be implemented)
 
 -----------------------------------------------------------------------------------------------------
 Through this application we have used Firebase RealTime Database
+
 RealTime Database Data Tree
 
 ```json
