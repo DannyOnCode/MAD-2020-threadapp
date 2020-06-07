@@ -166,15 +166,16 @@ public class ChatActivity extends AppCompatActivity {
         ChatMessageRecyclerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                InputMethodManager imm = (InputMethodManager) ChatActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                View view  = ChatActivity.this.getCurrentFocus();
-                if (view == null) {
-                    view = new View(ChatActivity.this);
-                }
-                if (imm != null && imm.isActive()) {
-                    // Disabled this log due to tendency to flood logcat
-                    // logHandler.printLogWithMessage("RecyclerView detected touch, hiding keyboard!");
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    InputMethodManager imm = (InputMethodManager) ChatActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    View view  = ChatActivity.this.getCurrentFocus();
+                    if (view == null) {
+                        view = new View(ChatActivity.this);
+                    }
+                    if (imm != null && imm.isAcceptingText()) {
+                        logHandler.printLogWithMessage("RecyclerView detected touch, hiding keyboard (if active)!");
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
                 }
                 return false;
             }
@@ -188,9 +189,8 @@ public class ChatActivity extends AppCompatActivity {
 
                 LinearLayoutManager llm = (LinearLayoutManager) recyclerView.getLayoutManager();
 
-                if(dy < 0) {
-                    // Disabled this log due to tendency to flood logcat
-                    // logHandler.printLogWithMessage("Scrolled up, setting scrollToLatestMessage = false!");
+                if(dy < 0 && scrollToLatestMessage) {
+                    logHandler.printLogWithMessage("Scrolled up, toggled scrollToLatestMessage = false!");
                     scrollToLatestMessage = false;
 
                 } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == adapter.chatMessageList.size()-1) {
