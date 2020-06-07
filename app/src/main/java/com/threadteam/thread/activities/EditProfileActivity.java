@@ -8,18 +8,9 @@ import androidx.cardview.widget.CardView;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,62 +20,86 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.User;
 
-import org.w3c.dom.Text;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditProfileActivity extends AppCompatActivity {
 
+    // TODO: DOCUMENTATION TO BE CONTINUED
+    //LOGGING
+    private LogHandler logHandler = new LogHandler("Edit Profile Activity");
+
+    // DATA STORE
+    //
+    // mImageUri:               STORE IMAGE URI FROM FILE IMAGE FOR UPLOADING TO FIREBASE
+    // PICK_IMAGE_REQUEST       CONSTANT REQUEST TO IDENTIFY IMAGE REQUEST
+    private Uri mImageUri;
     private static final int PICK_IMAGE_REQUEST = 1;
 
-    ImageView mButtonChooseImage;
-    CircleImageView mDisplayImage;
-    EditText mUserNameEdit;
-    EditText mStatusTitle;
-    EditText mDescription;
-    Button mCancelButton;
-    Button mConfirmButton;
-    ProgressBar mProgressBar;
-    CardView mCardView;
-
-    private Uri mImageUri;
-
+    // FIREBASE
+    //
+    // currentUser:             CURRENT USER FOR THE CURRENT SESSION
+    // firebaseAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION
+    // mDatabaseRef:            FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION
+    // mStorageRef:             FIREBASE STORAGE REFERENCE FOR THE CURRENT SESSION
+    // currentData:             VALUE EVENT LISTENER FOR RETRIEVING CURRENT DATA OF USER
     private StorageReference mStorageRef;
     private DatabaseReference mDatabaseRef;
     private FirebaseUser currentUser;
     private FirebaseAuth firebaseAuth;
+    private ValueEventListener currentData;
 
+    // VIEW OBJECTS
+    //
+    // mButtonChooseImage:      TRIGGERS PICKING IMAGE FROM DEVICE FILE
+    // mCancelButton:           TRIGGERS RETURN TO PROFILE PAGE
+    // mConfirmButton:          TRIGGERS UPLOAD TO FIREBASE WITH ALL NECESSARY INPUT DATA
+    // mDisplayImage:           DISPLAYS PROFILE PICTURE
+    // mUserNameEdit:           CONTAINS USERNAME DATA OF USER TO BE UPLOADED TO DATABASE
+    // mStatusTitle:            CONTAINS Status/Title DATA OF USER TO BE UPLOADED TO DATABASE
+    // mDescription:            CONTAINS ABOUT ME DESCRIPTION DATA OF USER TO BE UPLOADED TO DATABASE
+    // mProgressBar:            DISPLAYS THE UPLOAD PROGRESS ONCE mConfirmButton HAS BEEN CLICKED
+    // mCardView:               HOLDS THE ENTIRE EDIT PROFILE WHICH ALSO CONTAINS KEYBOARD CLOSE FUNCTION
+    ImageView mButtonChooseImage;
+    Button mCancelButton;
+    Button mConfirmButton;
+    CircleImageView mDisplayImage;
+    EditText mUserNameEdit;
+    EditText mStatusTitle;
+    EditText mDescription;
+    ProgressBar mProgressBar;
+    CardView mCardView;
+
+
+    // ACTIVITY STATE MANAGEMENT METHODS
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editprofile);
 
+        // BIND VIEW OBJECTS
         mButtonChooseImage = (ImageView) findViewById(R.id.buttonSelectImage);
         mDisplayImage = (CircleImageView) findViewById(R.id.userProfilePictureEdit);
         mConfirmButton = (Button) findViewById(R.id.confirmButton);
@@ -94,39 +109,29 @@ public class EditProfileActivity extends AppCompatActivity {
         mDescription = (EditText) findViewById(R.id.aboutMeDesciptionEdit);
         mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mCardView = (CardView) findViewById(R.id.retractKeyboard);
+        //LOG
+        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
 
+        // INITIALISE FIREBASE
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
         mDatabaseRef = FirebaseDatabase.getInstance().getReference("users");
-
         firebaseAuth = FirebaseAuth.getInstance();
+
         currentUser = firebaseAuth.getCurrentUser();
+        //Validation for if there is a user
+        if(currentUser == null) {
+            logHandler.printDefaultLog(LogHandler.FIREBASE_USER_NOT_FOUND);
+            Intent backToLogin = new Intent(EditProfileActivity.this, LoginActivity.class);
+            startActivity(backToLogin);
+            logHandler.printActivityIntentLog("Login Activity");
+            return;
+        }
+        logHandler.printDefaultLog(LogHandler.FIREBASE_USER_FOUND);
         String userID = currentUser.getUid();
-        mDatabaseRef.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String initialProfileImage = (String) dataSnapshot.child("_profileImageURL").getValue();
-                String initialUserName = (String) dataSnapshot.child("_username").getValue();
-                String initialStatusMessage = (String) dataSnapshot.child("_statusMessage").getValue();
-                String initialAboutMeMessage = (String) dataSnapshot.child("_aboutUsMessage").getValue();
-                Picasso.get()
-                        .load(initialProfileImage)
-                        .fit()
-                        .placeholder(R.drawable.profilepictureempty)
-                        .error(R.drawable.profilepictureempty)
-                        .centerCrop()
-                        .into(mDisplayImage);
-                mUserNameEdit.setText(initialUserName);
-                mStatusTitle.setText(initialStatusMessage);
-                mDescription.setText(initialAboutMeMessage);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Toast.makeText(EditProfileActivity.this,"No previous profile image",Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
+        // SETUP VIEW OBJECTS
+        //Populate Buttons with Listeners
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -137,15 +142,19 @@ public class EditProfileActivity extends AppCompatActivity {
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Validation for correct username input
                 if(TextUtils.isEmpty(mUserNameEdit.getText())){
                     mUserNameEdit.setError( "Username is required!" );
+                    logHandler.printLogWithMessage("Input Username was: " + mUserNameEdit.getText());
                 }
                 else if(mUserNameEdit.getText().length() < 2 ){
                     mUserNameEdit.setError("Minimum of 3 characters is required");
+                    logHandler.printLogWithMessage("Input Username was: " + mUserNameEdit.getText());
                 }
 
                 else if (mUserNameEdit.getText().length() > 16){
                     mUserNameEdit.setError("Maximum 16 characters only");
+                    logHandler.printLogWithMessage("Input Username was: " + mUserNameEdit.getText());
                 }
                 else{
                     uploadUserData();
@@ -156,12 +165,14 @@ public class EditProfileActivity extends AppCompatActivity {
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Moving activity
                 Intent goToViewProfile = new Intent(EditProfileActivity.this, ViewProfileActivity.class);
+                logHandler.printActivityIntentLog("View Profile Activity");
                 startActivity(goToViewProfile);
             }
         });
 
-
+        // Use CardView as scrim to dismiss keyboard
         mCardView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -176,8 +187,57 @@ public class EditProfileActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+
+        // INITIALISE LISTENERS
+
+        // currentData:     RETRIEVES CURRENT USER'S DATA
+        //                  CORRECT INVOCATION CODE: databaseRef.child("users")
+        //                                                      .child(currentUser.getUid())
+        //                                                      .addListenerForSingleValueEvent(currentData)
+        //                  SHOULD NOT BE USED INDEPENDENTLY.
+        currentData = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String initialProfileImage = (String) dataSnapshot.child("_profileImageURL").getValue();
+                String initialUserName = (String) dataSnapshot.child("_username").getValue();
+                String initialStatusMessage = (String) dataSnapshot.child("_statusMessage").getValue();
+                String initialAboutMeMessage = (String) dataSnapshot.child("_aboutUsMessage").getValue();
+
+                logHandler.printDatabaseResultLog(".getValue()", "Current Profile Image", "currentData", initialProfileImage);
+                logHandler.printDatabaseResultLog(".getValue()", "Current Username", "currentData", initialUserName);
+                logHandler.printDatabaseResultLog(".getValue()", "Current Status/Title", "currentData", initialStatusMessage);
+                logHandler.printDatabaseResultLog(".getValue()", "Current Description", "currentData", initialAboutMeMessage);
+                Picasso.get()
+                        .load(initialProfileImage)
+                        .fit()
+                        .placeholder(R.drawable.profilepictureempty)
+                        .error(R.drawable.profilepictureempty)
+                        .centerCrop()
+                        .into(mDisplayImage);
+                mUserNameEdit.setText(initialUserName);
+                mStatusTitle.setText(initialStatusMessage);
+                mDescription.setText(initialAboutMeMessage);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(EditProfileActivity.this,"No previous profile image",Toast.LENGTH_SHORT).show();
+                logHandler.printDatabaseErrorLog(databaseError);
+            }
+        };
+
+
+        // Input all current User data
+        mDatabaseRef.child(userID).addListenerForSingleValueEvent(currentData);
+
+        logHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
     }
 
+
+    // CLASS METHODS
+    //Open Device File Explorer to search for image only
     private void openFileChooser(){
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -185,6 +245,8 @@ public class EditProfileActivity extends AppCompatActivity {
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
     }
 
+
+    //Process image selected
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -203,12 +265,14 @@ public class EditProfileActivity extends AppCompatActivity {
 
         }
     }
+    //Get File Extensions e.g(.png , .jpg)
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
+    //Upload UserData to Firebase Storage and Update RealTime Database
     private void uploadUserData(){
         if(mImageUri != null){
             final StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
@@ -243,6 +307,10 @@ public class EditProfileActivity extends AppCompatActivity {
                         user.set_aboutUsMessage(mDescription.getText().toString().trim());
                         user.set_statusMessage(mStatusTitle.getText().toString().trim());
 
+                        logHandler.printLogWithMessage("User submitted username: " + mUserNameEdit.getText().toString().trim());
+                        logHandler.printLogWithMessage("User submitted status/title: " + mStatusTitle.getText().toString().trim());
+                        logHandler.printLogWithMessage("User submitted description: " + mDescription.getText().toString().trim());
+
                         mDatabaseRef.child(userID).child("_username").setValue(user.get_username());
                         mDatabaseRef.child(userID).child("_statusMessage").setValue(user.get_statusMessage());
                         mDatabaseRef.child(userID).child("_aboutUsMessage").setValue(user.get_aboutUsMessage());
@@ -257,6 +325,8 @@ public class EditProfileActivity extends AppCompatActivity {
                                     }
                                 },500);
                                 startActivity(new Intent(EditProfileActivity.this, ViewProfileActivity.class));
+                                logHandler.printLogWithMessage("Upload Userdata successful");
+                                logHandler.printActivityIntentLog("View Profile Activity");
                                 Toast.makeText(EditProfileActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
                             }
                         });
@@ -265,10 +335,12 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     } else
                     {
+                        logHandler.printLogWithMessage("Upload failed at upload: " + task.getException().getMessage());
                         Toast.makeText(EditProfileActivity.this, "upload failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
             });
+            //When no profile image has been given
         }else{
             firebaseAuth = FirebaseAuth.getInstance();
             currentUser = firebaseAuth.getCurrentUser();
@@ -277,6 +349,10 @@ public class EditProfileActivity extends AppCompatActivity {
             user.set_username(mUserNameEdit.getText().toString().trim());
             user.set_aboutUsMessage(mDescription.getText().toString().trim());
             user.set_statusMessage(mStatusTitle.getText().toString().trim());
+
+            logHandler.printLogWithMessage("User submitted username: " + mUserNameEdit.getText().toString().trim());
+            logHandler.printLogWithMessage("User submitted status/title: " + mStatusTitle.getText().toString().trim());
+            logHandler.printLogWithMessage("User submitted description: " + mDescription.getText().toString().trim());
 
             mDatabaseRef.child(userID).child("_username").setValue(user.get_username());
             mDatabaseRef.child(userID).child("_statusMessage").setValue(user.get_statusMessage());
@@ -291,6 +367,7 @@ public class EditProfileActivity extends AppCompatActivity {
                         }
                     }, 500);
                     startActivity(new Intent(EditProfileActivity.this, ViewProfileActivity.class));
+                    logHandler.printActivityIntentLog("View Profile Activity");
                     Toast.makeText(EditProfileActivity.this, "Updated successfully", Toast.LENGTH_LONG).show();
                 }
 
