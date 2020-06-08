@@ -9,9 +9,9 @@ With server functions you will be able to speak to not just one but many! All At
 Customize your avatar and earn your level as you chat (to be implemented)
 
 -----------------------------------------------------------------------------------------------------
-Through this application we have used Firebase RealTime Database
+Through this application we have used Firebase Realtime Database
 
-RealTime Database Data Tree
+## Realtime Database Data Tree
 
 ```json
 "thread" : {
@@ -55,7 +55,7 @@ RealTime Database Data Tree
 
               
               
-How to Use
+## How to Use
 1) Sign In with your Email address and password
 2) You are now free to explore the application
 3) View Profile & View Server pages can be navigated through the bottom navigation bar
@@ -69,3 +69,20 @@ How to Use
   - Tap on the floating action button to edit your profile!
   - Click Confirm to return to your profile and enjoy your new customized profile
 
+
+
+
+## Credits
+
+Thabith:
+- Login/Register Activities
+- Reset Password
+
+Danny:
+- View/Edit Profile Activities
+- Profile pics
+
+Eugene:
+- View/Add (Join/Create) Servers, Chat Activities
+- Share Server Code
+- Leave/Delete Servers
