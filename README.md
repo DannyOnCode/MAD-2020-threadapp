@@ -1,6 +1,6 @@
 # MAD-2020-threadapp
 a social app made for an assignment.
-codeveloped by Eugene L., Danny C. and Mohammad T.
+codeveloped by Eugene Long (S10193060J), Danny Chan (S10196363F) and Mohammad Thabith (S10196396).
 
 Welcome to our Application [THREAD]
 
