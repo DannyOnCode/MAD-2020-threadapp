@@ -17,12 +17,12 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -36,7 +36,6 @@ import com.threadteam.thread.adapters.ViewProfileAdapter;
 import com.threadteam.thread.models.User;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 // VIEW PROFILE ACTIVITY
@@ -86,7 +85,7 @@ public class ViewProfileActivity extends AppCompatActivity {
     private RecyclerView profileView;
     private Toolbar TopNavToolbar;
     private ActionMenuView BottomToolbarAMV;
-    private Button BottomToolbarButton;
+    private ImageButton MainActionFAB;
 
     // ACTIVITY STATE MANAGEMENT METHODS
     @Override
@@ -102,7 +101,7 @@ public class ViewProfileActivity extends AppCompatActivity {
         View bottomToolbarView = findViewById(R.id.profileBottomToolbarInclude);
         TopNavToolbar = topNavView.findViewById(R.id.topNavToolbar);
         BottomToolbarAMV = bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
-        BottomToolbarButton = bottomToolbarView.findViewById(R.id.bottomToolbarButton);
+        MainActionFAB = bottomToolbarView.findViewById(R.id.mainActionFAB);
 
         logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
 
@@ -116,8 +115,8 @@ public class ViewProfileActivity extends AppCompatActivity {
         });
 
         Drawable icon = ContextCompat.getDrawable(this, R.drawable.round_create_white_24);
-        BottomToolbarButton.setCompoundDrawablesWithIntrinsicBounds(icon, null, null, null);
-        BottomToolbarButton.setOnClickListener(new View.OnClickListener() {
+        MainActionFAB.setImageDrawable(icon);
+        MainActionFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent goToEditProfile = new Intent(ViewProfileActivity.this, EditProfileActivity.class);

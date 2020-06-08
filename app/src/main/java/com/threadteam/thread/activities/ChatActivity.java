@@ -16,7 +16,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +26,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -110,7 +110,7 @@ public class ChatActivity extends AppCompatActivity {
 
     private RecyclerView ChatMessageRecyclerView;
     private EditText MessageEditText;
-    private Button SendMsgButton;
+    private ImageButton SendMsgButton;
     private Toolbar TopNavToolbar;
 
     // ACTIVITY STATE MANAGEMENT METHODS
