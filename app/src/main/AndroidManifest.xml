@@ -11,27 +11,25 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".activities.RegisterActivity"
+        <activity android:name=".activities.PostsActivity"></activity>
+        <activity
+            android:name=".activities.RegisterActivity"
             android:windowSoftInputMode="adjustResize" />
-
-        <activity android:name=".activities.EditProfileActivity"
+        <activity
+            android:name=".activities.EditProfileActivity"
             android:parentActivityName=".activities.ViewProfileActivity"
             android:windowSoftInputMode="adjustResize" />
-
         <activity android:name=".activities.ViewProfileActivity" />
-
         <activity android:name=".activities.ViewServersActivity" />
-
-        <activity android:name=".activities.AddServerActivity"
+        <activity
+            android:name=".activities.AddServerActivity"
             android:parentActivityName=".activities.ViewServersActivity"
-            android:windowSoftInputMode="adjustResize"/>
-
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".activities.ChatActivity"
             android:parentActivityName=".activities.ViewServersActivity" />
-
-        <activity android:name=".activities.LoginActivity"
+        <activity
+            android:name=".activities.LoginActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,7 +41,6 @@
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
-
     </application>
 
 </manifest>
