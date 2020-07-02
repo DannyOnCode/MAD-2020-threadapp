@@ -14,14 +14,14 @@ import com.threadteam.thread.R;
 public class PostsItemViewHolder extends RecyclerView.ViewHolder {
 
     // VIEW OBJECTS
-    ConstraintLayout BasePostItemConstraintLayout;
-    CardView PostItemCardView;
-    ConstraintLayout PostItemConstraintLayout;
-    ImageView PostImageView;
-    TextView PostTitleTextView;
-    TextView PostDescTextView;
-    TextView PostSenderTextView;
-    TextView PostTimestampTextView;
+    private ConstraintLayout BasePostItemConstraintLayout;
+    private CardView PostItemCardView;
+    private ConstraintLayout PostItemConstraintLayout;
+    public ImageView PostImageView;
+    public TextView PostTitleTextView;
+    public TextView PostDescTextView;
+    public TextView PostSenderTextView;
+    public TextView PostTimestampTextView;
 
     public PostsItemViewHolder(@NonNull View itemView) {
         super(itemView);

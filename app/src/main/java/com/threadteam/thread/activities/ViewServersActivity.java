@@ -112,6 +112,7 @@ public class ViewServersActivity extends AppCompatActivity {
         // BIND TOOLBARS
         // NOTE:    IT IS IMPORTANT TO GET THE INCLUDE VIEWS BEFORE DOING FIND VIEW BY ID.
         //          THIS ENSURES THAT ANDROID CAN ALWAYS FIND THE CORRECT VIEW OBJECT.
+
         View topNavView = findViewById(R.id.serversNavBarInclude);
         View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
         TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
@@ -361,7 +362,7 @@ public class ViewServersActivity extends AppCompatActivity {
             return;
         }
 
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_chat_white_36);
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_home_white_36);
 
         if(drawable == null) {
             logHandler.printLogWithMessage("Drawable for round_chat_white_36 not found! Cancelling icon update!");

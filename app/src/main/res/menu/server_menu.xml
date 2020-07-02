@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/postsMenuItem"
+        android:icon="@drawable/round_all_inbox_white_36"
+        android:title="Posts"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/chatMenuItem"
+        android:icon="@drawable/round_chat_white_36"
+        android:title="Chat"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/membersMenuItem"
+        android:icon="@drawable/round_group_white_36"
+        android:title="Members"
+        app:showAsAction="always" />
+</menu>
