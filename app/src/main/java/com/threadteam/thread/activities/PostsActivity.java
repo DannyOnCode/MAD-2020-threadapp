@@ -2,10 +2,10 @@ package com.threadteam.thread.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,21 +29,18 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
-import com.threadteam.thread.adapters.ChatMessageAdapter;
+import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.PostsItemAdapter;
-import com.threadteam.thread.adapters.ViewServerAdapter;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.Post;
-import com.threadteam.thread.models.Server;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 
-public class PostsActivity extends AppCompatActivity {
+public class PostsActivity extends ServerBaseActivity {
 
     // LOGGING
     private LogHandler logHandler = new LogHandler("Posts Activity");
@@ -319,30 +315,19 @@ public class PostsActivity extends AppCompatActivity {
         //TODO: go to view post activity (when complete)
     }
 
-    @SuppressLint("RestrictedApi")
-    private void toggleOwnMenuItemDisplay(Boolean isEnabled) {
-
-        ActionMenuItemView ViewServersAMIV = (ActionMenuItemView) findViewById(R.id.postsMenuItem);
-
-        if(ViewServersAMIV == null) {
-            logHandler.printLogWithMessage("Can't find Bottom Toolbar menu item for View Servers! Cancelling icon update!");
-            return;
-        }
-
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_all_inbox_white_36);
-
-        if(drawable == null) {
-            logHandler.printLogWithMessage("Drawable for round_all_inbox_white_36 not found! Cancelling icon update!");
-        } else {
-            if(isEnabled) {
-                drawable.setColorFilter(null);
-            } else {
-                drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
-            }
-            ViewServersAMIV.setIcon(drawable);
-
-            logHandler.printLogWithMessage("Successfully toggled menu item for View Servers to " + isEnabled.toString());
-        }
+    @Override
+    protected void onDestroy() {
+        logHandler.printDefaultLog(LogHandler.STATE_ON_DESTROY);
+        Utils.ToggleMenuItemAlpha(
+                this,
+                R.id.viewProfileMenuItem,
+                "View Profile",
+                R.drawable.round_face_white_36,
+                "round_face_white_36",
+                true,
+                logHandler
+        );
+        super.onDestroy();
     }
 
     // TOOLBAR OVERRIDE METHODS
@@ -350,14 +335,23 @@ public class PostsActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Make ViewServers Button on menu bar look disabled
-        toggleOwnMenuItemDisplay(false);
+        Utils.ToggleMenuItemAlpha(
+                this,
+                R.id.postsMenuItem,
+                "Posts",
+                R.drawable.round_all_inbox_white_36,
+                "round_all_inbox_white_26",
+                false,
+                logHandler
+        );
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        addServerMenuItemsToMenu(menu);
         getMenuInflater().inflate(R.menu.server_menu, BottomToolbarAMV.getMenu());
-        return true;
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -371,17 +365,25 @@ public class PostsActivity extends AppCompatActivity {
             case R.id.chatMenuItem:
                 logHandler.printLogWithMessage("User tapped on Chat Menu Item!");
 
-                Intent goToChat = new Intent(PostsActivity.this, ChatActivity.class);
-                String EXTRA_SERVER_ID_KEY = "SERVER_ID";
-                String EXTRA_SERVER_ID_VALUE = serverId;
-                goToChat.putExtra(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
-                goToChat.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(goToChat);
-                logHandler.printActivityIntentLog("Chat Activity");
-                logHandler.printIntentExtrasLog(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
+                HashMap<String, String> extraMap = new HashMap<String, String>();
+                extraMap.put("SERVER_ID", serverId);
+                Utils.StartActivityOnNewStack(
+                        PostsActivity.this,
+                        ChatActivity.class,
+                        "Chat Activity",
+                        extraMap,
+                        logHandler);
 
                 // Reset disabled ActionMenuItemView button back to normal state
-                toggleOwnMenuItemDisplay(true);
+                Utils.ToggleMenuItemAlpha(
+                        this,
+                        R.id.postsMenuItem,
+                        "Posts",
+                        R.drawable.round_all_inbox_white_36,
+                        "round_all_inbox_white_26",
+                        true,
+                        logHandler
+                );
 
                 finish();
                 return true;
@@ -392,10 +394,24 @@ public class PostsActivity extends AppCompatActivity {
             case android.R.id.home:
                 logHandler.printLogWithMessage("User tapped on Back Button!");
 
-                Intent goToViewServers = new Intent(PostsActivity.this, ViewServersActivity.class);
-                goToViewServers.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(goToViewServers);
-                logHandler.printActivityIntentLog("View Servers Activity");
+                Utils.StartActivityOnNewStack(
+                        PostsActivity.this,
+                        ViewServersActivity.class,
+                        "View Servers Activity",
+                        null,
+                        logHandler);
+                break;
+
+            case SHARE_SERVER_MENU_ITEM:
+                logHandler.printLogWithMessage("User tapped on Share Server Menu Item!");
+                ConstraintLayout baseLayer = (ConstraintLayout) findViewById(R.id.basePostsConstraintLayout);
+                showShareServerPopup(baseLayer, serverId);
+                break;
+
+            case LEAVE_SERVER_MENU_ITEM:
+                logHandler.printLogWithMessage("User tapped on Leave Server Menu Item!");
+                handleLeaveServerAlert(serverId, currentUser.getUid());
+                break;
         }
 
         return super.onOptionsItemSelected(item);

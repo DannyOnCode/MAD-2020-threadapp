@@ -2,7 +2,6 @@ package com.threadteam.thread.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -13,8 +12,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -32,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
+import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ViewProfileAdapter;
 import com.threadteam.thread.models.User;
 
@@ -219,7 +216,15 @@ public class ViewProfileActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         logHandler.printDefaultLog(LogHandler.STATE_ON_DESTROY);
-        toggleOwnMenuItemDisplay(true);
+        Utils.ToggleMenuItemAlpha(
+                this,
+                R.id.viewProfileMenuItem,
+                "View Profile",
+                R.drawable.round_face_white_36,
+                "round_face_white_36",
+                true,
+                logHandler
+        );
         super.onDestroy();
     }
 
@@ -230,7 +235,15 @@ public class ViewProfileActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Make ViewServers Button on menu bar look disabled
-        toggleOwnMenuItemDisplay(false);
+        Utils.ToggleMenuItemAlpha(
+                this,
+                R.id.viewProfileMenuItem,
+                "View Profile",
+                R.drawable.round_face_white_36,
+                "round_face_white_36",
+                false,
+                logHandler
+        );
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -248,13 +261,23 @@ public class ViewProfileActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.viewServersMenuItem:
 
-                Intent goToViewServer = new Intent(ViewProfileActivity.this, ViewServersActivity.class);
-                goToViewServer.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(goToViewServer);
-                logHandler.printActivityIntentLog("View Server Activity");
+                Utils.StartActivityOnNewStack(
+                        ViewProfileActivity.this,
+                        ViewServersActivity.class,
+                        "View Servers Activity",
+                        null,
+                        logHandler);
 
                 // Reset disabled ActionMenuItemView button back to normal state
-                toggleOwnMenuItemDisplay(true);
+                Utils.ToggleMenuItemAlpha(
+                        this,
+                        R.id.viewProfileMenuItem,
+                        "View Profile",
+                        R.drawable.round_face_white_36,
+                        "round_face_white_36",
+                        true,
+                        logHandler
+                );
 
                 ViewProfileActivity.this.finish();
                 return true;
@@ -271,37 +294,5 @@ public class ViewProfileActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    // NAME:                toggleOwnMenuItemDisplay
-    // DESCRIPTION:         TOGGLES THE MENU ITEM'S VISUAL STATE FOR THE CURRENT ACTIVITY
-    // INPUTS:
-    // isEnabled:           WHEN TRUE, SETS THE MENU ITEM TO FULL OPACITY, OTHERWISE SETS IT TO 40%
-    // RETURN VALUE:        NULL
-    @SuppressLint("RestrictedApi")
-    private void toggleOwnMenuItemDisplay(Boolean isEnabled) {
-        // Make ViewServers Button on menu bar look disabled
-        ActionMenuItemView viewProfile = (ActionMenuItemView) findViewById(R.id.viewProfileMenuItem);
-
-        if(viewProfile == null) {
-            logHandler.printLogWithMessage("Can't find Bottom Toolbar menu item for View Profile! Cancelling icon update!");
-            return;
-        }
-
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_face_white_36);
-
-        if(drawable == null) {
-            logHandler.printLogWithMessage("Drawable for round_face_white_36 not found! Cancelling icon update!");
-            //Log.v(LogTAG, "drawable for round_chat_white_36 not found! Cancelling icon update!");
-        } else {
-            if(isEnabled) {
-                drawable.setColorFilter(null);
-            } else {
-                drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
-            }
-            viewProfile.setIcon(drawable);
-
-            logHandler.printLogWithMessage("Successfully toggled menu item for View Servers to " + isEnabled.toString());
-        }
     }
 }

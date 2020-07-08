@@ -2,33 +2,23 @@ package com.threadteam.thread.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.core.content.ContextCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.material.bottomappbar.BottomAppBar;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -39,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
+import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ViewServerAdapter;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.LogHandler;
@@ -46,6 +37,7 @@ import com.threadteam.thread.models.Server;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 // VIEW SERVERS ACTIVITY
 //
@@ -316,7 +308,15 @@ public class ViewServersActivity extends AppCompatActivity {
         }
 
         // RESET VIEW SERVERS MENU ITEM
-        toggleOwnMenuItemDisplay(true);
+        Utils.ToggleMenuItemAlpha(
+                this,
+                R.id.viewServersMenuItem,
+                "View Servers",
+                R.drawable.round_home_white_36,
+                "round_home_white_36",
+                false,
+                logHandler
+        );
 
         super.onDestroy();
     }
@@ -326,13 +326,15 @@ public class ViewServersActivity extends AppCompatActivity {
     private void handleTransitionIntoServer(Integer position) {
         logHandler.printLogWithMessage("User tapped on a server!");
 
-        Intent transitionToChat = new Intent(ViewServersActivity.this, PostsActivity.class);
-        String EXTRA_SERVER_ID_KEY = "SERVER_ID";
-        String EXTRA_SERVER_ID_VALUE = adapter.serverList.get(position).get_id();
-        transitionToChat.putExtra(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
-        startActivity(transitionToChat);
-        logHandler.printActivityIntentLog("Chat Activity");
-        logHandler.printIntentExtrasLog(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
+        HashMap<String, String> extraMap = new HashMap<String, String>();
+        extraMap.put("SERVER_ID", adapter.serverList.get(position).get_id());
+        Utils.StartActivityOnNewStack(
+                ViewServersActivity.this,
+                PostsActivity.class,
+                "Posts Activity",
+                extraMap,
+                logHandler);
+
         onStop();
     }
 
@@ -351,38 +353,20 @@ public class ViewServersActivity extends AppCompatActivity {
     // isEnabled:           WHEN TRUE, SETS THE MENU ITEM TO FULL OPACITY, OTHERWISE SETS IT TO 40%
     // RETURN VALUE:        NULL
 
-    @SuppressLint("RestrictedApi")
-    private void toggleOwnMenuItemDisplay(Boolean isEnabled) {
-
-        ActionMenuItemView ViewServersAMIV = (ActionMenuItemView) findViewById(R.id.viewServersMenuItem);
-
-        if(ViewServersAMIV == null) {
-            logHandler.printLogWithMessage("Can't find Bottom Toolbar menu item for View Servers! Cancelling icon update!");
-            return;
-        }
-
-        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_home_white_36);
-
-        if(drawable == null) {
-            logHandler.printLogWithMessage("Drawable for round_chat_white_36 not found! Cancelling icon update!");
-        } else {
-            if(isEnabled) {
-                drawable.setColorFilter(null);
-            } else {
-                drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
-            }
-            ViewServersAMIV.setIcon(drawable);
-
-            logHandler.printLogWithMessage("Successfully toggled menu item for View Servers to " + isEnabled.toString());
-        }
-    }
-
     // TOOLBAR OVERRIDE METHODS
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Make ViewServers Button on menu bar look disabled
-        toggleOwnMenuItemDisplay(false);
+        Utils.ToggleMenuItemAlpha(
+                this,
+                R.id.viewServersMenuItem,
+                "View Servers",
+                R.drawable.round_home_white_36,
+                "round_home_white_36",
+                false,
+                logHandler
+        );
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -404,13 +388,23 @@ public class ViewServersActivity extends AppCompatActivity {
             case R.id.viewProfileMenuItem:
                 logHandler.printLogWithMessage("User tapped on ViewProfile Menu Item!");
 
-                Intent goToViewProfile = new Intent(ViewServersActivity.this, ViewProfileActivity.class);
-                goToViewProfile.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                startActivity(goToViewProfile);
-                logHandler.printActivityIntentLog("ViewProfile Activity");
+                Utils.StartActivityOnNewStack(
+                        ViewServersActivity.this,
+                        ViewProfileActivity.class,
+                        "View Profile Activity",
+                        null,
+                        logHandler);
 
                 // Reset disabled ActionMenuItemView button back to normal state
-                toggleOwnMenuItemDisplay(true);
+                Utils.ToggleMenuItemAlpha(
+                        this,
+                        R.id.viewServersMenuItem,
+                        "View Servers",
+                        R.drawable.round_home_white_36,
+                        "round_home_white_36",
+                        true,
+                        logHandler
+                );
 
                 finish();
                 return true;

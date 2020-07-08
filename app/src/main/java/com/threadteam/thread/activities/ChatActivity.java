@@ -12,6 +12,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,6 +30,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.LogHandler;
+import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.ChatMessage;
@@ -73,17 +75,11 @@ public class ChatActivity extends ServerBaseActivity {
     // adapter:                 ADAPTER FOR CHAT MESSAGE RECYCLER VIEW.
     //                          HANDLES STORAGE OF DISPLAYED CHAT MESSAGE DATA AS WELL.
     // scrollToLatestMessage:   TOGGLE FOR SCROLL TO BOTTOM UPON MESSAGE ADDED. DOES THIS ACTION IF TRUE.
-    // SHARE_SERVER_MENU_ITEM:  CONSTANT DECLARING ID FOR THE SHARE SERVER MENU ITEM.
-    // LEAVE_SERVER_MENU_ITEM:  CONSTANT DECLARING ID FOR THE LEAVE SERVER MENU ITEM.
-    // shareCode:               CONTAINS THE CURRENT SHARING CODE OF THE SERVER (IF IT EXISTS)
-    //                          ALSO WORKS AS A FLAG FOR THE resetShareCode FUNCTION.
     // username:                CONTAINS CURRENT USER'S USERNAME. USED TO SEND MESSAGES.
 
     private String serverId;
     private ChatMessageAdapter adapter;
     private Boolean scrollToLatestMessage = false;
-    private Integer SHARE_SERVER_MENU_ITEM = -1;
-    private Integer LEAVE_SERVER_MENU_ITEM = -2;
     private String username;
 
     // VIEW OBJECTS
@@ -435,30 +431,40 @@ public class ChatActivity extends ServerBaseActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        addServerMenuItemsToMenu(menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if (item.getItemId() == SHARE_SERVER_MENU_ITEM) {
-            logHandler.printLogWithMessage("User tapped on Share Server Menu Item!");
-            ConstraintLayout baseLayer = (ConstraintLayout) findViewById(R.id.baseChatConstraintLayout);
-            showShareServerPopup(baseLayer, serverId);
+        switch (item.getItemId()) {
+            case SHARE_SERVER_MENU_ITEM:
+                logHandler.printLogWithMessage("User tapped on Share Server Menu Item!");
+                ConstraintLayout baseLayer = (ConstraintLayout) findViewById(R.id.baseChatConstraintLayout);
+                showShareServerPopup(baseLayer, serverId);
+                break;
 
-        } else if (item.getItemId() == LEAVE_SERVER_MENU_ITEM) {
-            logHandler.printLogWithMessage("User tapped on Leave Server Menu Item!");
-            handleLeaveServerAlert(serverId, currentUser.getUid());
+            case LEAVE_SERVER_MENU_ITEM:
+                logHandler.printLogWithMessage("User tapped on Leave Server Menu Item!");
+                handleLeaveServerAlert(serverId, currentUser.getUid());
+                break;
 
-        } else if (item.getItemId() == android.R.id.home) {
-            logHandler.printLogWithMessage("User tapped on Back Button!");
+            case android.R.id.home:
+                logHandler.printLogWithMessage("User tapped on Back Button!");
 
-            Intent goToPosts = new Intent(ChatActivity.this, PostsActivity.class);
-            String EXTRA_SERVER_ID_KEY = "SERVER_ID";
-            String EXTRA_SERVER_ID_VALUE = serverId;
-            goToPosts.putExtra(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
-            goToPosts.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(goToPosts);
-            logHandler.printActivityIntentLog("Post Activity");
-            logHandler.printIntentExtrasLog(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
+                HashMap<String, String> extraMap = new HashMap<String, String>();
+                extraMap.put("SERVER_ID", serverId);
+                Utils.StartActivityOnNewStack(
+                        ChatActivity.this,
+                        PostsActivity.class,
+                        "Posts Activity",
+                        extraMap,
+                        logHandler);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

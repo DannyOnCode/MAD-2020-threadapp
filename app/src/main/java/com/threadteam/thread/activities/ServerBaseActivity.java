@@ -31,11 +31,24 @@ import java.util.concurrent.TimeUnit;
 
 public class ServerBaseActivity extends AppCompatActivity {
 
+    // BASE ACTIVITY LOGGING
     private LogHandler logHandler = new LogHandler("Server Base Activity");
+
+    // FIREBASE
+    //
+    // databaseRef:             FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION
+
     private DatabaseReference databaseRef = FirebaseDatabase.getInstance().getReference();
 
-    private Integer SHARE_SERVER_MENU_ITEM = -1;
-    private Integer LEAVE_SERVER_MENU_ITEM = -2;
+    // DATA STORE
+    //
+    // SHARE_SERVER_MENU_ITEM:  CONSTANT DECLARING ID FOR THE SHARE SERVER MENU ITEM.
+    // LEAVE_SERVER_MENU_ITEM:  CONSTANT DECLARING ID FOR THE LEAVE SERVER MENU ITEM.
+    // shareCode:               CONTAINS THE CURRENT SHARING CODE OF THE SERVER (IF IT EXISTS)
+    //                          ALSO WORKS AS A FLAG FOR THE resetShareCode FUNCTION.
+
+    protected static final int SHARE_SERVER_MENU_ITEM = -1;
+    protected static final int LEAVE_SERVER_MENU_ITEM = -2;
     private String shareCode = null;
 
     protected void resetShareCode() {
@@ -300,11 +313,9 @@ public class ServerBaseActivity extends AppCompatActivity {
                 .addListenerForSingleValueEvent(presentDialog);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    protected void addServerMenuItemsToMenu(Menu menu) {
         menu.add(Menu.NONE, SHARE_SERVER_MENU_ITEM, Menu.NONE, "Share Server");
         menu.add(Menu.NONE, LEAVE_SERVER_MENU_ITEM, Menu.NONE, "Leave Server");
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
