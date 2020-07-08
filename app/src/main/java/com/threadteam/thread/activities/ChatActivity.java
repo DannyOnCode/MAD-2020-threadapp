@@ -84,7 +84,6 @@ public class ChatActivity extends ServerBaseActivity {
     private Boolean scrollToLatestMessage = false;
     private Integer SHARE_SERVER_MENU_ITEM = -1;
     private Integer LEAVE_SERVER_MENU_ITEM = -2;
-    private String shareCode;
     private String username;
 
     // VIEW OBJECTS
