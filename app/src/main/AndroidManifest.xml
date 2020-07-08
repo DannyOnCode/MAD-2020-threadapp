@@ -11,8 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".activities.PostsActivity" />
+        <activity android:name=".activities.AddPostActivity"></activity>
+        <activity android:name=".activities.PostsActivity" />
         <activity
             android:name=".activities.RegisterActivity"
             android:windowSoftInputMode="adjustResize" />
@@ -26,8 +26,7 @@
             android:name=".activities.AddServerActivity"
             android:parentActivityName=".activities.ViewServersActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".activities.ChatActivity" />
+        <activity android:name=".activities.ChatActivity" />
         <activity
             android:name=".activities.LoginActivity"
             android:windowSoftInputMode="adjustResize">
