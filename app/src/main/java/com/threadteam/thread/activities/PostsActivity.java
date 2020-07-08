@@ -3,6 +3,7 @@ package com.threadteam.thread.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -10,9 +11,13 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -88,15 +93,17 @@ public class PostsActivity extends AppCompatActivity {
         // NOTE:    IT IS IMPORTANT TO GET THE INCLUDE VIEWS BEFORE DOING FIND VIEW BY ID.
         //          THIS ENSURES THAT ANDROID CAN ALWAYS FIND THE CORRECT VIEW OBJECT.
 
-        View topNavView = findViewById(R.id.serversNavBarInclude);
-        View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
+        View topNavView = findViewById(R.id.postsNavBarInclude);
+        View bottomToolbarView = findViewById(R.id.postsBottomToolbarInclude);
         TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
         BottomToolbarAMV = (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
         MainActionFAB = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
 
         // SETUP TOOLBARS
-        this.setSupportActionBar(TopNavToolbar);
         TopNavToolbar.setTitle("Posts");
+        this.setSupportActionBar(TopNavToolbar);
+        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         BottomToolbarAMV.setOnMenuItemClickListener(new ActionMenuView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
@@ -310,5 +317,87 @@ public class PostsActivity extends AppCompatActivity {
 
     private void handleTransitionIntoPost(Integer position) {
         //TODO: go to view post activity (when complete)
+    }
+
+    @SuppressLint("RestrictedApi")
+    private void toggleOwnMenuItemDisplay(Boolean isEnabled) {
+
+        ActionMenuItemView ViewServersAMIV = (ActionMenuItemView) findViewById(R.id.postsMenuItem);
+
+        if(ViewServersAMIV == null) {
+            logHandler.printLogWithMessage("Can't find Bottom Toolbar menu item for View Servers! Cancelling icon update!");
+            return;
+        }
+
+        Drawable drawable = ContextCompat.getDrawable(this, R.drawable.round_all_inbox_white_36);
+
+        if(drawable == null) {
+            logHandler.printLogWithMessage("Drawable for round_all_inbox_white_36 not found! Cancelling icon update!");
+        } else {
+            if(isEnabled) {
+                drawable.setColorFilter(null);
+            } else {
+                drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
+            }
+            ViewServersAMIV.setIcon(drawable);
+
+            logHandler.printLogWithMessage("Successfully toggled menu item for View Servers to " + isEnabled.toString());
+        }
+    }
+
+    // TOOLBAR OVERRIDE METHODS
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Make ViewServers Button on menu bar look disabled
+        toggleOwnMenuItemDisplay(false);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.server_menu, BottomToolbarAMV.getMenu());
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        switch (item.getItemId()) {
+            case R.id.postsMenuItem:
+                // DISABLED
+                return false;
+
+            case R.id.chatMenuItem:
+                logHandler.printLogWithMessage("User tapped on Chat Menu Item!");
+
+                Intent goToChat = new Intent(PostsActivity.this, ChatActivity.class);
+                String EXTRA_SERVER_ID_KEY = "SERVER_ID";
+                String EXTRA_SERVER_ID_VALUE = serverId;
+                goToChat.putExtra(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
+                goToChat.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(goToChat);
+                logHandler.printActivityIntentLog("Chat Activity");
+                logHandler.printIntentExtrasLog(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
+
+                // Reset disabled ActionMenuItemView button back to normal state
+                toggleOwnMenuItemDisplay(true);
+
+                finish();
+                return true;
+
+            case R.id.membersMenuItem:
+                return false;
+
+            case android.R.id.home:
+                logHandler.printLogWithMessage("User tapped on Back Button!");
+
+                Intent goToViewServers = new Intent(PostsActivity.this, ViewServersActivity.class);
+                goToViewServers.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(goToViewServers);
+                logHandler.printActivityIntentLog("View Servers Activity");
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }

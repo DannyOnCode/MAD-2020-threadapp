@@ -136,8 +136,7 @@ public class ViewServersActivity extends AppCompatActivity {
         MainActionFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent goToEditProfile = new Intent(ViewServersActivity.this, AddServerActivity.class);
-                startActivity(goToEditProfile);
+                handleAddServer();
             }
         });
 
@@ -327,7 +326,7 @@ public class ViewServersActivity extends AppCompatActivity {
     private void handleTransitionIntoServer(Integer position) {
         logHandler.printLogWithMessage("User tapped on a server!");
 
-        Intent transitionToChat = new Intent(ViewServersActivity.this, ChatActivity.class);
+        Intent transitionToChat = new Intent(ViewServersActivity.this, PostsActivity.class);
         String EXTRA_SERVER_ID_KEY = "SERVER_ID";
         String EXTRA_SERVER_ID_VALUE = adapter.serverList.get(position).get_id();
         transitionToChat.putExtra(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);

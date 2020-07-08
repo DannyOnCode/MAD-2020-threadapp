@@ -466,6 +466,253 @@ public class ChatActivity extends AppCompatActivity {
         onStop();
     }
 
+    private void handleShareServerPopup() {
+        // LOGGING FOR SHARE SERVER POPUP WINDOW
+        LogHandler popupLogHandler = new LogHandler("ShareServerPopupWindow");
+
+        popupLogHandler.printLogWithMessage("Configuring Popup!");
+
+        ConstraintLayout BaseChatConstraintLayout = findViewById(R.id.baseChatConstraintLayout);
+
+        View popupView = LayoutInflater.from(this.getBaseContext()).inflate(
+                R.layout.activity_shareserver, BaseChatConstraintLayout, false
+        );
+
+        final PopupWindow shareCodePopup = new PopupWindow(
+                popupView,
+                (int) (BaseChatConstraintLayout.getWidth() * 0.8),
+                (int) (BaseChatConstraintLayout.getHeight() *0.8),
+                true);
+        shareCodePopup.setTouchable(true);
+        shareCodePopup.showAtLocation(BaseChatConstraintLayout, Gravity.CENTER, 0 ,0);
+        shareCodePopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss() {
+                resetShareCode();
+            }
+        });
+
+        popupLogHandler.printLogWithMessage("Completed configuring Popup!");
+
+        // BIND VIEW OBJECTS
+
+        ConstraintLayout BaseShareCodeConstraintLayout = popupView
+                .findViewById(R.id.baseShareCodeConstraintLayout);
+        Toolbar PopupToolbar = popupView.findViewById(R.id.shareCodeToolbar);
+        final Button RefreshCodeButton = popupView.findViewById(R.id.refreshCodeButton);
+        final TextView ShareCodeTextView = popupView.findViewById(R.id.shareCodeTextView);
+        final TextView ShareCodeDescTextView = popupView.findViewById(R.id.shareCodeDescTextView);
+        final TextView CodeExpiryTextView = popupView.findViewById(R.id.codeExpiryTextView);
+
+        popupLogHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
+
+        // SETUP VIEW OBJECTS
+
+        PopupToolbar.setTitle("Share Server Code");
+        RefreshCodeButton.setText("GET CODE");
+        ShareCodeTextView.setText("------");
+
+        final CountDownTimer codeTimer = new CountDownTimer(10*60*1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long mins = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
+                long secs = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - (mins * 60);
+                CodeExpiryTextView.setText(String.format(Locale.ENGLISH, "expires in %02d:%02d", mins, secs));
+            }
+
+            @Override
+            public void onFinish() {
+                logHandler.printLogWithMessage("Timer has ended!");
+
+                RefreshCodeButton.setText("GET CODE");
+                ShareCodeTextView.setText("------");
+                ShareCodeDescTextView.setText(R.string.share_code_noCode);
+                CodeExpiryTextView.setText("expires in 00:00:00");
+
+                resetShareCode();
+            }
+        };
+
+        popupLogHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
+
+        // INITIALISE LISTENERS
+
+        // sharesListener:  CHECKS THAT THERE IS NO IDENTICAL SHARE CODE IN SHARES AND CHANGES THE SHARE CODE IF
+        //                  NECESSARY, TILL THERE IS NO CONFLICT IN THE DATABASE. AFTER THIS, PAIRS THE SHARE CODE
+        //                  WITH THE CURRENT SERVER ID AND REFLECTS THE UPDATE GRAPHICALLY BY UPDATING ShareCodeTextView,
+        //                  RefreshCodeButton, ShareCodeDescTextView AND STARTS codeTimer.
+        //                  CORRECT INVOCATION CODE: databaseRef.child("shares")
+        //                                                      .child(shareCode)
+        //                                                      .addListenerForSingleValueEvent(sharesListener)
+        //                  SHOULD NOT BE USED INDEPENDENTLY.
+
+        final ValueEventListener sharesListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                while (dataSnapshot.getValue() != null) {
+                    shareCode = Utils.GenerateAlphanumericID(6);
+                }
+
+                databaseRef.child("shares").child(shareCode).setValue(serverId);
+
+                ShareCodeTextView.setText(shareCode);
+                RefreshCodeButton.setText("REFRESH");
+                ShareCodeDescTextView.setText(R.string.share_code_hasCode);
+                codeTimer.start();
+
+                logHandler.printLogWithMessage("Code generated successfully, timer started!");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                logHandler.printDatabaseErrorLog(databaseError);
+            }
+        };
+
+        popupLogHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
+
+        RefreshCodeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // FOR REFRESH
+                resetShareCode();
+                codeTimer.cancel();
+                logHandler.printLogWithMessage("Timer has been cancelled (if not null)!");
+
+                // GET CODE
+                shareCode = Utils.GenerateAlphanumericID(6);
+                databaseRef.child("shares")
+                        .child(shareCode)
+                        .addListenerForSingleValueEvent(sharesListener);
+            }
+        });
+
+        popupView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareCodePopup.dismiss();
+                codeTimer.cancel();
+            }
+        });
+    }
+
+    private void handleLeaveServerAlert() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Leave Server?");
+
+        // deleteServer:    REMOVES ALL SUBSCRIPTIONS FOR A SINGLE SERVER ACROSS ALL ITS MEMBERS
+        //                  INCLUDING THE OWNER, THEN DELETES ALL DATA PERTAINING TO IT AND SENDS
+        //                  THE USER BACK TO THE ViewServers Activity
+        //                  CORRECT INVOCATION CODE: databaseRef.child("members")
+        //                                                      .child(serverId)
+        //                                                      .addListenerForSingleValueEvent(deleteServer)
+        //                  SHOULD NOT BE USED INDEPENDENTLY.
+
+        final ValueEventListener deleteServer = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    if(data.getKey() == null) {
+                        logHandler.printDatabaseResultLog(".getChildren().Key()", "Subscribed User ID", "deleteServer", "null");
+                        continue;
+                    }
+
+                    String userID = data.getKey();
+                    logHandler.printDatabaseResultLog(".getChildren().Key()", "Subscribed User ID", "deleteServer", userID);
+
+                    databaseRef.child("users").child(userID).child("_subscribedServers").child(serverId).setValue(null);
+                }
+
+                // DELETE ALL SERVER DATA AFTER MEMBERS ARE GONE
+                databaseRef.child("servers").child(serverId).setValue(null);
+                databaseRef.child("messages").child(serverId).setValue(null);
+                databaseRef.child("members").child(serverId).setValue(null);
+
+                logHandler.printLogWithMessage("Server is completely deleted! Returning user back to View Server Activity!");
+                returnToViewServers();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                logHandler.printDatabaseErrorLog(databaseError);
+            }
+        };
+
+        // presentDialog:   GETS OWNER ID AND COMPARES IT TO CURRENT USER'S ID, THEN ADAPTS THE ALERT DIALOG
+        //                  ACCORDINGLY. FOLLOWING THIS, RUNS THE REST OF THE LEAVE SERVER LOGIC.
+        //                  CORRECT INVOCATION CODE: databaseRef.child("servers")
+        //                                                      .child(serverId)
+        //                                                      .addListenerForSingleValueEvent(presentDialog)
+
+        ValueEventListener presentDialog = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("_ownerID").getValue() == null) {
+                    logHandler.printDatabaseResultLog(".child(\"_ownerID\").getValue()", "Server Owner ID", "getServerOwner", "null");
+                    return;
+                }
+
+                String serverOwnerID = (String) dataSnapshot.child("_ownerID").getValue();
+
+                if(serverOwnerID == null) {
+                    logHandler.printLogWithMessage("Could not cast value of dataSnapshot.child(\"_ownerID\").getValue() to String! Aborting Leave Server function!");
+                    return;
+                }
+
+                logHandler.printDatabaseResultLog(".child(\"_ownerID\").getValue()", "Server Owner ID", "getServerOwner", serverOwnerID);
+
+                if(serverOwnerID.equals(currentUser.getUid())) {
+
+                    // User is server owner
+                    builder.setMessage("Are you sure you want to leave the server? As the owner, this will delete the server for everyone as well!");
+                    builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            logHandler.printLogWithMessage("Deleting server for all users!");
+                            databaseRef.child("members")
+                                    .child(serverId)
+                                    .addListenerForSingleValueEvent(deleteServer);
+
+                        }
+                    });
+
+                } else {
+
+                    // User is just a subscriber
+                    builder.setMessage("Are you sure you want to leave the server? You'll have to re-enter another Server Share Code if you want to rejoin the server!");
+                    builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            logHandler.printLogWithMessage("Removing server subscription for user!");
+                            databaseRef.child("users").child(currentUser.getUid()).child("_subscribedServers").child(serverId).setValue(null);
+                            databaseRef.child("members").child(serverId).child(currentUser.getUid()).setValue(null);
+
+                            logHandler.printLogWithMessage("Returning user back to View Server Activity!");
+                            returnToViewServers();
+                        }
+                    });
+
+                }
+
+                builder.setNeutralButton("Cancel", null);
+                builder.create().show();
+                logHandler.printLogWithMessage("Presenting Leave Server Dialog!");
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                logHandler.printDatabaseErrorLog(databaseError);
+            }
+        };
+
+        databaseRef.child("servers")
+                .child(serverId)
+                .addListenerForSingleValueEvent(presentDialog);
+    }
+
     // TOOLBAR OVERRIDE METHODS
 
     @Override
@@ -481,251 +728,23 @@ public class ChatActivity extends AppCompatActivity {
 
         if (item.getItemId() == SHARE_SERVER_MENU_ITEM) {
             logHandler.printLogWithMessage("User tapped on Share Server Menu Item!");
-
-            // LOGGING FOR SHARE SERVER POPUP WINDOW
-            LogHandler popupLogHandler = new LogHandler("ShareServerPopupWindow");
-
-            popupLogHandler.printLogWithMessage("Configuring Popup!");
-
-            ConstraintLayout BaseChatConstraintLayout = findViewById(R.id.baseChatConstraintLayout);
-
-            View popupView = LayoutInflater.from(this.getBaseContext()).inflate(
-                    R.layout.activity_shareserver, BaseChatConstraintLayout, false
-            );
-
-            final PopupWindow shareCodePopup = new PopupWindow(
-                    popupView,
-                    (int) (BaseChatConstraintLayout.getWidth() * 0.8),
-                    (int) (BaseChatConstraintLayout.getHeight() *0.8),
-                    true);
-            shareCodePopup.setTouchable(true);
-            shareCodePopup.showAtLocation(BaseChatConstraintLayout, Gravity.CENTER, 0 ,0);
-            shareCodePopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
-                @Override
-                public void onDismiss() {
-                    resetShareCode();
-                }
-            });
-
-            popupLogHandler.printLogWithMessage("Completed configuring Popup!");
-
-            // BIND VIEW OBJECTS
-
-            ConstraintLayout BaseShareCodeConstraintLayout = popupView
-                    .findViewById(R.id.baseShareCodeConstraintLayout);
-            Toolbar PopupToolbar = popupView.findViewById(R.id.shareCodeToolbar);
-            final Button RefreshCodeButton = popupView.findViewById(R.id.refreshCodeButton);
-            final TextView ShareCodeTextView = popupView.findViewById(R.id.shareCodeTextView);
-            final TextView ShareCodeDescTextView = popupView.findViewById(R.id.shareCodeDescTextView);
-            final TextView CodeExpiryTextView = popupView.findViewById(R.id.codeExpiryTextView);
-
-            popupLogHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
-
-            // SETUP VIEW OBJECTS
-
-            PopupToolbar.setTitle("Share Server Code");
-            RefreshCodeButton.setText("GET CODE");
-            ShareCodeTextView.setText("------");
-
-            final CountDownTimer codeTimer = new CountDownTimer(10*60*1000, 1000) {
-                @Override
-                public void onTick(long millisUntilFinished) {
-                    long mins = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
-                    long secs = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - (mins * 60);
-                    CodeExpiryTextView.setText(String.format(Locale.ENGLISH, "expires in %02d:%02d", mins, secs));
-                }
-
-                @Override
-                public void onFinish() {
-                    logHandler.printLogWithMessage("Timer has ended!");
-
-                    RefreshCodeButton.setText("GET CODE");
-                    ShareCodeTextView.setText("------");
-                    ShareCodeDescTextView.setText(R.string.share_code_noCode);
-                    CodeExpiryTextView.setText("expires in 00:00:00");
-
-                    resetShareCode();
-                }
-            };
-
-            popupLogHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
-
-            // INITIALISE LISTENERS
-
-            // sharesListener:  CHECKS THAT THERE IS NO IDENTICAL SHARE CODE IN SHARES AND CHANGES THE SHARE CODE IF
-            //                  NECESSARY, TILL THERE IS NO CONFLICT IN THE DATABASE. AFTER THIS, PAIRS THE SHARE CODE
-            //                  WITH THE CURRENT SERVER ID AND REFLECTS THE UPDATE GRAPHICALLY BY UPDATING ShareCodeTextView,
-            //                  RefreshCodeButton, ShareCodeDescTextView AND STARTS codeTimer.
-            //                  CORRECT INVOCATION CODE: databaseRef.child("shares")
-            //                                                      .child(shareCode)
-            //                                                      .addListenerForSingleValueEvent(sharesListener)
-            //                  SHOULD NOT BE USED INDEPENDENTLY.
-
-            final ValueEventListener sharesListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    while (dataSnapshot.getValue() != null) {
-                        shareCode = Utils.GenerateAlphanumericID(6);
-                    }
-
-                    databaseRef.child("shares").child(shareCode).setValue(serverId);
-
-                    ShareCodeTextView.setText(shareCode);
-                    RefreshCodeButton.setText("REFRESH");
-                    ShareCodeDescTextView.setText(R.string.share_code_hasCode);
-                    codeTimer.start();
-
-                    logHandler.printLogWithMessage("Code generated successfully, timer started!");
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    logHandler.printDatabaseErrorLog(databaseError);
-                }
-            };
-
-            popupLogHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
-
-            RefreshCodeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // FOR REFRESH
-                    resetShareCode();
-                    codeTimer.cancel();
-                    logHandler.printLogWithMessage("Timer has been cancelled (if not null)!");
-
-                    // GET CODE
-                    shareCode = Utils.GenerateAlphanumericID(6);
-                    databaseRef.child("shares")
-                               .child(shareCode)
-                               .addListenerForSingleValueEvent(sharesListener);
-                }
-            });
-
-            popupView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    shareCodePopup.dismiss();
-                    codeTimer.cancel();
-                }
-            });
+            handleShareServerPopup();
 
         } else if (item.getItemId() == LEAVE_SERVER_MENU_ITEM) {
             logHandler.printLogWithMessage("User tapped on Leave Server Menu Item!");
+            handleLeaveServerAlert();
 
-            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle("Leave Server?");
+        } else if (item.getItemId() == android.R.id.home) {
+            logHandler.printLogWithMessage("User tapped on Back Button!");
 
-            // deleteServer:    REMOVES ALL SUBSCRIPTIONS FOR A SINGLE SERVER ACROSS ALL ITS MEMBERS
-            //                  INCLUDING THE OWNER, THEN DELETES ALL DATA PERTAINING TO IT AND SENDS
-            //                  THE USER BACK TO THE ViewServers Activity
-            //                  CORRECT INVOCATION CODE: databaseRef.child("members")
-            //                                                      .child(serverId)
-            //                                                      .addListenerForSingleValueEvent(deleteServer)
-            //                  SHOULD NOT BE USED INDEPENDENTLY.
-
-            final ValueEventListener deleteServer = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    for(DataSnapshot data : dataSnapshot.getChildren()) {
-                        if(data.getKey() == null) {
-                            logHandler.printDatabaseResultLog(".getChildren().Key()", "Subscribed User ID", "deleteServer", "null");
-                            continue;
-                        }
-
-                        String userID = data.getKey();
-                        logHandler.printDatabaseResultLog(".getChildren().Key()", "Subscribed User ID", "deleteServer", userID);
-
-                        databaseRef.child("users").child(userID).child("_subscribedServers").child(serverId).setValue(null);
-                    }
-
-                    // DELETE ALL SERVER DATA AFTER MEMBERS ARE GONE
-                    databaseRef.child("servers").child(serverId).setValue(null);
-                    databaseRef.child("messages").child(serverId).setValue(null);
-                    databaseRef.child("members").child(serverId).setValue(null);
-
-                    logHandler.printLogWithMessage("Server is completely deleted! Returning user back to View Server Activity!");
-                    returnToViewServers();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    logHandler.printDatabaseErrorLog(databaseError);
-                }
-            };
-
-            // presentDialog:   GETS OWNER ID AND COMPARES IT TO CURRENT USER'S ID, THEN ADAPTS THE ALERT DIALOG
-            //                  ACCORDINGLY. FOLLOWING THIS, RUNS THE REST OF THE LEAVE SERVER LOGIC.
-            //                  CORRECT INVOCATION CODE: databaseRef.child("servers")
-            //                                                      .child(serverId)
-            //                                                      .addListenerForSingleValueEvent(presentDialog)
-
-            ValueEventListener presentDialog = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.child("_ownerID").getValue() == null) {
-                        logHandler.printDatabaseResultLog(".child(\"_ownerID\").getValue()", "Server Owner ID", "getServerOwner", "null");
-                        return;
-                    }
-
-                    String serverOwnerID = (String) dataSnapshot.child("_ownerID").getValue();
-
-                    if(serverOwnerID == null) {
-                        logHandler.printLogWithMessage("Could not cast value of dataSnapshot.child(\"_ownerID\").getValue() to String! Aborting Leave Server function!");
-                        return;
-                    }
-
-                    logHandler.printDatabaseResultLog(".child(\"_ownerID\").getValue()", "Server Owner ID", "getServerOwner", serverOwnerID);
-
-                    if(serverOwnerID.equals(currentUser.getUid())) {
-
-                        // User is server owner
-                        builder.setMessage("Are you sure you want to leave the server? As the owner, this will delete the server for everyone as well!");
-                        builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                logHandler.printLogWithMessage("Deleting server for all users!");
-                                databaseRef.child("members")
-                                           .child(serverId)
-                                           .addListenerForSingleValueEvent(deleteServer);
-
-                            }
-                        });
-
-                    } else {
-
-                        // User is just a subscriber
-                        builder.setMessage("Are you sure you want to leave the server? You'll have to re-enter another Server Share Code if you want to rejoin the server!");
-                        builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                logHandler.printLogWithMessage("Removing server subscription for user!");
-                                databaseRef.child("users").child(currentUser.getUid()).child("_subscribedServers").child(serverId).setValue(null);
-                                databaseRef.child("members").child(serverId).child(currentUser.getUid()).setValue(null);
-
-                                logHandler.printLogWithMessage("Returning user back to View Server Activity!");
-                                returnToViewServers();
-                            }
-                        });
-
-                    }
-
-                    builder.setNeutralButton("Cancel", null);
-                    builder.create().show();
-                    logHandler.printLogWithMessage("Presenting Leave Server Dialog!");
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    logHandler.printDatabaseErrorLog(databaseError);
-                }
-            };
-
-            databaseRef.child("servers")
-                       .child(serverId)
-                       .addListenerForSingleValueEvent(presentDialog);
+            Intent goToPosts = new Intent(ChatActivity.this, PostsActivity.class);
+            String EXTRA_SERVER_ID_KEY = "SERVER_ID";
+            String EXTRA_SERVER_ID_VALUE = serverId;
+            goToPosts.putExtra(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
+            goToPosts.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(goToPosts);
+            logHandler.printActivityIntentLog("Post Activity");
+            logHandler.printIntentExtrasLog(EXTRA_SERVER_ID_KEY, EXTRA_SERVER_ID_VALUE);
         }
 
         return super.onOptionsItemSelected(item);
