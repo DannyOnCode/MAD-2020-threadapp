@@ -314,7 +314,7 @@ public class ViewServersActivity extends AppCompatActivity {
                 "View Servers",
                 R.drawable.round_home_white_36,
                 "round_home_white_36",
-                false,
+                true,
                 logHandler
         );
 

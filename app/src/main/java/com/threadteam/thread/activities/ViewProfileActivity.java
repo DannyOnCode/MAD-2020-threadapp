@@ -231,7 +231,6 @@ public class ViewProfileActivity extends AppCompatActivity {
     //CLASS METHODS
 
     // TOOLBAR OVERRIDE METHODS
-    @SuppressLint("RestrictedApi")
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         // Make ViewServers Button on menu bar look disabled
@@ -254,7 +253,6 @@ public class ViewProfileActivity extends AppCompatActivity {
         return true;
     }
 
-    @SuppressLint("RestrictedApi")
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -266,7 +264,8 @@ public class ViewProfileActivity extends AppCompatActivity {
                         ViewServersActivity.class,
                         "View Servers Activity",
                         null,
-                        logHandler);
+                        logHandler
+                );
 
                 // Reset disabled ActionMenuItemView button back to normal state
                 Utils.ToggleMenuItemAlpha(
@@ -281,9 +280,11 @@ public class ViewProfileActivity extends AppCompatActivity {
 
                 ViewProfileActivity.this.finish();
                 return true;
+
             case R.id.viewProfileMenuItem:
                 // DISABLED
                 return true;
+
             case LOG_OUT_MENU_ITEM_ID:
                 firebaseAuth.signOut();
                 Intent logOutToSignIn = new Intent(ViewProfileActivity.this, LoginActivity.class);
