@@ -193,7 +193,7 @@ public class AddServerActivity extends AppCompatActivity {
                                .child(userId)
                                .child("_subscribedServers")
                                .child(joinServerID)
-                               .setValue(true);
+                               .setValue(0);
 
                     // Add user to list of members
                     databaseRef.child("members")
@@ -322,7 +322,7 @@ public class AddServerActivity extends AppCompatActivity {
         }
 
         databaseRef.child("servers").child(newServerId).setValue(newServer);
-        databaseRef.child("users").child(userId).child("_subscribedServers").child(newServerId).setValue(true);
+        databaseRef.child("users").child(userId).child("_subscribedServers").child(newServerId).setValue(0);
         databaseRef.child("members").child(newServerId).child(currentUser.getUid()).setValue(true);
 
         logHandler.printLogWithMessage("New server details have been pushed to database; returning user back to ViewServers Activity!");

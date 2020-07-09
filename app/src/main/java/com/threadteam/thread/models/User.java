@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.google.firebase.database.Exclude;
+import com.threadteam.thread.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,9 @@ public class User {
     @Exclude
     private List<String> _subscribedServers = new ArrayList<String>();
 
+    @Exclude
+    private List<Integer> _expList = new ArrayList<>();
+
     // CONSTRUCTORS
 
     // FIREBASE REQUIRED BLANK CONSTRUCTOR
@@ -41,7 +45,7 @@ public class User {
 
     }
 
-    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,List<String> _subscribedServers) {
+    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,List<String> _subscribedServers,List<Integer> _expList) {
         if(_aboutUsMessage.trim().equals("")){
             _aboutUsMessage = "No Description";
         }
@@ -55,6 +59,26 @@ public class User {
         this._aboutUsMessage = _aboutUsMessage;
         this._statusMessage = _statusMessage;
         this._subscribedServers = _subscribedServers;
+        this._expList = _expList;
+    }
+
+    public Integer GetUserExpForServer(String serverID) {
+        int serverIndex = _subscribedServers.indexOf(serverID);
+        return this._expList.get(serverIndex);
+    }
+
+    public Integer GetUserLevelForServer(String serverID) {
+        return Utils.ConvertExpToLevel(GetUserExpForServer(serverID));
+    }
+
+    public Integer GetExpToNextLevelForServer(String serverID) {
+        return Utils.GetExpToNextLevel(GetUserLevelForServer(serverID));
+    }
+
+    public Integer GetProgressToNextLevelForServer(String serverID) {
+        int exp = GetUserExpForServer(serverID);
+        int level = GetUserLevelForServer(serverID);
+        return Utils.GetExpProgress(exp, level);
     }
 
     // GET/SET METHODS
@@ -110,5 +134,13 @@ public class User {
 
     public void set_subscribedServers(List<String> _subscribedServers) {
         this._subscribedServers = _subscribedServers;
+    }
+
+    public List<Integer> get_expList() {
+        return _expList;
+    }
+
+    public void set_expList(List<Integer> _expList) {
+        this._expList = _expList;
     }
 }

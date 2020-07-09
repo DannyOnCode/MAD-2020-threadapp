@@ -3,6 +3,7 @@ package com.threadteam.thread.activities;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.CountDownTimer;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -50,6 +52,62 @@ public class ServerBaseActivity extends AppCompatActivity {
     protected static final int SHARE_SERVER_MENU_ITEM = -1;
     protected static final int LEAVE_SERVER_MENU_ITEM = -2;
     private String shareCode = null;
+
+    protected void addExpForServerMember(final String userId, final String serverId, final int exp, int secondsCooldown) {
+        String PREF_FILE = "cooldownPref";
+        String COOLDOWN_KEY = "cooldownFinish";
+
+        SharedPreferences prefs = getSharedPreferences(PREF_FILE, MODE_PRIVATE);
+        long millisCooldownFinish = prefs.getLong(COOLDOWN_KEY, -1);
+        long millisNow = System.currentTimeMillis();
+
+        if(millisCooldownFinish == -1 || millisNow > millisCooldownFinish) {
+
+            final ValueEventListener updateExpListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if(dataSnapshot.getValue() == null) {
+                        logHandler.printDatabaseResultLog(".getValue()", "Server Exp", "updateExpListener", "null");
+                        return;
+                    }
+
+                    Long currentExp = (Long) dataSnapshot.getValue();
+                    logHandler.printDatabaseResultLog(".getValue()", "Server Exp", "updateExpListener", currentExp.toString());
+
+                    databaseRef.child("users")
+                            .child(userId)
+                            .child("_subscribedServers")
+                            .child(serverId)
+                            .setValue(currentExp + exp);
+
+                    // Feedback to user on level up
+                    Integer oldLevel = Utils.ConvertExpToLevel(currentExp.intValue());
+                    Integer newLevel = Utils.ConvertExpToLevel(currentExp.intValue() + exp);
+                    if(oldLevel < newLevel) {
+                        //TODO: Maybe make level up dialog nicer? Will have to see if we've got time to implement this
+                        Toast.makeText(getApplicationContext(), "You leveled up! Current level: " + newLevel.toString(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    logHandler.printDatabaseErrorLog(databaseError);
+                }
+            };
+
+            databaseRef.child("users")
+                       .child(userId)
+                       .child("_subscribedServers")
+                       .child(serverId)
+                       .addListenerForSingleValueEvent(updateExpListener);
+
+            // Write Cooldown time to sharedprefs
+            SharedPreferences.Editor editor = prefs.edit();
+            millisCooldownFinish = System.currentTimeMillis() + secondsCooldown * 1000;
+            editor.putLong(COOLDOWN_KEY, millisCooldownFinish);
+            editor.apply();
+        }
+    }
 
     protected void resetShareCode() {
         logHandler.printLogWithMessage("Resetting Share Code (if not null)!");

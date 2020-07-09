@@ -113,4 +113,18 @@ public class Utils {
         }
     }
 
+    public static Integer ConvertExpToLevel(int exp) {
+        return (int) Math.floor(1.26 * Math.sqrt(exp)) + 1;
+    }
+
+    public static Integer GetExpToNextLevel(int level) {
+        return (int) Math.ceil(Math.pow(level/1.26, 2));
+    }
+
+    public static Integer GetExpProgress(int exp, int level) {
+        double currentExpRange = GetExpToNextLevel(level) - GetExpToNextLevel(level-1);
+        double currentExp = exp - GetExpToNextLevel(level-1);
+        return (int) (currentExp / currentExpRange * 100);
+    }
+
 }

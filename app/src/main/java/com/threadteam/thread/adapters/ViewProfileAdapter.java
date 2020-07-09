@@ -128,7 +128,6 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
                         serverStatusCardViewHolder.serverName.setText(serverName);
                         serverStatusCardViewHolder.serverTitle.setText(serverTitle);
-                        serverStatusCardViewHolder.serverLevel.setText("N/A");
                     }
 
                     @Override
@@ -136,6 +135,11 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         logHandler.printDatabaseErrorLog(databaseError);
                     }
                 });
+                Integer serverLevelData = userData.GetUserLevelForServer(serverDetails);
+                serverStatusCardViewHolder.serverLevel.setText(serverLevelData.toString());
+
+                serverStatusCardViewHolder.profileXpProgressBar.setProgress(userData.GetProgressToNextLevelForServer(serverDetails));
+
                 break;
         }
     }

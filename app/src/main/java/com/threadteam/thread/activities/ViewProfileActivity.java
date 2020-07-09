@@ -181,12 +181,16 @@ public class ViewProfileActivity extends AppCompatActivity {
                 user.set_statusMessage(statusDescription);
 
                 List<String> serverList = new ArrayList<>();
+                List<Integer> expList = new ArrayList<>();
                 for(DataSnapshot data : dataSnapshot.child("_subscribedServers").getChildren()){
                     serverList.add(data.getKey());
+                    expList.add(((Long) data.getValue()).intValue());
                     logHandler.printDatabaseResultLog(".getKey()", "ServerID", "userDataListener", data.getKey());
+                    logHandler.printDatabaseResultLog(".getValue()", "ServerExp", "userDataListener", ((Long) data.getValue()).toString());
                 }
 
                 user.set_subscribedServers(serverList);
+                user.set_expList(expList);
 
                 profileAdapter.userData = user;
                 profileAdapter.notifyDataSetChanged();
