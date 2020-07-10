@@ -125,17 +125,19 @@ public class ViewMembersActivity extends ServerBaseActivity {
                 })
         );
 
-        // Get serverId from Intent
+        // Get data from Intent
         final Intent dataReceiver = getIntent();
         serverId = dataReceiver.getStringExtra("SERVER_ID");
 
         if (serverId == null) {
             logHandler.printGetExtrasResultLog("SERVER_ID", "null");
+        } else {
+            logHandler.printGetExtrasResultLog("SERVER_ID", serverId);
+            // Update adapter
+            adapter.serverId = serverId;
         }
-        logHandler.printGetExtrasResultLog("SERVER_ID", serverId);
 
-        // Update adapter
-        adapter.serverId = serverId;
+        getIsOwner(dataReceiver);
 
         // INITIALISE FIREBASE
         firebaseAuth = FirebaseAuth.getInstance();
@@ -356,6 +358,9 @@ public class ViewMembersActivity extends ServerBaseActivity {
                 false,
                 logHandler
         );
+
+        enableSettingsIfOwner(this);
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -375,6 +380,7 @@ public class ViewMembersActivity extends ServerBaseActivity {
                 logHandler.printLogWithMessage("User tapped on Posts Menu Item!");
 
                 extraMap.put("SERVER_ID", serverId);
+                extraMap.put("IS_OWNER", isOwner.toString());
                 Utils.StartActivityOnNewStack(
                         ViewMembersActivity.this,
                         PostsActivity.class,
@@ -399,8 +405,8 @@ public class ViewMembersActivity extends ServerBaseActivity {
             case R.id.chatMenuItem:
                 logHandler.printLogWithMessage("User tapped on Chat Menu Item!");
 
-                extraMap = new HashMap<String, String>();
                 extraMap.put("SERVER_ID", serverId);
+                extraMap.put("IS_OWNER", isOwner.toString());
                 Utils.StartActivityOnNewStack(
                         ViewMembersActivity.this,
                         ChatActivity.class,

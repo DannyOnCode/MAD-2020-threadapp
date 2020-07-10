@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.view.menu.ActionMenuItem;
+import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -49,10 +51,12 @@ public class ServerBaseActivity extends AppCompatActivity {
     // LEAVE_SERVER_MENU_ITEM:  CONSTANT DECLARING ID FOR THE LEAVE SERVER MENU ITEM.
     // shareCode:               CONTAINS THE CURRENT SHARING CODE OF THE SERVER (IF IT EXISTS)
     //                          ALSO WORKS AS A FLAG FOR THE resetShareCode FUNCTION.
+    // isOwner:                 CONTAINS DATA ON WHETHER THE CURRENT USER IS THE OWNER OF THE SERVER
 
     protected static final int SHARE_SERVER_MENU_ITEM = -1;
     protected static final int LEAVE_SERVER_MENU_ITEM = -2;
     private String shareCode = null;
+    protected Boolean isOwner;
 
     protected void addExpForServerMember(final String userId, final String serverId, final int exp, int secondsCooldown) {
         String PREF_FILE = "cooldownPref";
@@ -375,6 +379,31 @@ public class ServerBaseActivity extends AppCompatActivity {
     protected void addServerMenuItemsToMenu(Menu menu) {
         menu.add(Menu.NONE, SHARE_SERVER_MENU_ITEM, Menu.NONE, "Share Server");
         menu.add(Menu.NONE, LEAVE_SERVER_MENU_ITEM, Menu.NONE, "Leave Server");
+    }
+
+    protected void getIsOwner(Intent dataReceiver) {
+        String isOwnerString = dataReceiver.getStringExtra("IS_OWNER");
+
+        if (isOwnerString == null) {
+            logHandler.printGetExtrasResultLog("IS_OWNER", "null");
+        } else {
+            logHandler.printGetExtrasResultLog("IS_OWNER", isOwnerString);
+            isOwner = isOwnerString.equals(((Boolean) true).toString());
+        }
+    }
+
+    protected void enableSettingsIfOwner(AppCompatActivity currentActivity) {
+        ActionMenuItemView SettingsAMIV = (ActionMenuItemView) currentActivity.findViewById(R.id.settingsMenuItem);
+
+        if(SettingsAMIV == null) {
+            logHandler.printLogWithMessage("Can't find Bottom Toolbar menu item for " + "Settings" + "! Cancelling icon update!");
+            return;
+        }
+        SettingsAMIV.setVisibility(View.INVISIBLE);
+
+        if(isOwner){
+            SettingsAMIV.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.threadteam.thread.activities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.ActionMenuItem;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
@@ -11,10 +12,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -29,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
@@ -164,6 +163,8 @@ public class PostsActivity extends ServerBaseActivity {
             logHandler.printGetExtrasResultLog("SERVER_ID", "null");
         }
         logHandler.printGetExtrasResultLog("SERVER_ID", serverId);
+
+        getIsOwner(dataReceiver);
 
         // INITIALISE FIREBASE
         firebaseAuth = FirebaseAuth.getInstance();
@@ -345,6 +346,9 @@ public class PostsActivity extends ServerBaseActivity {
                 false,
                 logHandler
         );
+
+        enableSettingsIfOwner(this);
+
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -352,7 +356,7 @@ public class PostsActivity extends ServerBaseActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         addServerMenuItemsToMenu(menu);
         getMenuInflater().inflate(R.menu.server_menu, BottomToolbarAMV.getMenu());
-        return super.onPrepareOptionsMenu(menu);
+        return true;
     }
 
     @Override
@@ -368,6 +372,7 @@ public class PostsActivity extends ServerBaseActivity {
                 logHandler.printLogWithMessage("User tapped on Chat Menu Item!");
 
                 extraMap.put("SERVER_ID", serverId);
+                extraMap.put("IS_OWNER", isOwner.toString());
                 Utils.StartActivityOnNewStack(
                         PostsActivity.this,
                         ChatActivity.class,
@@ -393,6 +398,7 @@ public class PostsActivity extends ServerBaseActivity {
                 logHandler.printLogWithMessage("User tapped on Posts Menu Item!");
 
                 extraMap.put("SERVER_ID", serverId);
+                extraMap.put("IS_OWNER", isOwner.toString());
                 Utils.StartActivityOnNewStack(
                         PostsActivity.this,
                         ViewMembersActivity.class,

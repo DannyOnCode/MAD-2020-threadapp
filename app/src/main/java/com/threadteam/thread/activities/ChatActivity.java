@@ -194,6 +194,8 @@ public class ChatActivity extends ServerBaseActivity {
         }
         logHandler.printGetExtrasResultLog("SERVER_ID", serverId);
 
+        getIsOwner(dataReceiver);
+
         logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
 
         // INITIALISE FIREBASE
@@ -460,6 +462,7 @@ public class ChatActivity extends ServerBaseActivity {
 
                 HashMap<String, String> extraMap = new HashMap<String, String>();
                 extraMap.put("SERVER_ID", serverId);
+                extraMap.put("IS_OWNER", isOwner.toString());
                 Utils.StartActivityOnNewStack(
                         ChatActivity.this,
                         PostsActivity.class,

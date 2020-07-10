@@ -325,17 +325,34 @@ public class ViewServersActivity extends AppCompatActivity {
 
     private void handleTransitionIntoServer(Integer position) {
         logHandler.printLogWithMessage("User tapped on a server!");
-
-        HashMap<String, String> extraMap = new HashMap<String, String>();
+        final HashMap<String, String> extraMap = new HashMap<String, String>();
         extraMap.put("SERVER_ID", adapter.serverList.get(position).get_id());
-        Utils.StartActivityOnNewStack(
-                ViewServersActivity.this,
-                PostsActivity.class,
-                "Posts Activity",
-                extraMap,
-                logHandler);
 
-        onStop();
+        final ValueEventListener checkIfOwner = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String ownerID = (String) dataSnapshot.child("_ownerID").getValue();
+                extraMap.put("IS_OWNER", ((Boolean) currentUser.getUid().equals(ownerID)).toString());
+
+                Utils.StartActivityOnNewStack(
+                        ViewServersActivity.this,
+                        PostsActivity.class,
+                        "Posts Activity",
+                        extraMap,
+                        logHandler);
+
+                onStop();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                logHandler.printDatabaseErrorLog(databaseError);
+            }
+        };
+
+        databaseRef.child("servers")
+                .child(adapter.serverList.get(position).get_id())
+                .addListenerForSingleValueEvent(checkIfOwner);
     }
 
     private void handleAddServer() {
