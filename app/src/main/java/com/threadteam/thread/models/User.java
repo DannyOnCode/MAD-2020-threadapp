@@ -81,6 +81,10 @@ public class User {
         return Utils.GetExpProgress(exp, level);
     }
 
+    public Integer GetAbsoluteLevelProgressForServer(String serverID) {
+        return (int) ((double) GetUserExpForServer(serverID) / (double) GetExpToNextLevelForServer(serverID) * 100);
+    }
+
     // GET/SET METHODS
     public String get_id() {
         return _id;

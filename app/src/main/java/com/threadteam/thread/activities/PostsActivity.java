@@ -341,7 +341,7 @@ public class PostsActivity extends ServerBaseActivity {
                 R.id.postsMenuItem,
                 "Posts",
                 R.drawable.round_all_inbox_white_36,
-                "round_all_inbox_white_26",
+                "round_all_inbox_white_36",
                 false,
                 logHandler
         );
@@ -357,6 +357,7 @@ public class PostsActivity extends ServerBaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        HashMap<String, String> extraMap = new HashMap<String, String>();
 
         switch (item.getItemId()) {
             case R.id.postsMenuItem:
@@ -366,7 +367,6 @@ public class PostsActivity extends ServerBaseActivity {
             case R.id.chatMenuItem:
                 logHandler.printLogWithMessage("User tapped on Chat Menu Item!");
 
-                HashMap<String, String> extraMap = new HashMap<String, String>();
                 extraMap.put("SERVER_ID", serverId);
                 Utils.StartActivityOnNewStack(
                         PostsActivity.this,
@@ -381,7 +381,7 @@ public class PostsActivity extends ServerBaseActivity {
                         R.id.postsMenuItem,
                         "Posts",
                         R.drawable.round_all_inbox_white_36,
-                        "round_all_inbox_white_26",
+                        "round_all_inbox_white_36",
                         true,
                         logHandler
                 );
@@ -390,6 +390,28 @@ public class PostsActivity extends ServerBaseActivity {
                 return true;
 
             case R.id.membersMenuItem:
+                logHandler.printLogWithMessage("User tapped on Posts Menu Item!");
+
+                extraMap.put("SERVER_ID", serverId);
+                Utils.StartActivityOnNewStack(
+                        PostsActivity.this,
+                        ViewMembersActivity.class,
+                        "Posts Activity",
+                        extraMap,
+                        logHandler);
+
+                // Reset disabled ActionMenuItemView button back to normal state
+                Utils.ToggleMenuItemAlpha(
+                        this,
+                        R.id.postsMenuItem,
+                        "Posts",
+                        R.drawable.round_all_inbox_white_36,
+                        "round_all_inbox_white_36",
+                        true,
+                        logHandler
+                );
+
+                finish();
                 return false;
 
             case android.R.id.home:
@@ -411,7 +433,7 @@ public class PostsActivity extends ServerBaseActivity {
 
             case LEAVE_SERVER_MENU_ITEM:
                 logHandler.printLogWithMessage("User tapped on Leave Server Menu Item!");
-                handleLeaveServerAlert(serverId, currentUser.getUid());
+                handleLeaveServerAlert(PostsActivity.this, serverId, currentUser.getUid());
                 break;
         }
 

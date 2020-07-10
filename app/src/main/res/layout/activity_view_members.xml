@@ -5,7 +5,7 @@
     android:id="@+id/baseViewMembersConstraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.ViewMembers">
+    tools:context=".activities.ViewMembersActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/viewMembersRecyclerView"
@@ -17,7 +17,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewMembersNavBarInclude"
         app:layout_constraintVertical_bias="0.0"
-        tools:listitem="@layout/activity_partial_member_card" />
+        tools:listitem="@layout/activity_partial_view_member" />
 
     <include
         android:id="@+id/viewMembersBottomToolbarInclude"

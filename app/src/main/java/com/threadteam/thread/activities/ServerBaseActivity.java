@@ -1,6 +1,7 @@
 package com.threadteam.thread.activities;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -254,9 +255,9 @@ public class ServerBaseActivity extends AppCompatActivity {
         resetShareCode();
     }
 
-    protected void handleLeaveServerAlert(final String serverId, final String currentUID) {
+    protected void handleLeaveServerAlert(Context currentContext, final String serverId, final String currentUID) {
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this.getBaseContext());
+        final AlertDialog.Builder builder = new AlertDialog.Builder(currentContext);
         builder.setTitle("Leave Server?");
 
         // deleteServer:    REMOVES ALL SUBSCRIPTIONS FOR A SINGLE SERVER ACROSS ALL ITS MEMBERS

@@ -452,7 +452,7 @@ public class ChatActivity extends ServerBaseActivity {
 
             case LEAVE_SERVER_MENU_ITEM:
                 logHandler.printLogWithMessage("User tapped on Leave Server Menu Item!");
-                handleLeaveServerAlert(serverId, currentUser.getUid());
+                handleLeaveServerAlert(ChatActivity.this, serverId, currentUser.getUid());
                 break;
 
             case android.R.id.home:
