@@ -112,7 +112,8 @@ public class PostsActivity extends ServerBaseActivity {
         MainActionFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: go to create post activity (when complete)
+                Intent ToAddPost = new Intent(PostsActivity.this, AddPostActivity.class);
+                startActivity(ToAddPost);
             }
         });
 
