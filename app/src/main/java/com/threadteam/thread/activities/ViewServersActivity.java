@@ -223,13 +223,11 @@ public class ViewServersActivity extends MainBaseActivity {
         return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
     }
 
-
     @Override
     ActionMenuView setBottomToolbarAMV() {
         View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
         return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
     }
-
 
     @Override
     ImageButton setMainActionButton() {
@@ -291,17 +289,6 @@ public class ViewServersActivity extends MainBaseActivity {
     @Override
     int setCurrentMenuItemID() {
         return R.id.viewServersMenuItem;
-    }
-
-    @Override
-    int setBottomToolbarMenuID() {
-        return R.menu.bottom_app_bar_menu;
-    }
-
-    @Override
-    HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
-        itemHashMap.put(LOG_OUT_MENU_ITEM_ID, "Log Out");
-        return itemHashMap;
     }
 
     // ACTIVITY SPECIFIC METHODS

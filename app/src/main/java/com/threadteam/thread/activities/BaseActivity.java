@@ -61,8 +61,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     // CurrentMenuItem:         THE ACTION MENU ITEM FOR THE CURRENT ACTIVITY IF THE ACTIVITY CORRESPONDS
     //                          TO A MENU ITEM IN BottomToolbarAMV
 
-    private ActionMenuView BottomToolbarAMV;
-    private Toolbar TopNavToolbar;
+    protected ActionMenuView BottomToolbarAMV;
+    protected Toolbar TopNavToolbar;
     private ImageButton MainActionButton;
     private ActionMenuItemView CurrentMenuItem;
 
@@ -90,6 +90,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         SetupViewObjects();
         logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
+
+        HandleIntentExtras();
 
         InitialiseFirebase();
         logHandler.printDefaultLog(LogHandler.FIREBASE_INITIALISED);
@@ -144,7 +146,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if(BottomToolbarAMV != null) {
+        if(BottomToolbarAMV != null && BottomToolbarAMV.getMenu().size() == 0) {
             getMenuInflater().inflate(setBottomToolbarMenuID(), BottomToolbarAMV.getMenu());
         }
 
@@ -178,10 +180,16 @@ public abstract class BaseActivity extends AppCompatActivity {
                 }
             });
         }
+
+        DoAdditionalSetupForToolbars();
     }
+
+    abstract void DoAdditionalSetupForToolbars();
 
     abstract void BindViewObjects();
     abstract void SetupViewObjects();
+
+    abstract void HandleIntentExtras();
 
     private void InitialiseFirebase() {
         firebaseAuth = FirebaseAuth.getInstance();

@@ -10,13 +10,15 @@ import androidx.annotation.Nullable;
 
 import com.threadteam.thread.R;
 
+import java.util.HashMap;
+
 public abstract class MainBaseActivity extends BaseActivity {
 
     // DATA STORE
     //
     // LOG_OUT_MENU_ITEM_ID:    CONSTANT DECLARING ID FOR THE LOG OUT MENU ITEM.
 
-    protected final int LOG_OUT_MENU_ITEM_ID = -1;
+    private final int LOG_OUT_MENU_ITEM_ID = -1;
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -56,6 +58,25 @@ public abstract class MainBaseActivity extends BaseActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    // ABSTRACT OVERRIDE METHODS
+
+    @Override
+    HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
+        itemHashMap.put(LOG_OUT_MENU_ITEM_ID, "Log Out");
+        return itemHashMap;
+    }
+
+    @Override
+    void HandleIntentExtras() { }
+
+    @Override
+    void DoAdditionalSetupForToolbars() { }
+
+    @Override
+    int setBottomToolbarMenuID() {
+        return R.menu.bottom_app_bar_menu;
     }
 
     // DEFAULT SUPER METHODS
