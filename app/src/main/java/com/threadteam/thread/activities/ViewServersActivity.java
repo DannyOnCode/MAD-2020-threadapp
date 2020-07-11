@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -87,7 +88,15 @@ public class ViewServersActivity extends MainBaseActivity {
             // ADD ID BACK TO server FROM THE dataSnapshot's KEY.
             server.set_id(dataSnapshot.getKey());
 
+            // CHECK IF SERVER IS ALREADY DISPLAYED
+            for(Server s: adapter.serverList) {
+                if(s.get_id().equals(server.get_id())) {
+                    return;
+                }
+            }
+
             // ADD SERVER TO adapter, THEN SORT AND TELL adapter TO UPDATE VIEW BASED ON NEW DATA.
+
             adapter.serverList.add(server);
             Collections.sort(adapter.serverList);
             adapter.notifyDataSetChanged();
@@ -198,6 +207,11 @@ public class ViewServersActivity extends MainBaseActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 
     // ABSTRACT OVERRIDE METHODS

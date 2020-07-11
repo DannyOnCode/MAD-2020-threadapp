@@ -75,6 +75,9 @@ public abstract class MainBaseActivity extends BaseActivity {
     void DoAdditionalSetupForToolbars() { }
 
     @Override
+    void DoAdditionalSetupForFirebase() { }
+
+    @Override
     int setBottomToolbarMenuID() {
         return R.menu.bottom_app_bar_menu;
     }

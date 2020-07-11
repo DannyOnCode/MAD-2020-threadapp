@@ -1,13 +1,5 @@
 package com.threadteam.thread.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
@@ -16,68 +8,40 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ActionMenuView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.threadteam.thread.LogHandler;
-import com.threadteam.thread.Utils;
-import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.R;
+import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.models.ChatMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-// CHAT ACTIVITY
-//
-// PROGRAMMER-IN-CHARGE:
-// EUGENE LONG, S10193060J
-//
-// DESCRIPTION
-// Displays all messages in the server chat
-// Allows user to send messages
-// Also allows the user to share/leave/delete the server
-//
-// NAVIGATION
-// PARENT: VIEW SERVERS
-// CHILDREN: N/A
-
-public class ChatActivity extends ServerBaseActivity {
-
-    // LOGGING
-    private LogHandler logHandler = new LogHandler("Chat Activity");
-
-    // FIREBASE
-    //
-    // currentUser:             CURRENT USER FOR THE CURRENT SESSION
-    // firebaseAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION
-    // databaseRef:             FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION
-    // chatListener:            CHILD EVENT LISTENER FOR RETRIEVING ALL CHAT MESSAGES IN CURRENT SERVER
-
-    private FirebaseUser currentUser;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference databaseRef;
-    private ChildEventListener chatListener;
+public class ChatActivity extends ServerBaseActivityTemp {
 
     // DATA STORE
     //
-    // serverId:                CONTAINS CURRENT SERVER ID DATA
     // adapter:                 ADAPTER FOR CHAT MESSAGE RECYCLER VIEW.
     //                          HANDLES STORAGE OF DISPLAYED CHAT MESSAGE DATA AS WELL.
     // scrollToLatestMessage:   TOGGLE FOR SCROLL TO BOTTOM UPON MESSAGE ADDED. DOES THIS ACTION IF TRUE.
     // username:                CONTAINS CURRENT USER'S USERNAME. USED TO SEND MESSAGES.
 
-    private String serverId;
     private ChatMessageAdapter adapter;
     private Boolean scrollToLatestMessage = false;
     private String username;
@@ -87,48 +51,259 @@ public class ChatActivity extends ServerBaseActivity {
     // ChatMessageRecyclerView: DISPLAYS ALL CHAT MESSAGES IN THE SERVER. USES adapter AS ITS ADAPTER.
     // MessageEditText:         CONTAINS TEXT DATA TO BE SENT UPON USER TAPPING SendMsgButton.
     // SendMsgButton:           TRIGGERS SENDING OF TEXT DATA TO THE SERVER
-    // TopNavToolbar:           TOOLBAR OBJECT THAT HANDLES UPWARDS NAVIGATION AND THE TITLE
-
 
     private RecyclerView ChatMessageRecyclerView;
     private EditText MessageEditText;
     private ImageButton SendMsgButton;
-    private Toolbar TopNavToolbar;
 
-    // ACTIVITY STATE MANAGEMENT METHODS
+    // INITIALISE LISTENERS
 
-    @SuppressLint("ClickableViewAccessibility")
+    // getUsername:     RETRIEVES CURRENT USER'S USERNAME
+    //                  CORRECT INVOCATION CODE: databaseRef.child("users")
+    //                                                      .child(currentUser.getUid())
+    //                                                      .child("_username")
+    //                                                      .addListenerForSingleValueEvent(getUsername)
+    //                  SHOULD NOT BE USED INDEPENDENTLY.
+
+    ValueEventListener getUsername = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if(dataSnapshot.getValue() == null) {
+                logHandler.printDatabaseResultLog(".getValue()", "Current Username", "getUsername", "null");
+                username = "anonymous";
+                return;
+            }
+            username = (String) dataSnapshot.getValue();
+            logHandler.printDatabaseResultLog(".getValue()", "Current Username", "getUsername", username);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            logHandler.printDatabaseErrorLog(databaseError);
+        }
+    };
+
+    // chatListener:    HANDLES LOADING OF ALL CHAT MESSAGES, AS WELL AS UPDATING THE ADAPTER
+    //                  ON MESSAGE ADDED/DELETED/CHANGED EVENTS
+    //                  CORRECT INVOCATION CODE: databaseRef.child("messages")
+    //                                                      .child(serverId)
+    //                                                      .addChildEventListener(chatListener)
+    //                  SHOULD BE CANCELLED UPON ACTIVITY STOP!
+
+    private ChildEventListener chatListener = new ChildEventListener() {
+
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            logHandler.printLogWithMessage("Chat message added/loaded!");
+
+            if(dataSnapshot.getKey() == null) {
+                logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", "null");
+                return;
+            }
+
+            if(dataSnapshot.getValue() == null) {
+                logHandler.printDatabaseResultLog(".getValue()", "Message Values", "chatListener", "null");
+                return;
+            }
+
+            String senderUID = (String) dataSnapshot.child("_senderUID").getValue();
+            String sender = (String) dataSnapshot.child("_sender").getValue();
+            String message = (String) dataSnapshot.child("_message").getValue();
+            Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
+
+            ChatMessage chatMessage;
+
+            if (senderUID == null) {
+                logHandler.printDatabaseResultLog(".child(\"_senderUID\").getValue()", "Sender ID", "chatListener", "null");
+                return;
+            } else if (sender == null) {
+                logHandler.printDatabaseResultLog(".child(\"_sender\").getValue()", "Sender Name", "chatListener", "null");
+                return;
+            } else if (message == null) {
+                logHandler.printDatabaseResultLog(".child(\"_message\").getValue()", "Message", "chatListener", "null");
+                return;
+            } else if (timestampMillis == null) {
+                logHandler.printDatabaseResultLog(".child(\"timestamp\").getValue()", "Timestamp", "chatListener", "null");
+                chatMessage = new ChatMessage(senderUID, sender, message);
+            } else {
+                chatMessage = new ChatMessage(senderUID, sender, message, timestampMillis);
+            }
+
+            chatMessage.set_id(dataSnapshot.getKey());
+
+            logHandler.printDatabaseResultLog("", "Chat Message", "chatListener", chatMessage.toString());
+
+            adapter.chatMessageList.add(chatMessage);
+            adapter.notifyItemInserted(adapter.chatMessageList.size());
+
+            if(scrollToLatestMessage) {
+                logHandler.printLogWithMessage("scrollToLatestMessage = true; scrolling to latest message now!");
+                ChatMessageRecyclerView.smoothScrollToPosition(Math.max(0, adapter.chatMessageList.size() - 1));
+            }
+        }
+
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            logHandler.printLogWithMessage("Chat Message changed! Updating timestamp!");
+
+            // Note: Future features may introduce editing of messages, but for now it's just for updating the timestamp
+            //       when Firebase Cloud Functions gives us the server side timestamp.
+
+            if(dataSnapshot.getKey() == null) {
+                logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", "null");
+                return;
+            }
+            logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", dataSnapshot.getKey());
+
+            Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
+
+            if(timestampMillis == null) {
+                logHandler.printDatabaseResultLog(".child(\"timestamp\").getValue()", "Timestamp", "chatListener", "null");
+                return;
+            }
+            logHandler.printDatabaseResultLog(".child(\"timestamp\").getValue()", "Timestamp", "chatListener", timestampMillis.toString());
+
+            String messageId = dataSnapshot.getKey();
+
+            for(int i=0; i<adapter.chatMessageList.size(); i++) {
+                if(adapter.chatMessageList.get(i).get_id() != null && adapter.chatMessageList.get(i).get_id().equals(messageId)) {
+                    adapter.chatMessageList.get(i).setTimestampMillis(timestampMillis);
+                    adapter.notifyItemChanged(i);
+                    return;
+                }
+            }
+        }
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+            logHandler.printLogWithMessage("Chat messaged removed! Deleting chat message!");
+
+            if(dataSnapshot.getKey() == null) {
+                logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", "null");
+                return;
+            }
+            logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", dataSnapshot.getKey());
+
+            for(int i=0; i<adapter.chatMessageList.size(); i++) {
+                if(adapter.chatMessageList.get(i).get_id() != null &&
+                        adapter.chatMessageList.get(i).get_id().equals(dataSnapshot.getKey())) {
+                    adapter.chatMessageList.remove(i);
+                    adapter.notifyItemRemoved(i);
+                    return;
+                }
+            }
+        }
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            logHandler.printDatabaseErrorLog(databaseError);
+        }
+    };
+
+    // DEFAULT SUPER METHODS
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        logHandler.printDefaultLog(LogHandler.STATE_ON_CREATE);
-
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == android.R.id.home) {
+            logHandler.printLogWithMessage("User tapped on Back Button!");
+
+            Intent goToPosts = new Intent(currentActivity, PostsActivity.class);
+            PutExtrasForServerIntent(goToPosts);
+            currentActivity.startActivity(goToPosts);
+            logHandler.printActivityIntentLog("Posts");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    // ABSTRACT OVERRIDE METHODS
+
+    @Override
+    void SetContentView() {
         setContentView(R.layout.activity_chat);
+    }
 
-        // BIND TOOLBARS
-        // NOTE:    IT IS IMPORTANT TO GET THE INCLUDE VIEWS BEFORE DOING FIND VIEW BY ID.
-        //          THIS ENSURES THAT ANDROID CAN ALWAYS FIND THE CORRECT VIEW OBJECT.
+    @Override
+    AppCompatActivity setCurrentActivity() {
+        return ChatActivity.this;
+    }
 
+    @Override
+    String setTitleForActivity() {
+        return "Chat";
+    }
+
+    @Override
+    ImageButton setMainActionButton() {
+        return null;
+    }
+
+    @Override
+    Toolbar setTopNavToolbar() {
         View includeView = findViewById(R.id.chatNavBarInclude);
-        TopNavToolbar = (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+        return (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+    }
 
-        logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
+    @Override
+    ActionMenuView setBottomToolbarAMV() {
+        return null;
+    }
 
-        // SETUP TOOLBARS
-        TopNavToolbar.setTitle("Chat");
-        this.setSupportActionBar(TopNavToolbar);
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        logHandler.printDefaultLog(LogHandler.TOOLBAR_SETUP);
-
-        // BIND VIEW OBJECTS
+    @Override
+    void BindViewObjects() {
         ChatMessageRecyclerView = findViewById(R.id.chatMessageRecyclerView);
         MessageEditText = findViewById(R.id.messageEditText);
         SendMsgButton = findViewById(R.id.sendMsgButton);
+    }
 
-        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
+    @Override
+    ConstraintLayout setBaseLayer() {
+        return (ConstraintLayout) findViewById(R.id.baseChatConstraintLayout);
+    }
 
-        // SETUP VIEW OBJECTS
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    void SetupViewObjects() {
         SendMsgButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -149,10 +324,10 @@ public class ChatActivity extends ServerBaseActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if(event.getAction() == MotionEvent.ACTION_UP) {
-                    InputMethodManager imm = (InputMethodManager) ChatActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-                    View view  = ChatActivity.this.getCurrentFocus();
+                    InputMethodManager imm = (InputMethodManager) currentActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+                    View view  = currentActivity.getCurrentFocus();
                     if (view == null) {
-                        view = new View(ChatActivity.this);
+                        view = new View(currentActivity);
                     }
                     if (imm != null && imm.isAcceptingText()) {
                         logHandler.printLogWithMessage("RecyclerView detected touch, hiding keyboard (if active)!");
@@ -184,207 +359,38 @@ public class ChatActivity extends ServerBaseActivity {
         };
 
         ChatMessageRecyclerView.addOnScrollListener(scrollListener);
-
-        // Get serverId from Intent
-        final Intent dataReceiver = getIntent();
-        serverId = dataReceiver.getStringExtra("SERVER_ID");
-
-        if (serverId == null) {
-            logHandler.printGetExtrasResultLog("SERVER_ID", "null");
-        }
-        logHandler.printGetExtrasResultLog("SERVER_ID", serverId);
-
-        getIsOwner(dataReceiver);
-
-        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
-
-        // INITIALISE FIREBASE
-        firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = firebaseAuth.getCurrentUser();
-
-        if(currentUser == null) {
-            logHandler.printDefaultLog(LogHandler.FIREBASE_USER_NOT_FOUND);
-            Intent backToLogin = new Intent(ChatActivity.this, LoginActivity.class);
-            startActivity(backToLogin);
-            return;
-        }
-        logHandler.printDefaultLog(LogHandler.FIREBASE_USER_FOUND);
-
-        adapter.currentUserUID = currentUser.getUid();
-        databaseRef = FirebaseDatabase.getInstance().getReference();
-
-        logHandler.printDefaultLog(LogHandler.FIREBASE_INITIALISED);
-
-        // INITIALISE LISTENERS
-
-        // getUsername:     RETRIEVES CURRENT USER'S USERNAME
-        //                  CORRECT INVOCATION CODE: databaseRef.child("users")
-        //                                                      .child(currentUser.getUid())
-        //                                                      .child("_username")
-        //                                                      .addListenerForSingleValueEvent(getUsername)
-        //                  SHOULD NOT BE USED INDEPENDENTLY.
-
-        ValueEventListener getUsername = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.getValue() == null) {
-                    logHandler.printDatabaseResultLog(".getValue()", "Current Username", "getUsername", "null");
-                    username = "anonymous";
-                    return;
-                }
-                username = (String) dataSnapshot.getValue();
-                logHandler.printDatabaseResultLog(".getValue()", "Current Username", "getUsername", username);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                logHandler.printDatabaseErrorLog(databaseError);
-            }
-        };
-
-        databaseRef.child("users")
-                   .child(currentUser.getUid())
-                   .child("_username")
-                   .addListenerForSingleValueEvent(getUsername);
-
-        // chatListener:    HANDLES LOADING OF ALL CHAT MESSAGES, AS WELL AS UPDATING THE ADAPTER
-        //                  ON MESSAGE ADDED/DELETED/CHANGED EVENTS
-        //                  CORRECT INVOCATION CODE: databaseRef.child("messages")
-        //                                                      .child(serverId)
-        //                                                      .addChildEventListener(chatListener)
-        //                  SHOULD BE CANCELLED UPON ACTIVITY STOP!
-
-        chatListener = new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                logHandler.printLogWithMessage("Chat message added/loaded!");
-
-                if(dataSnapshot.getKey() == null) {
-                    logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", "null");
-                    return;
-                }
-
-                if(dataSnapshot.getValue() == null) {
-                    logHandler.printDatabaseResultLog(".getValue()", "Message Values", "chatListener", "null");
-                    return;
-                }
-
-                String senderUID = (String) dataSnapshot.child("_senderUID").getValue();
-                String sender = (String) dataSnapshot.child("_sender").getValue();
-                String message = (String) dataSnapshot.child("_message").getValue();
-                Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
-
-                ChatMessage chatMessage;
-
-                if (senderUID == null) {
-                    logHandler.printDatabaseResultLog(".child(\"_senderUID\").getValue()", "Sender ID", "chatListener", "null");
-                    return;
-                } else if (sender == null) {
-                    logHandler.printDatabaseResultLog(".child(\"_sender\").getValue()", "Sender Name", "chatListener", "null");
-                    return;
-                } else if (message == null) {
-                    logHandler.printDatabaseResultLog(".child(\"_message\").getValue()", "Message", "chatListener", "null");
-                    return;
-                } else if (timestampMillis == null) {
-                    logHandler.printDatabaseResultLog(".child(\"timestamp\").getValue()", "Timestamp", "chatListener", "null");
-                    chatMessage = new ChatMessage(senderUID, sender, message);
-                } else {
-                    chatMessage = new ChatMessage(senderUID, sender, message, timestampMillis);
-                }
-
-                chatMessage.set_id(dataSnapshot.getKey());
-
-                logHandler.printDatabaseResultLog("", "Chat Message", "chatListener", chatMessage.toString());
-
-                adapter.chatMessageList.add(chatMessage);
-                adapter.notifyItemInserted(adapter.chatMessageList.size());
-
-                if(scrollToLatestMessage) {
-                    logHandler.printLogWithMessage("scrollToLatestMessage = true; scrolling to latest message now!");
-                    ChatMessageRecyclerView.smoothScrollToPosition(Math.max(0, adapter.chatMessageList.size() - 1));
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                logHandler.printLogWithMessage("Chat Message changed! Updating timestamp!");
-
-                // Note: Future features may introduce editing of messages, but for now it's just for updating the timestamp
-                //       when Firebase Cloud Functions gives us the server side timestamp.
-
-                if(dataSnapshot.getKey() == null) {
-                    logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", "null");
-                    return;
-                }
-                logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", dataSnapshot.getKey());
-
-                Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
-
-                if(timestampMillis == null) {
-                    logHandler.printDatabaseResultLog(".child(\"timestamp\").getValue()", "Timestamp", "chatListener", "null");
-                    return;
-                }
-                logHandler.printDatabaseResultLog(".child(\"timestamp\").getValue()", "Timestamp", "chatListener", timestampMillis.toString());
-
-                String messageId = dataSnapshot.getKey();
-
-                for(int i=0; i<adapter.chatMessageList.size(); i++) {
-                    if(adapter.chatMessageList.get(i).get_id() != null && adapter.chatMessageList.get(i).get_id().equals(messageId)) {
-                        adapter.chatMessageList.get(i).setTimestampMillis(timestampMillis);
-                        adapter.notifyItemChanged(i);
-                        return;
-                    }
-                }
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                logHandler.printLogWithMessage("Chat messaged removed! Deleting chat message!");
-
-                if(dataSnapshot.getKey() == null) {
-                    logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", "null");
-                    return;
-                }
-                logHandler.printDatabaseResultLog(".getKey()", "Message ID", "chatListener", dataSnapshot.getKey());
-
-                for(int i=0; i<adapter.chatMessageList.size(); i++) {
-                    if(adapter.chatMessageList.get(i).get_id() != null &&
-                            adapter.chatMessageList.get(i).get_id().equals(dataSnapshot.getKey())) {
-                        adapter.chatMessageList.remove(i);
-                        adapter.notifyItemRemoved(i);
-                        return;
-                    }
-                }
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                logHandler.printDatabaseErrorLog(databaseError);
-            }
-        };
-
-        logHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
-
-        databaseRef.child("messages")
-                   .child(serverId)
-                   .addChildEventListener(chatListener);
     }
 
     @Override
-    protected void onStop() {
-        logHandler.printDefaultLog(LogHandler.STATE_ON_STOP);
-
-        // CANCEL CHILD EVENT LISTENERS ON ACTIVITY DESTROYED
-        databaseRef.removeEventListener(chatListener);
-        resetShareCode();
-
-        super.onStop();
+    void DoAdditionalSetupForFirebase() {
+        adapter.currentUserUID = currentUser.getUid();
     }
 
-    // CLASS METHODS
+    @Override
+    void AttachListeners() {
+        databaseRef.child("users")
+                .child(currentUser.getUid())
+                .child("_username")
+                .addListenerForSingleValueEvent(getUsername);
+
+        databaseRef.child("messages")
+                .child(serverId)
+                .addChildEventListener(chatListener);
+    }
+
+    @Override
+    void DestroyListeners() {
+        if(chatListener != null) {
+            databaseRef.removeEventListener(chatListener);
+        }
+    }
+
+    @Override
+    int setCurrentMenuItemID() {
+        return R.id.chatMenuItem;
+    }
+
+    // ACTIVITY SPECIFIC METHODS
 
     private void sendMessage() {
 
@@ -433,45 +439,5 @@ public class ChatActivity extends ServerBaseActivity {
             logHandler.printLogWithMessage("No message was pushed because there was no text after formatting!");
         }
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        addServerMenuItemsToMenu(menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @SuppressLint("ClickableViewAccessibility")
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        switch (item.getItemId()) {
-            case SHARE_SERVER_MENU_ITEM:
-                logHandler.printLogWithMessage("User tapped on Share Server Menu Item!");
-                ConstraintLayout baseLayer = (ConstraintLayout) findViewById(R.id.baseChatConstraintLayout);
-                showShareServerPopup(baseLayer, serverId);
-                break;
-
-            case LEAVE_SERVER_MENU_ITEM:
-                logHandler.printLogWithMessage("User tapped on Leave Server Menu Item!");
-                handleLeaveServerAlert(ChatActivity.this, serverId, currentUser.getUid());
-                break;
-
-            case android.R.id.home:
-                logHandler.printLogWithMessage("User tapped on Back Button!");
-
-                HashMap<String, String> extraMap = new HashMap<String, String>();
-                extraMap.put("SERVER_ID", serverId);
-                extraMap.put("IS_OWNER", isOwner.toString());
-                Utils.StartActivityOnNewStack(
-                        ChatActivity.this,
-                        PostsActivity.class,
-                        "Posts Activity",
-                        extraMap,
-                        logHandler);
-                return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

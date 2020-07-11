@@ -94,6 +94,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         HandleIntentExtras();
 
         InitialiseFirebase();
+        DoAdditionalSetupForFirebase();
         logHandler.printDefaultLog(LogHandler.FIREBASE_INITIALISED);
 
         logHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
@@ -206,6 +207,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         databaseRef = FirebaseDatabase.getInstance().getReference();
     }
+
+    abstract void DoAdditionalSetupForFirebase();
 
     abstract void AttachListeners();
     abstract void DestroyListeners();

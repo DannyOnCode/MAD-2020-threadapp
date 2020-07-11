@@ -103,6 +103,13 @@ public abstract class ServerBaseActivityTemp extends BaseActivity {
                 //TODO: Implement Settings Activity
                 return true;
 
+            case android.R.id.home:
+                logHandler.printLogWithMessage("User tapped on Back Button!");
+                Intent returnToViewServers = new Intent(currentActivity, ViewServersActivity.class);
+                currentActivity.startActivity(returnToViewServers);
+                logHandler.printActivityIntentLog("View Servers");
+                return true;
+
             case SHARE_SERVER_MENU_ITEM:
                 showShareServerPopup(setBaseLayer());
                 return true;
@@ -152,9 +159,12 @@ public abstract class ServerBaseActivityTemp extends BaseActivity {
     @Override
     void DoAdditionalSetupForToolbars() {
         if(currentActivity.getSupportActionBar() != null) {
-            currentActivity.getSupportActionBar().setDisplayShowHomeEnabled(true);
+            currentActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
+
+    @Override
+    void DoAdditionalSetupForFirebase() { }
 
     @Override
     int setBottomToolbarMenuID() {
@@ -162,11 +172,6 @@ public abstract class ServerBaseActivityTemp extends BaseActivity {
     }
 
     // ACTIVITY SPECIFIC METHODS
-
-    private void PutExtrasForServerIntent(Intent intent) {
-        intent.putExtra(SERVER_ID_KEY, serverId);
-        intent.putExtra(IS_OWNER_KEY, isOwner.toString());
-    }
 
     private void resetShareCode() {
         logHandler.printLogWithMessage("Resetting Share Code (if not null)!");
@@ -445,6 +450,11 @@ public abstract class ServerBaseActivityTemp extends BaseActivity {
     }
 
     // PROTECTED CONVENIENCE METHODS
+
+    protected void PutExtrasForServerIntent(Intent intent) {
+        intent.putExtra(SERVER_ID_KEY, serverId);
+        intent.putExtra(IS_OWNER_KEY, isOwner.toString());
+    }
 
     protected void addExpForServerMember(final String _userId, final String _serverId, final int _exp, int _secondsCooldown) {
         String PREF_FILE = "cooldownPref";

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 
@@ -54,7 +55,7 @@ public class PostsActivity extends ServerBaseActivityTemp {
     //                                                      .addChildEventListener(postListener)
     //                  SHOULD BE CANCELLED UPON ACTIVITY STOP!
 
-    final private ChildEventListener postListener = new ChildEventListener() {
+    private ChildEventListener postListener = new ChildEventListener() {
 
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -212,6 +213,11 @@ public class PostsActivity extends ServerBaseActivityTemp {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        return super.onOptionsItemSelected(item);
+    }
+
     // ABSTRACT OVERRIDE METHODS
 
     @Override
@@ -267,7 +273,7 @@ public class PostsActivity extends ServerBaseActivityTemp {
 
     @Override
     ConstraintLayout setBaseLayer() {
-        return null;
+        return (ConstraintLayout) findViewById(R.id.basePostsConstraintLayout);
     }
 
     @Override
