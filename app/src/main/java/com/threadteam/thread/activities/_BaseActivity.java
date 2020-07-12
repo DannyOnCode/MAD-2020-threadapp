@@ -27,7 +27,7 @@ import java.util.HashMap;
 public abstract class _BaseActivity extends AppCompatActivity {
 
     // LOGGING
-    LogHandler logHandler;
+    protected LogHandler logHandler;
 
     // FIREBASE
     //
@@ -81,6 +81,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
         SetupToolbars();
         MainActionButton = setMainActionButton();
+        DoAdditionalSetupForToolbars();
         logHandler.printDefaultLog(LogHandler.TOOLBAR_SETUP);
 
         BindViewObjects();
@@ -134,9 +135,11 @@ public abstract class _BaseActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if(CurrentMenuItem != null) {
+        if(BottomToolbarAMV != null) {
             setCurrentMenuItem();
-            toggleCurrentMenuItem(false);
+            if(CurrentMenuItem != null) {
+                toggleCurrentMenuItem(false);
+            }
         }
 
         return super.onPrepareOptionsMenu(menu);
@@ -179,8 +182,6 @@ public abstract class _BaseActivity extends AppCompatActivity {
                 }
             });
         }
-
-        DoAdditionalSetupForToolbars();
     }
 
     abstract void DoAdditionalSetupForToolbars();
