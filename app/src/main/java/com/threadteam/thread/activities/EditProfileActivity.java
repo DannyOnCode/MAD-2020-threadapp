@@ -60,7 +60,6 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditProfileActivity extends AppCompatActivity {
 
-    // TODO: DOCUMENTATION TO BE CONTINUED
     //LOGGING
     private LogHandler logHandler = new LogHandler("Edit Profile Activity");
 
