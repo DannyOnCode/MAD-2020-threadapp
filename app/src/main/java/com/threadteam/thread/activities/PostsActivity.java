@@ -30,7 +30,7 @@ import com.threadteam.thread.models.Post;
 
 import java.util.ArrayList;
 
-public class PostsActivity extends ServerBaseActivityTemp {
+public class PostsActivity extends ServerBaseActivity {
 
     // DATA STORE
     //

@@ -29,7 +29,7 @@ import com.threadteam.thread.models.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewMembersActivity extends ServerBaseActivityTemp {
+public class ViewMembersActivity extends ServerBaseActivity {
 
     // DATA STORE
     //
