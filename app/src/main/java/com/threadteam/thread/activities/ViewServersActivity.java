@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class ViewServersActivity extends MainBaseActivity {
+public class ViewServersActivity extends _MainBaseActivity {
 
     // DATA STORE
     //

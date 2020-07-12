@@ -24,7 +24,7 @@ import com.threadteam.thread.LogHandler;
 
 import java.util.HashMap;
 
-public abstract class BaseActivity extends AppCompatActivity {
+public abstract class _BaseActivity extends AppCompatActivity {
 
     // LOGGING
     LogHandler logHandler;

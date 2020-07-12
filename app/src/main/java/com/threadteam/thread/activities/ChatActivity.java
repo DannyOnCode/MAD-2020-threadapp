@@ -33,7 +33,7 @@ import com.threadteam.thread.models.ChatMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ChatActivity extends ServerBaseActivity {
+public class ChatActivity extends _ServerBaseActivity {
 
     // DATA STORE
     //

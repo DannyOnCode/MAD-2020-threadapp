@@ -12,7 +12,7 @@ import com.threadteam.thread.R;
 
 import java.util.HashMap;
 
-public abstract class MainBaseActivity extends BaseActivity {
+public abstract class _MainBaseActivity extends _BaseActivity {
 
     // DATA STORE
     //

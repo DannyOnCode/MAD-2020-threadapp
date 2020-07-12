@@ -23,9 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.Server;
 
-import java.util.HashMap;
-
-public class AddServerActivity extends MainBaseActivity {
+public class AddServerActivity extends _MainBaseActivity {
 
     //DATA STORE
     private String joinServerID;
