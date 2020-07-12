@@ -1,7 +1,6 @@
 package com.threadteam.thread.activities;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -9,7 +8,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageButton;
 
 import androidx.annotation.Nullable;
@@ -17,15 +15,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.threadteam.thread.LogHandler;
-import com.threadteam.thread.R;
-import com.threadteam.thread.adapters.ViewServerAdapter;
 
 import java.util.HashMap;
 
@@ -66,10 +61,13 @@ public abstract class BaseActivity extends AppCompatActivity {
     private ImageButton MainActionButton;
     private ActionMenuItemView CurrentMenuItem;
 
+    // CONSTANTS
+    protected static int NO_MENU_ITEM_FOR_ACTIVITY = -9999;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SetContentView();
+        setContentView(setLayoutIDForContentView());
 
         currentActivity = setCurrentActivity();
         title = setTitleForActivity();
@@ -136,7 +134,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
 
-        if(BottomToolbarAMV != null) {
+        if(CurrentMenuItem != null) {
             setCurrentMenuItem();
             toggleCurrentMenuItem(false);
         }
@@ -158,7 +156,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    abstract void SetContentView();
+    abstract int setLayoutIDForContentView();
 
     abstract AppCompatActivity setCurrentActivity();
     abstract String setTitleForActivity();
@@ -216,7 +214,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     abstract int setCurrentMenuItemID();
 
     private void setCurrentMenuItem() {
-        CurrentMenuItem = (ActionMenuItemView) currentActivity.findViewById(setCurrentMenuItemID());
+        if(setCurrentMenuItemID() != NO_MENU_ITEM_FOR_ACTIVITY) {
+            CurrentMenuItem = (ActionMenuItemView) currentActivity.findViewById(setCurrentMenuItemID());
+        }
     }
 
     abstract int setBottomToolbarMenuID();

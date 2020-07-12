@@ -259,8 +259,8 @@ public class ChatActivity extends ServerBaseActivityTemp {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    void SetContentView() {
-        setContentView(R.layout.activity_chat);
+    int setLayoutIDForContentView() {
+        return R.layout.activity_chat;
     }
 
     @Override

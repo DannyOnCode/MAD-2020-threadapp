@@ -221,8 +221,8 @@ public class PostsActivity extends ServerBaseActivityTemp {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    void SetContentView() {
-        setContentView(R.layout.activity_posts);
+    int setLayoutIDForContentView() {
+        return R.layout.activity_posts;
     }
 
     @Override

@@ -227,8 +227,8 @@ public class ViewServersActivity extends MainBaseActivity {
     }
 
     @Override
-    void SetContentView() {
-        setContentView(R.layout.activity_view_servers);
+    int setLayoutIDForContentView() {
+        return R.layout.activity_view_servers;
     }
 
     @Override

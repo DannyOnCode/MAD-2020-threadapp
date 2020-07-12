@@ -242,8 +242,8 @@ public class ViewMembersActivity extends ServerBaseActivityTemp {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    void SetContentView() {
-        setContentView(R.layout.activity_view_members);
+    int setLayoutIDForContentView() {
+        return R.layout.activity_view_members;
     }
 
     @Override
