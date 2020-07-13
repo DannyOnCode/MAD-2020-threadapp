@@ -59,7 +59,7 @@ public class ViewMemberAdapter extends RecyclerView.Adapter<ViewMemberViewHolder
         Integer colorInt = Utils.GetDefaultColorIntForStage(stage);
 
         String title;
-        if(titleList.size() > 0) {
+        if(titleList.size() > 0 && !titleList.get(stage).equals("")) {
             title = titleList.get(stage);
         } else {
             title = Utils.GetDefaultTitleForStage(stage);
