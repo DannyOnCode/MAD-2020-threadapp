@@ -27,6 +27,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
+import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.models.ChatMessage;
 
@@ -75,6 +76,55 @@ public class ChatActivity extends _ServerBaseActivity {
             }
             username = (String) dataSnapshot.getValue();
             logHandler.printDatabaseResultLog(".getValue()", "Current Username", "getUsername", username);
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            logHandler.printDatabaseErrorLog(databaseError);
+        }
+    };
+
+    // mapUsersToTitle: MAPS ALL USERS IN SERVER (MEMBERS) TO THEIR RESPECTIVE TITLES BASED ON EXP
+    //                  CORRECT INVOCATION CODE: databaseRef.child("members")
+    //                                                      .child(serverId)
+    //                                                      .addValueEventListener(mapUsersToTitle)
+
+    ValueEventListener mapUsersToTitle = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            if(dataSnapshot.getValue() == null) {
+                logHandler.printDatabaseResultLog(".getValue()", "Member Data", "mapUsersToTitle", "null");
+                return;
+            }
+
+            HashMap<String, Integer> colorMap = new HashMap<>();
+
+            for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                if (snapshot.getKey() == null) {
+                    logHandler.printDatabaseResultLog("snapshot.getKey()", "Member ID", "mapUsersToTitle", "null");
+                    return;
+                }
+
+                String memberId = snapshot.getKey();
+                logHandler.printDatabaseResultLog("snapshot.getKey()", "Member ID", "mapUsersToTitle", memberId);
+
+                if (snapshot.getValue() == null) {
+                    logHandler.printDatabaseResultLog("snapshot.getValue()", "Member EXP", "mapUsersToTitle", "null");
+                    return;
+                }
+
+                int memberExp = ((Long) snapshot.getValue()).intValue();
+                logHandler.printDatabaseResultLog("snapshot.getValue()", "Member EXP", "mapUsersToTitle", Integer.toString(memberExp));
+
+                int memberLevel = Utils.ConvertExpToLevel(memberExp);
+                int memberStage = Utils.ConvertLevelToStage(memberLevel);
+                int memberColor = Utils.GetDefaultColorIntForStage(memberStage);
+
+                colorMap.put(memberId, memberColor);
+            }
+
+            adapter.userColorMap = colorMap;
+            adapter.notifyDataSetChanged();
         }
 
         @Override
@@ -373,6 +423,10 @@ public class ChatActivity extends _ServerBaseActivity {
                 .child("_username")
                 .addListenerForSingleValueEvent(getUsername);
 
+        databaseRef.child("members")
+                   .child(serverId)
+                   .addValueEventListener(mapUsersToTitle);
+
         databaseRef.child("messages")
                 .child(serverId)
                 .addChildEventListener(chatListener);
@@ -382,6 +436,9 @@ public class ChatActivity extends _ServerBaseActivity {
     void DestroyListeners() {
         if(chatListener != null) {
             databaseRef.removeEventListener(chatListener);
+        }
+        if(mapUsersToTitle != null) {
+            databaseRef.removeEventListener(mapUsersToTitle);
         }
     }
 

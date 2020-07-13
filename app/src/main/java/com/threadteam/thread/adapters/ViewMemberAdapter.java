@@ -9,15 +9,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
 import com.threadteam.thread.R;
+import com.threadteam.thread.Utils;
 import com.threadteam.thread.models.User;
 import com.threadteam.thread.viewholders.ViewMemberViewHolder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ViewMemberAdapter extends RecyclerView.Adapter<ViewMemberViewHolder> {
 
     // DATA STORE
     public List<User> userList;
+    public List<String> titleList = new ArrayList<>();
     public String serverId;
 
     // CONSTRUCTOR
@@ -52,11 +55,26 @@ public class ViewMemberAdapter extends RecyclerView.Adapter<ViewMemberViewHolder
         int exp = currentUser.GetUserExpForServer(serverId);
         int expToNextLevel = currentUser.GetExpToNextLevelForServer(serverId);
         int progressToNextLevel = currentUser.GetAbsoluteLevelProgressForServer(serverId);
+        int stage = Utils.ConvertLevelToStage(level);
+        Integer colorInt = Utils.GetDefaultColorIntForStage(stage);
+
+        String title;
+        if(titleList.size() > 0) {
+            title = titleList.get(stage);
+        } else {
+            title = Utils.GetDefaultTitleForStage(stage);
+        }
 
         String levelString = "Lvl " + level;
         String expString = exp + "/" + expToNextLevel + " xp";
 
         holder.MemberName.setText(nameString);
+
+        if(colorInt != null) {
+            holder.MemberName.setTextColor(colorInt);
+        }
+
+        holder.MemberTitle.setText(title);
         holder.MemberLevel.setText(levelString);
         holder.MemberProgressBar.setProgress(progressToNextLevel);
         holder.MemberExp.setText(expString);

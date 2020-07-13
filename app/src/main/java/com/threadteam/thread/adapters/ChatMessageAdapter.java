@@ -15,6 +15,7 @@ import com.threadteam.thread.models.ChatMessage;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -31,6 +32,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     //DATA STORE
     public List<ChatMessage> chatMessageList;
+    public HashMap<String, Integer> userColorMap = new HashMap<>();
     public String currentUserUID;
 
     // CONSTRUCTOR
@@ -93,6 +95,11 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             ((IncomingChatMessageViewHolder) holder).SenderTextView.setText(senderUsername);
             ((IncomingChatMessageViewHolder) holder).MessageTextView.setText(message);
             ((IncomingChatMessageViewHolder) holder).TimestampTextView.setText(timeString);
+
+            String senderId = chatMessageList.get(position).get_senderID();
+            if(userColorMap.containsKey(senderId)) {
+                ((IncomingChatMessageViewHolder) holder).SenderTextView.setTextColor(userColorMap.get(senderId));
+            }
 
             LogHandler.staticPrintLog(
                     "Binding IncomingChatMessageViewHolder with data: " +

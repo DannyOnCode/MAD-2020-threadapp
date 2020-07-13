@@ -27,6 +27,7 @@ import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ViewMembersActivity extends _ServerBaseActivity {
@@ -44,6 +45,51 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     private RecyclerView ViewMembersRecyclerView;
 
     // INITIALISE LISTENERS
+
+    // retrieveMemberTitles:        RETRIEVES MEMBER TITLES AND LOADS IT INTO adapter
+    //                              CORRECT INVOCATION CODE: databaseRef.child("titles")
+    //                                                                  .child(serverId)
+    //                                                                  .addValueEventListener(retrieveMemberTitles)
+
+    private ValueEventListener retrieveMemberTitles = new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+            if(dataSnapshot.getValue() == null) {
+                logHandler.printDatabaseResultLog(".getValue()", "Member Title Data", "retrieveMemberTitles", "null");
+                return;
+            }
+
+            List<String> titleData = new ArrayList<>(Collections.nCopies(10, ""));
+
+            for(DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                if (snapshot.getKey() == null) {
+                    logHandler.printDatabaseResultLog("snapshot.getKey()", "Member Title Index", "retrieveMemberTitles", "null");
+                    return;
+                }
+
+                int index = Integer.parseInt(snapshot.getKey());
+                logHandler.printDatabaseResultLog("snapshot.getValue()", "Member Title", "retrieveMemberTitles", Integer.toString(index));
+
+                String title = (String) snapshot.getValue();
+                if (title == null) {
+                    logHandler.printDatabaseResultLog("snapshot.getValue()", "Member Title", "retrieveMemberTitles", "null");
+                    return;
+                }
+                logHandler.printDatabaseResultLog("snapshot.getValue()", "Member Title", "retrieveMemberTitles", title);
+
+                titleData.set(index, title);
+            }
+
+            adapter.titleList = titleData;
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+            logHandler.printDatabaseErrorLog(databaseError);
+        }
+    };
 
     // getUserListener: GETS AND ADDS A SINGLE USER TO adapter IF USER DOESN'T EXIST, ELSE UPDATES IT.
     //                  CORRECT INVOCATION CODE: databaseRef.child("users")
@@ -313,8 +359,12 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     @Override
     void AttachListeners() {
         databaseRef.child("members")
-                .child(serverId)
-                .addChildEventListener(memberListener);
+                   .child(serverId)
+                   .addChildEventListener(memberListener);
+
+        databaseRef.child("titles")
+                   .child(serverId)
+                   .addValueEventListener(retrieveMemberTitles);
     }
 
     @Override
@@ -324,6 +374,9 @@ public class ViewMembersActivity extends _ServerBaseActivity {
         }
         if(getUserListener != null) {
             databaseRef.removeEventListener(getUserListener);
+        }
+        if(retrieveMemberTitles != null) {
+            databaseRef.removeEventListener(retrieveMemberTitles);
         }
     }
 

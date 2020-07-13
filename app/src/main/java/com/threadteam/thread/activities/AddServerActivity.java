@@ -212,7 +212,7 @@ public class AddServerActivity extends _MainBaseActivity {
                     databaseRef.child("members")
                             .child(joinServerID)
                             .child(currentUser.getUid())
-                            .setValue(true);
+                            .setValue(0);
 
                     logHandler.printLogWithMessage("Server successfully joined; returning user back to ViewServers Activity!");
                     returnToViewServers();
@@ -336,7 +336,7 @@ public class AddServerActivity extends _MainBaseActivity {
 
         databaseRef.child("servers").child(newServerId).setValue(newServer);
         databaseRef.child("users").child(userId).child("_subscribedServers").child(newServerId).setValue(0);
-        databaseRef.child("members").child(newServerId).child(currentUser.getUid()).setValue(true);
+        databaseRef.child("members").child(newServerId).child(currentUser.getUid()).setValue(0);
 
         logHandler.printLogWithMessage("New server details have been pushed to database; returning user back to ViewServers Activity!");
         returnToViewServers();

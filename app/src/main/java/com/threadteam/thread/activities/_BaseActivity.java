@@ -44,7 +44,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
     // title                    TITLE OF THE CURRENT ACTIVITY
     // currentActivity          CURRENT ACTIVITY CONTEXT
 
-    private String title;
+    private String memberExp;
     protected AppCompatActivity currentActivity;
 
     // VIEW OBJECTS
@@ -70,8 +70,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
         setContentView(setLayoutIDForContentView());
 
         currentActivity = setCurrentActivity();
-        title = setTitleForActivity();
-        logHandler = new LogHandler(title + " Activity");
+        memberExp = setTitleForActivity();
+        logHandler = new LogHandler(memberExp + " Activity");
 
         logHandler.printDefaultLog(LogHandler.STATE_ON_CREATE);
 
@@ -171,7 +171,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
     private void SetupToolbars() {
         if(TopNavToolbar != null) {
             currentActivity.setSupportActionBar(TopNavToolbar);
-            TopNavToolbar.setTitle(title);
+            TopNavToolbar.setTitle(memberExp);
         }
 
         if(BottomToolbarAMV != null) {
@@ -238,7 +238,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
     @SuppressLint("RestrictedApi")
     protected void toggleCurrentMenuItem(Boolean enabled) {
         if(CurrentMenuItem == null) {
-            logHandler.printLogWithMessage("Can't find current menu item for " + title + "! Cancelling icon update!");
+            logHandler.printLogWithMessage("Can't find current menu item for " + memberExp + "! Cancelling icon update!");
             return;
         }
 
@@ -254,7 +254,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
             }
             CurrentMenuItem.setIcon(drawable);
 
-            logHandler.printLogWithMessage("Successfully toggled current menu item for " + title + " to " + enabled.toString());
+            logHandler.printLogWithMessage("Successfully toggled current menu item for " + memberExp + " to " + enabled.toString());
         }
     }
 

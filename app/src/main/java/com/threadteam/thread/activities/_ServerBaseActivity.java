@@ -98,7 +98,14 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
             case R.id.settingsMenuItem:
                 logHandler.printLogWithMessage("User tapped on Settings Menu Item!");
 
-                //TODO: Implement Settings Activity
+                if(currentActivity.getClass() != ServerSettingsActivity.class) {
+                    Intent goToServerSettings = new Intent(currentActivity, ServerSettingsActivity.class);
+                    PutExtrasForServerIntent(goToServerSettings);
+                    currentActivity.startActivity(goToServerSettings);
+                    logHandler.printActivityIntentLog("Server Settings");
+
+                    toggleCurrentMenuItem(true);
+                }
                 return true;
 
             case android.R.id.home:
@@ -479,6 +486,11 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
                             .child(_userId)
                             .child("_subscribedServers")
                             .child(_serverId)
+                            .setValue(currentExp + _exp);
+
+                    databaseRef.child("members")
+                            .child(_serverId)
+                            .child(_userId)
                             .setValue(currentExp + _exp);
 
                     // Feedback to user on level up
