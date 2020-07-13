@@ -7,7 +7,7 @@
     android:layout_height="wrap_content">
 
     <include
-        android:id="@+id/addServerNavbarInclude"
+        android:id="@+id/addPostNavbarInclude"
         layout="@layout/activity_partial_topnavtoolbar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -26,7 +26,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/addServerNavbarInclude">
+        app:layout_constraintTop_toBottomOf="@id/addPostNavbarInclude">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/postItemConstraintLayout"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content">
 
             <Button
-                android:id="@+id/cancelButton2"
+                android:id="@+id/cancelPostButton"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -47,25 +47,37 @@
                 app:backgroundTint="#FFFFFF"
                 app:backgroundTintMode="screen"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/confirmButton2"
-                app:layout_constraintStart_toStartOf="@+id/confirmButton2"
-                app:layout_constraintTop_toBottomOf="@+id/confirmButton2"
+                app:layout_constraintEnd_toEndOf="@+id/confirmPostButton"
+                app:layout_constraintStart_toStartOf="@+id/confirmPostButton"
+                app:layout_constraintTop_toBottomOf="@+id/confirmPostButton"
                 app:rippleColor="#66FF4444" />
 
             <Button
-                android:id="@+id/confirmButton2"
+                android:id="@+id/confirmPostButton"
                 style="@style/Widget.MaterialComponents.Button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="8dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:text="Confirm"
                 android:textColor="#FFFFFF"
                 app:backgroundTint="@color/colorPrimary"
-                app:layout_constraintEnd_toEndOf="@+id/editPostName2"
-                app:layout_constraintStart_toStartOf="@+id/editPostName2"
-                app:layout_constraintTop_toBottomOf="@+id/editPostName2" />
+                app:layout_constraintEnd_toEndOf="@+id/editMessage"
+                app:layout_constraintStart_toStartOf="@+id/editMessage"
+                app:layout_constraintTop_toBottomOf="@+id/progressBarAddPost" />
+
+            <ProgressBar
+                android:id="@+id/progressBarAddPost"
+                style="@style/progressBarStyle"
+                android:indeterminate="true"
+                android:visibility="invisible"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                app:layout_constraintEnd_toEndOf="@+id/editMessage"
+                app:layout_constraintStart_toStartOf="@+id/editMessage"
+                app:layout_constraintTop_toBottomOf="@+id/editMessage" />
 
             <View
                 android:id="@+id/colorBackground"
@@ -89,7 +101,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/editPostName" />
 
             <EditText
-                android:id="@+id/editPostName2"
+                android:id="@+id/editMessage"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:ems="10"
@@ -119,22 +131,22 @@
                 android:id="@+id/PostTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:text="Post Title"
                 android:textColor="@color/colorPrimary"
-                app:layout_constraintStart_toStartOf="@+id/postImageView"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/postImageView" />
 
             <EditText
                 android:id="@+id/editPostName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="16dp"
                 android:ems="10"
                 android:hint="Enter the Post Title here"
                 android:inputType="textPersonName"
-                app:layout_constraintEnd_toEndOf="@+id/postImageView"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/PostTitle"
                 app:layout_constraintTop_toBottomOf="@+id/PostTitle" />
 

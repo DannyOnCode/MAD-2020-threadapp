@@ -24,11 +24,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
+import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.PostsItemAdapter;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.Post;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PostsActivity extends _ServerBaseActivity {
 
@@ -246,8 +248,16 @@ public class PostsActivity extends _ServerBaseActivity {
         mainActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent ToAddPost = new Intent(PostsActivity.this, AddPostActivity.class);
-                startActivity(ToAddPost);
+                final HashMap<String, String> extraMap = new HashMap<String, String>();
+                extraMap.put("SERVER_ID", serverId);
+                Utils.StartActivityOnNewStack(
+                        PostsActivity.this,
+                        AddPostActivity.class,
+                        "AddPost Activity",
+                        extraMap,
+                        logHandler);
+
+                onStop();
             }
         });
 
