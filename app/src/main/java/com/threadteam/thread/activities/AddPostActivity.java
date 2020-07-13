@@ -314,7 +314,7 @@ public class AddPostActivity extends AppCompatActivity {
 
                         HashMap<String, Object> postDescriptions = new HashMap<>();
                         postDescriptions.put("_title", post.get_title());
-                        postDescriptions.put("_senderUID", post.get_id());
+                        postDescriptions.put("_senderUID", post.get_senderID());
                         postDescriptions.put("_sender", post.get_senderUsername());
                         postDescriptions.put("_message", post.get_message());
                         postDescriptions.put("_imageLink", post.get_imageLink());
@@ -355,7 +355,7 @@ public class AddPostActivity extends AppCompatActivity {
 
             HashMap<String, Object> postDescriptions = new HashMap<>();
             postDescriptions.put("_title", post.get_title());
-            postDescriptions.put("_senderUID", post.get_id());
+            postDescriptions.put("_senderUID", post.get_senderID());
             postDescriptions.put("_sender", post.get_senderUsername());
             postDescriptions.put("_message", post.get_message());
             postDescriptions.put("timestamp", post.getTimestampMillis());
