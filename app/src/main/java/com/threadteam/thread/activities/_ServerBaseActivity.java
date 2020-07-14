@@ -369,6 +369,8 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
                 databaseRef.child("servers").child(serverId).setValue(null);
                 databaseRef.child("messages").child(serverId).setValue(null);
                 databaseRef.child("members").child(serverId).setValue(null);
+                databaseRef.child("titles").child(serverId).setValue(null);
+                databaseRef.child("posts").child(serverId).setValue(null);
 
                 logHandler.printLogWithMessage("Server is completely deleted! Returning user back to View Server Activity!");
                 returnToViewServers();
