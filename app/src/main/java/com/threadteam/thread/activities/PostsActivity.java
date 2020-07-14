@@ -248,14 +248,9 @@ public class PostsActivity extends _ServerBaseActivity {
         mainActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final HashMap<String, String> extraMap = new HashMap<String, String>();
-                extraMap.put("SERVER_ID", serverId);
-                Utils.StartActivityOnNewStack(
-                        PostsActivity.this,
-                        AddPostActivity.class,
-                        "AddPost Activity",
-                        extraMap,
-                        logHandler);
+                Intent goToAddPost = new Intent(currentActivity, AddPostActivity.class);
+                PutExtrasForServerIntent(goToAddPost);
+                currentActivity.startActivity(goToAddPost);
 
                 onStop();
             }

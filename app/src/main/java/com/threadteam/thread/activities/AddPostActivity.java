@@ -3,17 +3,22 @@ package com.threadteam.thread.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -21,18 +26,14 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.Post;
 
@@ -50,10 +51,8 @@ import java.util.HashMap;
 // PARENT: VIEW POST
 // CHILDREN: N/A
 
-public class AddPostActivity extends AppCompatActivity {
+public class AddPostActivity extends _ServerBaseActivity {
 
-    //LOGGING
-    private LogHandler logHandler = new LogHandler("Add Post Activity");
 
     // DATA STORE
     //
@@ -62,7 +61,6 @@ public class AddPostActivity extends AppCompatActivity {
 
     private Uri mImageUri;
     private static final int PICK_IMAGE_REQUEST = 1;
-    private String serverId;
     private String userName;
 
     // FIREBASE
@@ -74,11 +72,6 @@ public class AddPostActivity extends AppCompatActivity {
     // currentData:             VALUE EVENT LISTENER FOR RETRIEVING CURRENT DATA OF USER.
 
     private StorageReference mStorageRef;
-    private DatabaseReference mDatabaseRef;
-    private FirebaseUser currentUser;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference ref;
-    private ValueEventListener userDataListener;
 
 
     // VIEW OBJECTS
@@ -93,103 +86,129 @@ public class AddPostActivity extends AppCompatActivity {
     // mProgressBar:            DISPLAYS THE UPLOAD PROGRESS ONCE mConfirmButton HAS BEEN CLICKED.
 
     private ImageView mChooseImage;
-    private Button mCancelButton;
     private Button mConfirmButton;
     private ImageView mDisplayImage;
     private EditText mTitleEdit;
     private EditText mMessageEdit;
     private ProgressBar mProgressBar;
-    private Toolbar TopNavToolbar;
 
+    // INITIALISE LISTENERS
+    ValueEventListener userDataListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            userName = (String) dataSnapshot.child("_username").getValue();
 
-    // ACTIVITY STATE MANAGEMENT METHODS
+            logHandler.printDatabaseResultLog(".getValue()", "Current Username", "userDataListener", userName);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            logHandler.printDatabaseErrorLog(databaseError);
+        }
+    };
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_addpost);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == android.R.id.home) {
+            logHandler.printLogWithMessage("User tapped on Back Button!");
+
+            Intent goToServer = new Intent(currentActivity, PostsActivity.class);
+            PutExtrasForServerIntent(goToServer);
+            currentActivity.startActivity(goToServer);
+            logHandler.printActivityIntentLog("Posts");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    // ABSTRACT OVERRIDE METHODS
+    @Override
+    ConstraintLayout setBaseLayer() {
+        return (ConstraintLayout) findViewById(R.id.baseAddPostItemConstraintLayout);
+    }
+
+    @Override
+    int setLayoutIDForContentView() {
+        return R.layout.activity_addpost;
+    }
+
+    @Override
+    AppCompatActivity setCurrentActivity() {
+        return AddPostActivity.this;
+    }
+
+    @Override
+    String setTitleForActivity() {
+        return "Add Post";
+    }
+
+    @Override
+    ImageButton setMainActionButton() {
+        return null;
+    }
+
+    @Override
+    Toolbar setTopNavToolbar() {
         View includeView = findViewById(R.id.addPostNavbarInclude);
-        TopNavToolbar = (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+        return (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+    }
 
-        logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
+    @Override
+    ActionMenuView setBottomToolbarAMV() {
+        return null;
+    }
 
-        // SETUP TOOLBARS
-        TopNavToolbar.setTitle("Add Post");
-        this.setSupportActionBar(TopNavToolbar);
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        logHandler.printDefaultLog(LogHandler.TOOLBAR_SETUP);
-
-        // BIND VIEW OBJECTS
+    @Override
+    void BindViewObjects() {
         mChooseImage = (ImageView) findViewById(R.id.postImageView);
         mDisplayImage = (ImageView) findViewById(R.id.postImageView);
         mConfirmButton = (Button) findViewById(R.id.confirmPostButton);
-        mCancelButton = (Button) findViewById(R.id.cancelPostButton);
         mTitleEdit = (EditText) findViewById(R.id.editPostName);
         mMessageEdit = (EditText) findViewById(R.id.editMessage);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarAddPost);
+    }
 
-        //LOG
-        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
-
-        // Get serverId from Intent
-        final Intent dataReceiver = getIntent();
-        serverId = dataReceiver.getStringExtra("SERVER_ID");
-
-        if (serverId == null) {
-            logHandler.printGetExtrasResultLog("SERVER_ID", "null");
-        }
-        logHandler.printGetExtrasResultLog("SERVER_ID", serverId);
-
-        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
-
-
-
-
-
+    @Override
+    void SetupViewObjects() {
         // INITIALISE FIREBASE
-        mStorageRef = FirebaseStorage.getInstance().getReference("posts").child(serverId);
-        mDatabaseRef = FirebaseDatabase.getInstance().getReference("posts");
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        currentUser = firebaseAuth.getCurrentUser();
-        //Validation for if there is a user
-        if(currentUser == null) {
-            logHandler.printDefaultLog(LogHandler.FIREBASE_USER_NOT_FOUND);
-            Intent backToLogin = new Intent(AddPostActivity.this, LoginActivity.class);
-            startActivity(backToLogin);
-            logHandler.printActivityIntentLog("Login Activity");
-            return;
-        }
-        logHandler.printDefaultLog(LogHandler.FIREBASE_USER_FOUND);
-        String userID = currentUser.getUid();
-
-        // Get Owner Username from Database
-        ref = FirebaseDatabase.getInstance().getReference().child("users").child(userID);
-        // INITIALISE LISTENERS
-
-        // userDataListener:    USED TO RETRIEVE USERNAME
-        //                      CORRECT INVOCATION CODE: databaseRef.child("users")
-        //                                                          .child(userID)
-        //                                                          .addListenerForSingleValueEvent(addServerOnce)
-        //                      SHOULD NOT BE USED INDEPENDENTLY.
-        userDataListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                userName = (String) dataSnapshot.child("_username").getValue();
-
-                logHandler.printDatabaseResultLog(".getValue()", "Current Username", "userDataListener", userName);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                logHandler.printDatabaseErrorLog(databaseError);
-            }
-        };
-
-        logHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
-
-        ref.addValueEventListener(userDataListener);
+        mStorageRef = FirebaseStorage.getInstance().getReference("posts");
 
         // SETUP VIEW OBJECTS
         //Populate Buttons with Listeners
@@ -223,19 +242,29 @@ public class AddPostActivity extends AppCompatActivity {
                 }
             }
         });
-
-        mCancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //Moving activity
-                Intent goToViewServer = new Intent(AddPostActivity.this, ViewServersActivity.class);
-                logHandler.printActivityIntentLog("View Server Activity");
-                startActivity(goToViewServer);
-            }
-        });
     }
 
-    // CLASS METHODS
+    @Override
+    void AttachListeners() {
+        databaseRef.child("users")
+                .child(currentUser.getUid())
+                .addValueEventListener(userDataListener);
+    }
+
+    @Override
+    void DestroyListeners() {
+        if(userDataListener != null) {
+            databaseRef.removeEventListener(userDataListener);
+        }
+    }
+
+    @Override
+    int setCurrentMenuItemID() {
+        return NO_MENU_ITEM_FOR_ACTIVITY;
+    }
+
+    // ACTIVITY SPECIFIC METHODS
+
     //Open Device File Explorer to search for image only
     private void openFileChooser(){
         Intent intent = new Intent();
@@ -258,7 +287,7 @@ public class AddPostActivity extends AppCompatActivity {
                     .placeholder(R.drawable.backgroundforaddimage)
                     .error(R.drawable.backgroundforaddimage)
                     .centerCrop()
-                    .into(mChooseImage);
+                    .into(mDisplayImage);
 
 
         }
@@ -275,7 +304,7 @@ public class AddPostActivity extends AppCompatActivity {
         //Set Progressbar to visible
         mProgressBar.setVisibility(View.VISIBLE);
         if(mImageUri != null){
-            final StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
+            final StorageReference fileReference = mStorageRef.child(serverId).child(System.currentTimeMillis()
                     + "."+getFileExtension(mImageUri));
 
             fileReference.putFile(mImageUri).continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>()
@@ -298,8 +327,6 @@ public class AddPostActivity extends AppCompatActivity {
                     {
                         Uri downloadUri = task.getResult();
 
-                        firebaseAuth = FirebaseAuth.getInstance();
-                        currentUser = firebaseAuth.getCurrentUser();
                         String senderID = currentUser.getUid();
                         Post post = new Post();
                         post.set_imageLink(downloadUri.toString());
@@ -320,7 +347,7 @@ public class AddPostActivity extends AppCompatActivity {
                         postDescriptions.put("_imageLink", post.get_imageLink());
                         postDescriptions.put("timestamp", post.getTimestampMillis());
 
-                        mDatabaseRef.child(serverId).push().setValue(postDescriptions,new DatabaseReference.CompletionListener() {
+                        databaseRef.child("posts").child(serverId).push().setValue(postDescriptions,new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                                 startActivity(new Intent(AddPostActivity.this, ViewServersActivity.class));
@@ -340,8 +367,6 @@ public class AddPostActivity extends AppCompatActivity {
             });
             //When no image has been given
         }else{
-            firebaseAuth = FirebaseAuth.getInstance();
-            currentUser = firebaseAuth.getCurrentUser();
             String senderID = currentUser.getUid();
             Post post = new Post();
             post.set_title(mTitleEdit.getText().toString().trim());
@@ -359,9 +384,8 @@ public class AddPostActivity extends AppCompatActivity {
             postDescriptions.put("_sender", post.get_senderUsername());
             postDescriptions.put("_message", post.get_message());
             postDescriptions.put("timestamp", post.getTimestampMillis());
-            //Set Progressbar to visible
-            mProgressBar.setVisibility(View.VISIBLE);
-            mDatabaseRef.child(serverId).push().setValue(postDescriptions,new DatabaseReference.CompletionListener() {
+
+            databaseRef.child("posts").child(serverId).push().setValue(postDescriptions,new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                     startActivity(new Intent(AddPostActivity.this, ViewServersActivity.class));
