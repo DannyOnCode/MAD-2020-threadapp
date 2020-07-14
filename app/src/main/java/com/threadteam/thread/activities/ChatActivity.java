@@ -444,7 +444,7 @@ public class ChatActivity extends _ServerBaseActivity {
 
     @Override
     int setCurrentMenuItemID() {
-        return R.id.chatMenuItem;
+        return NO_MENU_ITEM_FOR_ACTIVITY;
     }
 
     // ACTIVITY SPECIFIC METHODS
