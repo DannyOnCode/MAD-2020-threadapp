@@ -11,6 +11,7 @@ import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.viewholders.IncomingChatMessageViewHolder;
 import com.threadteam.thread.viewholders.OutgoingChatMessageViewHolder;
+import com.threadteam.thread.viewholders.SystemChatMessageViewHolder;
 import com.threadteam.thread.models.ChatMessage;
 
 import java.text.SimpleDateFormat;
@@ -42,10 +43,13 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemViewType(int position) {
-        if(chatMessageList.get(position).get_senderID().equals(currentUserUID)) {
+        ChatMessage message = chatMessageList.get(position);
+        if(message.get_senderID().equals(currentUserUID)) {
             return 0;
-        } else {
+        } else if (message.get_senderID().equals("SYSTEM") && message.get_senderUsername().equals("SYSTEM")) {
             return 1;
+        } else {
+            return 2;
         }
     }
 
@@ -59,13 +63,20 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     false
             );
             return new OutgoingChatMessageViewHolder(item);
-        } else {
+        } else if(viewType == 2) {
             View item = LayoutInflater.from(parent.getContext()).inflate(
                     R.layout.activity_partial_chatmessage_incoming,
                     parent,
                     false
             );
             return new IncomingChatMessageViewHolder(item);
+        } else {
+            View item = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.activity_partial_chatmessage_system,
+                    parent,
+                    false
+            );
+            return new SystemChatMessageViewHolder(item);
         }
     }
 
@@ -91,7 +102,7 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     "Binding OutgoingChatMessageViewHolder with data: " +
                             senderUsername + ", " + message + ", " + timeString
             );
-        } else {
+        } else if(getItemViewType(position) == 2) {
             ((IncomingChatMessageViewHolder) holder).SenderTextView.setText(senderUsername);
             ((IncomingChatMessageViewHolder) holder).MessageTextView.setText(message);
             ((IncomingChatMessageViewHolder) holder).TimestampTextView.setText(timeString);
@@ -105,6 +116,8 @@ public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     "Binding IncomingChatMessageViewHolder with data: " +
                             senderUsername + ", " + chatMessageList + ", " + timeString
             );
+        } else {
+            ((SystemChatMessageViewHolder) holder).MessageTextView.setText(message);
         }
     }
 

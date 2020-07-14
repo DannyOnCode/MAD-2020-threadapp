@@ -491,7 +491,7 @@ public class ChatActivity extends _ServerBaseActivity {
             scrollToLatestMessage = true;
             logHandler.printLogWithMessage("Message pushed! Setting scrollToLatestMessage = true!");
 
-            addExpForServerMember(currentUser.getUid(), serverId, 1, 60);
+            AddExpForServerMember(currentUser.getUid(), serverId, 1, 60);
         } else {
             logHandler.printLogWithMessage("No message was pushed because there was no text after formatting!");
         }
