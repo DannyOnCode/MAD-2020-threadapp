@@ -16,7 +16,7 @@ public class Post {
     private String _imageLink;
     private String _title;
     private String _message;
-    private String _senderID;
+    private String _senderUID;
     private String _senderUsername;
 
     // TIMESTAMP FOR LOCAL USE. SHOULD NOT BE SYNCED WITH FIREBASE.
@@ -29,11 +29,11 @@ public class Post {
     // FIREBASE REQUIRED BLANK CONSTRUCTOR
     public Post() {}
 
-    public Post(String imageLink, String title, String message, String senderID, String senderUsername) {
+    public Post(String imageLink, String title, String message, String senderUID, String senderUsername) {
         this._imageLink = imageLink;
         this._title = title;
         this._message = message;
-        this._senderID = senderID;
+        this._senderUID = senderUID;
         this._senderUsername = senderUsername;
 
         // LEAVE TIMESTAMP EMPTY FOR SOLE-SERVER SIDE GENERATION
@@ -43,7 +43,7 @@ public class Post {
         this._imageLink = imageLink;
         this._title = title;
         this._message = message;
-        this._senderID = senderID;
+        this._senderUID = senderID;
         this._senderUsername = senderUsername;
 
         this.timestampMillis = timestampMillis;
@@ -82,11 +82,11 @@ public class Post {
     }
 
     public String get_senderID() {
-        return _senderID;
+        return _senderUID;
     }
 
-    public void set_senderID(String _senderID) {
-        this._senderID = _senderID;
+    public void set_senderID(String _senderUID) {
+        this._senderUID = _senderUID;
     }
 
     public String get_senderUsername() {
@@ -114,7 +114,7 @@ public class Post {
                 ", _imageLink='" + _imageLink + '\'' +
                 ", _title='" + _title + '\'' +
                 ", _message='" + _message + '\'' +
-                ", _senderID='" + _senderID + '\'' +
+                ", _senderID='" + _senderUID + '\'' +
                 ", _senderUsername='" + _senderUsername + '\'' +
                 ", timestampMillis=" + timestampMillis +
                 '}';

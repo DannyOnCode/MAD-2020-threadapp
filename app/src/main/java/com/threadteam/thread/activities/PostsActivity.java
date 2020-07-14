@@ -82,10 +82,7 @@ public class PostsActivity extends _ServerBaseActivity {
 
             Post post;
 
-            if (imageLink == null) {
-                logHandler.printDatabaseResultLog(".child(\"_imageLink\").getValue()", "Image Link", "postListener", "null");
-                return;
-            } else if (title == null) {
+            if (title == null) {
                 logHandler.printDatabaseResultLog(".child(\"_title\").getValue()", "Title", "postListener", "null");
                 return;
             } else if (message == null) {
@@ -101,7 +98,13 @@ public class PostsActivity extends _ServerBaseActivity {
                 logHandler.printDatabaseResultLog(".child(\"timestamp\").getValue()", "Timestamp", "postListener", "null");
                 post = new Post(imageLink, title, message, senderUID, sender);
             } else {
-                post = new Post(imageLink, title, message, senderUID, sender, timestampMillis);
+                if(imageLink != null){
+                    post = new Post(imageLink, title, message, senderUID, sender, timestampMillis);
+                }
+                else{
+                    logHandler.printDatabaseResultLog(".child(\"_imageLink\").getValue()", "Image Link", "postListener", "null");
+                    post= new Post(null,title, message, senderUID, sender, timestampMillis);
+                }
             }
 
             post.set_id(dataSnapshot.getKey());
