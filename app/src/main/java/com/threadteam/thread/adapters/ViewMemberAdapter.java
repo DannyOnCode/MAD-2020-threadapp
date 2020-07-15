@@ -86,6 +86,8 @@ public class ViewMemberAdapter extends RecyclerView.Adapter<ViewMemberViewHolder
                     .error(R.drawable.profilepictureempty)
                     .centerCrop()
                     .into(holder.MemberProfileImageView);
+        } else {
+            holder.MemberProfileImageView.setImageResource(R.drawable.profilepictureempty);
         }
     }
 

@@ -122,7 +122,6 @@ public class ViewMembersActivity extends _ServerBaseActivity {
             }
             else if(profileImageURL == null) {
                 logHandler.printDatabaseResultLog(".child(\"_profileImageURL\").getValue()", "Profile Image URL", "addUserOnce", "null");
-                return;
             }
 
             logHandler.printDatabaseResultLog(".getKey()", "User ID", "addUserOnce", id);
