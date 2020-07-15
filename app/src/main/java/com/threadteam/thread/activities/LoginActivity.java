@@ -182,7 +182,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 //Navigating to Register Activity
-                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                startActivity(new Intent(LoginActivity.this, notifyActivity.class));
                 logHandler.printActivityIntentLog("Register Activity");
 
             }
