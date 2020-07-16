@@ -162,6 +162,8 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
     }
 
     @Override
+    void HandleAdditionalIntentExtras(){ }
+    @Override
     void DoAdditionalSetupForToolbars() {
         if(currentActivity.getSupportActionBar() != null) {
             currentActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);

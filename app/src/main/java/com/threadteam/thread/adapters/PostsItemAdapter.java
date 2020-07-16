@@ -59,13 +59,14 @@ public class PostsItemAdapter extends RecyclerView.Adapter<PostsItemViewHolder> 
             timeString = new SimpleDateFormat("d/MM/yyyy h:mma", Locale.UK).format(date);
         }
 
-        if(imageLink != null) {
+        Picasso.get().setLoggingEnabled(true);
+        if(imageLink != null){
             Picasso.get()
                     .load(imageLink)
-                    .fit()
-                    .error(R.drawable.profilepictureempty)
-                    .centerCrop()
                     .into(holder.PostImageView);
+        }
+        else{
+            holder.PostImageView.setImageResource(R.drawable.profilepictureempty);
         }
 
         holder.PostTitleTextView.setText(title);

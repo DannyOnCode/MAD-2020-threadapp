@@ -31,10 +31,10 @@
                 android:adjustViewBounds="true"
                 android:cropToPadding="false"
                 android:scaleType="fitXY"
+                android:src="@drawable/addpostimage"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/backgrounds/scenic" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/postTitleTextView"

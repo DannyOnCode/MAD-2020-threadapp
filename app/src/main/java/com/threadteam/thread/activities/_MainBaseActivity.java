@@ -72,6 +72,9 @@ public abstract class _MainBaseActivity extends _BaseActivity {
     void HandleIntentExtras() { }
 
     @Override
+    void HandleAdditionalIntentExtras(){}
+
+    @Override
     void DoAdditionalSetupForToolbars() { }
 
     @Override

@@ -161,7 +161,7 @@ public class ChatActivity extends _ServerBaseActivity {
             String message = (String) dataSnapshot.child("_message").getValue();
             Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
 
-            ChatMessage chatMessage;
+            final ChatMessage chatMessage;
 
             if (senderUID == null) {
                 logHandler.printDatabaseResultLog(".child(\"_senderUID\").getValue()", "Sender ID", "chatListener", "null");

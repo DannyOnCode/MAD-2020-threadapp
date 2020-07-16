@@ -92,6 +92,7 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case 0:
                 //Profile Card
                 ViewProfileCardViewHolder profileHolder = (ViewProfileCardViewHolder) holder;
+                Picasso.get().setLoggingEnabled(true);
                 if(userData.get_profileImageURL() != null){
                     Picasso.get()
                             .load(userData.get_profileImageURL())
@@ -116,7 +117,6 @@ public class ViewProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             case 2:
                 //Server Card
                 final ViewServerStatusCardViewHolder serverStatusCardViewHolder = (ViewServerStatusCardViewHolder) holder;
-                //Problem is here
                 String serverDetails = userData.get_subscribedServers().get(position - 2);
                 ref = FirebaseDatabase.getInstance().getReference().child("servers").child(serverDetails);
                 ref.addListenerForSingleValueEvent(new ValueEventListener() {

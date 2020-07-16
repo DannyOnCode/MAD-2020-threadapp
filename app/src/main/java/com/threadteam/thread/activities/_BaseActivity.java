@@ -91,9 +91,10 @@ public abstract class _BaseActivity extends AppCompatActivity {
         logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
 
         HandleIntentExtras();
-
+        HandleAdditionalIntentExtras();
         InitialiseFirebase();
         DoAdditionalSetupForFirebase();
+
         logHandler.printDefaultLog(LogHandler.FIREBASE_INITIALISED);
 
         logHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
@@ -190,6 +191,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
     abstract void SetupViewObjects();
 
     abstract void HandleIntentExtras();
+    abstract void HandleAdditionalIntentExtras();
 
     private void InitialiseFirebase() {
         firebaseAuth = FirebaseAuth.getInstance();

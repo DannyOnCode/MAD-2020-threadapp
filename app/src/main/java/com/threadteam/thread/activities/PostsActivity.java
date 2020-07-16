@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
 import com.threadteam.thread.Utils;
@@ -346,6 +347,10 @@ public class PostsActivity extends _ServerBaseActivity {
     // ACTIVITY SPECIFIC METHODS
 
     private void handleTransitionIntoPost(Integer position) {
-        //TODO: go to view post activity (when complete)
+        logHandler.printLogWithMessage("User tapped on a server!");
+        Intent goToViewPostDetails = new Intent(currentActivity, ViewPostDetailsActivity.class);
+        goToViewPostDetails.putExtra("POST_ID", adapter.postList.get(position).get_id());
+        PutExtrasForServerIntent(goToViewPostDetails);
+        currentActivity.startActivity(goToViewPostDetails);
     }
 }
