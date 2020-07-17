@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -37,17 +38,29 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.R;
+import com.threadteam.thread.interfaces.APIService;
 import com.threadteam.thread.models.ChatMessage;
 import com.threadteam.thread.Utils;
+import com.threadteam.thread.models.User;
+import com.threadteam.thread.notifications.Client;
+import com.threadteam.thread.notifications.Data;
+import com.threadteam.thread.notifications.Sender;
+import com.threadteam.thread.notifications.ThreadResponse;
+import com.threadteam.thread.notifications.Token;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 // CHAT ACTIVITY
 //
@@ -113,6 +126,12 @@ public class ChatActivity extends AppCompatActivity {
     private ImageButton SendMsgButton;
     private Toolbar TopNavToolbar;
 
+
+    //FOR NOTIFICATIONS
+    APIService apiService;
+    boolean notify = false;
+
+
     // ACTIVITY STATE MANAGEMENT METHODS
 
     @SuppressLint("ClickableViewAccessibility")
@@ -139,6 +158,9 @@ public class ChatActivity extends AppCompatActivity {
 
         logHandler.printDefaultLog(LogHandler.TOOLBAR_SETUP);
 
+
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+
         // BIND VIEW OBJECTS
         ChatMessageRecyclerView = findViewById(R.id.chatMessageRecyclerView);
         MessageEditText = findViewById(R.id.messageEditText);
@@ -151,6 +173,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 sendMessage();
+                notify = true;
             }
         });
 
@@ -447,6 +470,67 @@ public class ChatActivity extends AppCompatActivity {
             logHandler.printLogWithMessage("No message was pushed because there was no text after formatting!");
         }
 
+        //ADDED BY BEEF FOR NOTIFICATIONS
+        final String msg = message;
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(currentUser.getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(notify){
+                    sendNotification(serverId, user.get_username(),msg);
+
+                }
+                notify=false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+    private void sendNotification(String receiver, final String username, final String message){
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = tokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(currentUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message",
+                            serverId);
+
+                    Sender sender = new Sender(data, token.getToken());
+
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<ThreadResponse>() {
+                                @Override
+                                public void onResponse(Call<ThreadResponse> call, Response<ThreadResponse> response) {
+                                    if (response.code() ==200){
+                                        if (response.body().success !=1){
+                                            Toast.makeText(ChatActivity.this,"Failed!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ThreadResponse> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void resetShareCode() {

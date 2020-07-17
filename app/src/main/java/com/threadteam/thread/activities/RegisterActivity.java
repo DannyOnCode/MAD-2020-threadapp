@@ -25,9 +25,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.User;
+import com.threadteam.thread.notifications.Token;
+
 
 
 // REGISTER ACTIVITY
@@ -43,6 +46,7 @@ import com.threadteam.thread.models.User;
 // PARENT: NONE
 // CHILDREN: LOGIN ACTIVITY
 // OTHER: VIEW SERVER
+
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -113,6 +117,8 @@ public class RegisterActivity extends AppCompatActivity {
         // INITIALISE FIREBASE
         user = new User();
         reff = FirebaseDatabase.getInstance().getReference().child("users");
+
+
 
         // SETUP VIEW OBJECTS
         //Populate Buttons with Listeners
@@ -194,6 +200,8 @@ public class RegisterActivity extends AppCompatActivity {
                             String UserID  = fAuth.getCurrentUser().getUid();
                             reff.child(UserID).setValue(user);
 
+                            updateToken(FirebaseInstanceId.getInstance().getToken());
+
                             Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                             logHandler.printLogWithMessage("Registered Successfully");
 
@@ -242,4 +250,12 @@ public class RegisterActivity extends AppCompatActivity {
         }
 
     }
+
+    private void updateToken (String token){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(fAuth.getCurrentUser().getUid()).setValue(token1);
+    }
+
+
 }
