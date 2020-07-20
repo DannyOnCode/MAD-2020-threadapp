@@ -289,7 +289,7 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
 
             if(scrollToLatestMessage) {
                 logHandler.printLogWithMessage("scrollToLatestMessage = true; scrolling to latest message now!");
-                viewPostDetailsRecyclerView.smoothScrollToPosition(Math.max(0, adapter.postMessageList.size() + 1));
+                viewPostDetailsRecyclerView.smoothScrollToPosition(adapter.getItemCount() -1);
             }
         }
 
@@ -416,13 +416,14 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
                     logHandler.printLogWithMessage("Scrolled up, toggled scrollToLatestMessage = false!");
                     scrollToLatestMessage = false;
 
-                } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == adapter.postMessageList.size()+1) {
+                } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == (adapter.getItemCount() - 1)) {
                     logHandler.printLogWithMessage("Scrolled to bottom of chat, setting scrollToLatestMessage = true!");
                     scrollToLatestMessage = true;
                 }
 
             }
         };
+        viewPostDetailsRecyclerView.addOnScrollListener(scrollListener);
     }
 
     @Override
@@ -510,6 +511,7 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
             commentMessageHashMap.put("timestamp", System.currentTimeMillis());
             databaseRef.child("postmessages").child(serverId).child(postID).push().setValue(commentMessageHashMap);
 
+            scrollToLatestMessage = true;
             AddExpForServerMember(currentUser.getUid(), serverId, 1, 60);
         } else {
             logHandler.printLogWithMessage("No message was pushed because there was no text after formatting!");
