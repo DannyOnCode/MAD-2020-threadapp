@@ -435,6 +435,9 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
                             databaseRef.child("users").child(currentUID).child("_subscribedServers").child(serverId).setValue(null);
                             databaseRef.child("members").child(serverId).child(currentUID).setValue(null);
 
+                            // Send user left server notification in chat
+                            Utils.SendUserActionSystemMessage(logHandler, databaseRef, currentUID, " left the server! :(", serverId);
+
                             logHandler.printLogWithMessage("Returning user back to View Server Activity!");
                             returnToViewServers();
                         }
@@ -465,15 +468,6 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
         intent.putExtra(IS_OWNER_KEY, isOwner.toString());
     }
 
-    protected void SendSystemMessageInChat(@NonNull String message, @NonNull String _serverId) {
-        HashMap<String, Object> chatMessageHashMap = new HashMap<>();
-        chatMessageHashMap.put("_senderUID", "SYSTEM");
-        chatMessageHashMap.put("_sender", "SYSTEM");
-        chatMessageHashMap.put("_message", message);
-        chatMessageHashMap.put("timestamp", System.currentTimeMillis());
-        databaseRef.child("messages").child(_serverId).push().setValue(chatMessageHashMap);
-    }
-
     protected void AddExpForServerMember(final String _userId, final String _serverId, final int _exp, int _secondsCooldown) {
         String PREF_FILE = "cooldownPref";
         String COOLDOWN_KEY = "cooldownFinish";
@@ -483,26 +477,6 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
         long millisNow = System.currentTimeMillis();
 
         if(millisCooldownFinish == -1 || millisNow > millisCooldownFinish) {
-
-            final ValueEventListener broadcastLevelUp = new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    String username = (String) dataSnapshot.getValue();
-
-                    if(username == null) {
-                        logHandler.printDatabaseResultLog(".getValue()", "Username", "broadcastLevelUp", "null");
-                        return;
-                    }
-                    logHandler.printDatabaseResultLog(".getValue()", "Username", "broadcastLevelUp", username);
-
-                    SendSystemMessageInChat(username + " has levelled up!", _serverId);
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    logHandler.printDatabaseErrorLog(databaseError);
-                }
-            };
 
             final ValueEventListener updateExpListener = new ValueEventListener() {
                 @Override
@@ -530,13 +504,9 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
                     Integer oldLevel = Utils.ConvertExpToLevel(currentExp.intValue());
                     Integer newLevel = Utils.ConvertExpToLevel(currentExp.intValue() + _exp);
                     if(oldLevel < newLevel) {
-                        //TODO: Maybe make level up dialog nicer? Will have to see if we've got time to implement this
 
                         // Announce level up in chat
-                        databaseRef.child("users")
-                                   .child(_userId)
-                                   .child("_username")
-                                   .addListenerForSingleValueEvent(broadcastLevelUp);
+                        Utils.SendUserActionSystemMessage(logHandler, databaseRef, _userId, " has leveled up! " + oldLevel + " -> " + newLevel, _serverId);
 
                         Toast.makeText(getApplicationContext(), "You leveled up! Current level: " + newLevel.toString(), Toast.LENGTH_SHORT).show();
                     }

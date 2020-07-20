@@ -21,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
+import com.threadteam.thread.Utils;
 import com.threadteam.thread.models.Server;
 
 public class AddServerActivity extends _MainBaseActivity {
@@ -197,28 +198,31 @@ public class AddServerActivity extends _MainBaseActivity {
                 if(dataSnapshot.getValue() != null) {
                     logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "not null");
                     displayError("User is already subscribed to this server!");
-                } else {
-                    logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "null");
-                    logHandler.printLogWithMessage("Subscribing user to server!");
-
-                    // Subscribe user to server
-                    databaseRef.child("users")
-                            .child(userId)
-                            .child("_subscribedServers")
-                            .child(joinServerID)
-                            .setValue(0);
-
-                    // Add user to list of members
-                    databaseRef.child("members")
-                            .child(joinServerID)
-                            .child(currentUser.getUid())
-                            .setValue(0);
-
-                    logHandler.printLogWithMessage("Server successfully joined; returning user back to ViewServers Activity!");
-                    returnToViewServers();
-
-                    finish();
+                    return;
                 }
+                logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "null");
+                logHandler.printLogWithMessage("Subscribing user to server!");
+
+                // Subscribe user to server
+                databaseRef.child("users")
+                        .child(userId)
+                        .child("_subscribedServers")
+                        .child(joinServerID)
+                        .setValue(0);
+
+                // Add user to list of members
+                databaseRef.child("members")
+                        .child(joinServerID)
+                        .child(currentUser.getUid())
+                        .setValue(0);
+
+                // User join message
+                Utils.SendUserActionSystemMessage(logHandler, databaseRef, userId, " has joined the server!", joinServerID);
+
+                logHandler.printLogWithMessage("Server successfully joined; returning user back to ViewServers Activity!");
+                returnToViewServers();
+
+                finish();
             }
 
             @Override

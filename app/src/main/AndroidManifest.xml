@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".activities.MemberProfileActivity" />
         <activity android:name=".activities.ViewPostDetailsActivity"></activity>
         <activity android:name=".activities.ServerSettingsActivity" />
         <activity android:name=".activities.ViewMembersActivity" />

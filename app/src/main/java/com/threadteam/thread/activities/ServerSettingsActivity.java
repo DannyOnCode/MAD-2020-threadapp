@@ -42,8 +42,11 @@ public class ServerSettingsActivity extends _ServerBaseActivity {
 
     // VIEW OBJECTS
     //
-    // EditMemberTitleRecyclerView: DISPLAYS ALL CHAT MESSAGES IN THE SERVER. USES adapter AS ITS ADAPTER.
-    // TODO: document vars
+    // EditMemberTitleRecyclerView:     DISPLAYS ALL CHAT MESSAGES IN THE SERVER. USES adapter AS ITS ADAPTER.
+    // EditServerTitleEditText:         EDIT TEXT VIEW OBJECT FOR KEYING IN NEW SERVER TITLE
+    // EditServerDescEditText:          EDIT TEXT VIEW OBJECT FOR KEYING IN NEW SERVER DESCRIPTION
+    // EditServerDetailsApplyButton:    APPLIES CHANGES TO SERVER TITLE AND DESCRIPTION ONCE CLICKED
+    // EditMemberTitlesApplyButton:     APPLIES CHANGES TO MEMBER TITLES ONCE CLICKED
 
     private EditText EditServerTitleEditText;
     private EditText EditServerDescEditText;

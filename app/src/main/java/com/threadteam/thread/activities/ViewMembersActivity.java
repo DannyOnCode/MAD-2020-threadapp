@@ -1,5 +1,6 @@
 package com.threadteam.thread.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -96,7 +97,6 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     //                                                      .child(userID)
     //                                                      .addValueEventListener(getUserListener)
     //                  SHOULD NOT BE USED INDEPENDENTLY.
-    //                  index SHOULD BE MODIFIED BEFOREHAND TO INDICATE THE INDEX AT WHICH THE USER IS ADDED IN THE ADAPTER.
 
     private ValueEventListener getUserListener = new ValueEventListener() {
 
@@ -344,7 +344,13 @@ public class ViewMembersActivity extends _ServerBaseActivity {
                 new RecyclerTouchListener(this, ViewMembersRecyclerView, new RecyclerViewClickListener() {
                     @Override
                     public void onClick(View view, int position) {
-                        // TODO: Handle touch into member profile here
+                        String memberId = adapter.userList.get(position).get_id();
+
+                        Intent goToMemberProfile = new Intent(currentActivity, MemberProfileActivity.class);
+                        PutExtrasForServerIntent(goToMemberProfile);
+                        goToMemberProfile.putExtra("MEMBER_ID", memberId);
+                        currentActivity.startActivity(goToMemberProfile);
+                        logHandler.printActivityIntentLog("View Member Profile");
                     }
                 })
         );
