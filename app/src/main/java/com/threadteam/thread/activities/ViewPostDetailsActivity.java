@@ -265,19 +265,6 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
                 postMessage = new PostMessage(senderUID, senderName, commentMessage, timestampMillis);
             }
 
-
-            /*databaseRef.child("members").child(serverId).child(senderUID).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                    userExp = ((Long) dataSnapshot.getValue()).intValue();
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-                    logHandler.printDatabaseErrorLog(databaseError);
-                }
-            });*/
-
             userExp = userExpList.get(senderUID);
             int level = Utils.ConvertExpToLevel(userExp);
             int stage = Utils.ConvertLevelToStage(level);
@@ -395,7 +382,6 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         viewPostDetailsRecyclerView.setLayoutManager(layoutManager);
-        ((LinearLayoutManager) viewPostDetailsRecyclerView.getLayoutManager()).setStackFromEnd(true);
         viewPostDetailsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         viewPostDetailsRecyclerView.setAdapter(adapter);
 
