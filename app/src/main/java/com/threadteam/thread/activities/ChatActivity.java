@@ -473,7 +473,7 @@ public class ChatActivity extends AppCompatActivity {
         //ADDED BY BEEF FOR NOTIFICATIONS
         final String msg = message;
 
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(currentUser.getUid());
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users").child(currentUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

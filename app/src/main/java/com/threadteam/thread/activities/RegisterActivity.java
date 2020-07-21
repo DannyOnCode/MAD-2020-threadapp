@@ -87,7 +87,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     private String _aboutUsMessage;
     private String _statusMessage;
-
     // ACTIVITY STATE MANAGEMENT METHODS
 
     @Override
@@ -117,6 +116,8 @@ public class RegisterActivity extends AppCompatActivity {
         // INITIALISE FIREBASE
         user = new User();
         reff = FirebaseDatabase.getInstance().getReference().child("users");
+        String token = FirebaseInstanceId.getInstance().getToken();
+        final Token _token = new Token(token);
 
 
 
@@ -197,10 +198,9 @@ public class RegisterActivity extends AppCompatActivity {
                             user.set_username(username);
                             user.set_aboutUsMessage(_aboutUsMessage);
                             user.set_statusMessage(_statusMessage);
+                            user.set_token(_token);
                             String UserID  = fAuth.getCurrentUser().getUid();
                             reff.child(UserID).setValue(user);
-
-                            updateToken(FirebaseInstanceId.getInstance().getToken());
 
                             Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                             logHandler.printLogWithMessage("Registered Successfully");
@@ -249,12 +249,6 @@ public class RegisterActivity extends AppCompatActivity {
 
         }
 
-    }
-
-    private void updateToken (String token){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token1 = new Token(token);
-        reference.child(fAuth.getCurrentUser().getUid()).setValue(token1);
     }
 
 

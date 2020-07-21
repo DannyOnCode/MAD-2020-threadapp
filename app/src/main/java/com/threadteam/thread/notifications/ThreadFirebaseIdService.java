@@ -21,11 +21,12 @@ public class ThreadFirebaseIdService extends FirebaseInstanceIdService {
 
         String refreshToken = FirebaseInstanceId.getInstance().getToken();
         if (firebaseUser != null){
+            Log.d("myfirebaseid","Refreshed token: " + refreshToken);
+            logHandler.printLogWithMessage("THIS PAGE WORKS");
+
             updateToken(refreshToken);
         }
 
-        logHandler.printLogWithMessage("THIS PAGE WORKS");
-        Log.d("REFRESHED TOKEN", refreshToken);
     }
 
     private void updateToken(String refreshToken) {

@@ -30,6 +30,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
+import com.threadteam.thread.models.User;
 import com.threadteam.thread.notifications.Token;
 
 
@@ -61,6 +62,8 @@ public class LoginActivity extends AppCompatActivity {
     //
     //    // fAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION
     private FirebaseAuth fAuth;
+    private DatabaseReference reff;
+    private User user;
 
     // VIEW OBJECTS
     //
@@ -160,9 +163,6 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                        // if successful show toast and move to ViewServerActivity
                         if (task.isSuccessful()) {
-
-                            updateToken(FirebaseInstanceId.getInstance().getToken());
-
                             Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             logHandler.printLogWithMessage("Logged in Successfully");
 
@@ -291,11 +291,5 @@ public class LoginActivity extends AppCompatActivity {
             logHandler.printLogWithMessage("Keyboard Hidden");
 
         }
-    }
-
-    private void updateToken (String token){
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
-        Token token1 = new Token(token);
-        reference.child(fAuth.getCurrentUser().getUid()).setValue(token1);
     }
 }

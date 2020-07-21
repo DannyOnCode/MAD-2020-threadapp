@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.google.firebase.database.Exclude;
+import com.threadteam.thread.notifications.Token;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,6 +31,7 @@ public class User {
     private String _profileImageURL;
     private String _aboutUsMessage;
     private String _statusMessage;
+    private Token _token;
 
     @Exclude
     private List<String> _subscribedServers = new ArrayList<String>();
@@ -41,7 +43,7 @@ public class User {
 
     }
 
-    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,List<String> _subscribedServers) {
+    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,Token _token,List<String> _subscribedServers) {
         if(_aboutUsMessage.trim().equals("")){
             _aboutUsMessage = "No Description";
         }
@@ -54,6 +56,7 @@ public class User {
         this._profileImageURL = _profileImageURL;
         this._aboutUsMessage = _aboutUsMessage;
         this._statusMessage = _statusMessage;
+        this._token = _token;
         this._subscribedServers = _subscribedServers;
     }
 
@@ -103,6 +106,10 @@ public class User {
         }
         this._statusMessage = _statusMessage;
     }
+
+    public Token get_token() {return _token;}
+
+    public void set_token(Token _token){this._token = _token;}
 
     public List<String> get_subscribedServers() {
         return _subscribedServers;

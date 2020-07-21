@@ -15,9 +15,6 @@
         <activity android:name=".activities.RegisterActivity"
             android:windowSoftInputMode="adjustResize" />
 
-        <activity android:name=".activities.notifyActivity"
-            android:windowSoftInputMode="adjustResize" />
-
         <activity android:name=".activities.EditProfileActivity"
             android:parentActivityName=".activities.ViewProfileActivity"
             android:windowSoftInputMode="adjustResize" />
