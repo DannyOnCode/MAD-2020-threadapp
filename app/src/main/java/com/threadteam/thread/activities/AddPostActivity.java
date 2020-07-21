@@ -148,9 +148,9 @@ public class AddPostActivity extends _ServerBaseActivity {
         if(item.getItemId() == android.R.id.home) {
             logHandler.printLogWithMessage("User tapped on Back Button!");
 
-            Intent goToServer = new Intent(currentActivity, PostsActivity.class);
-            PutExtrasForServerIntent(goToServer);
-            currentActivity.startActivity(goToServer);
+            Intent goToPost = new Intent(currentActivity, PostsActivity.class);
+            PutExtrasForServerIntent(goToPost);
+            currentActivity.startActivity(goToPost);
             logHandler.printActivityIntentLog("Posts");
             return true;
         }

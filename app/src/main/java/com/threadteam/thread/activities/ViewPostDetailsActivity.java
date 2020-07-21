@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.renderscript.Sampler;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -38,8 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class ViewPostDetailsActivity extends  _ServerBaseActivity{
-
-    //TODO: when the post is freshly created the items are aligned not to the top parent
 
     // DATA STORE
     //
@@ -225,7 +224,6 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
         }
     };
 
-    //TODO: Not working as well as expected
     private ChildEventListener commentMessageListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -518,5 +516,20 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
         }
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == android.R.id.home) {
+            logHandler.printLogWithMessage("User tapped on Back Button!");
+
+            Intent goToPost = new Intent(currentActivity, PostsActivity.class);
+            PutExtrasForServerIntent(goToPost);
+            currentActivity.startActivity(goToPost);
+            logHandler.printActivityIntentLog("Posts");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
