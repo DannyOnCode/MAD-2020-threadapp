@@ -4,7 +4,7 @@ import android.net.Uri;
 import android.widget.ImageView;
 
 import com.google.firebase.database.Exclude;
-import com.threadteam.thread.notifications.Token;
+import com.threadteam.thread.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +31,12 @@ public class User {
     private String _profileImageURL;
     private String _aboutUsMessage;
     private String _statusMessage;
-    private Token _token;
 
     @Exclude
     private List<String> _subscribedServers = new ArrayList<String>();
+
+    @Exclude
+    private List<Integer> _expList = new ArrayList<>();
 
     // CONSTRUCTORS
 
@@ -43,7 +45,7 @@ public class User {
 
     }
 
-    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,Token _token,List<String> _subscribedServers) {
+    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,List<String> _subscribedServers,List<Integer> _expList) {
         if(_aboutUsMessage.trim().equals("")){
             _aboutUsMessage = "No Description";
         }
@@ -56,8 +58,31 @@ public class User {
         this._profileImageURL = _profileImageURL;
         this._aboutUsMessage = _aboutUsMessage;
         this._statusMessage = _statusMessage;
-        this._token = _token;
         this._subscribedServers = _subscribedServers;
+        this._expList = _expList;
+    }
+
+    public Integer GetUserExpForServer(String serverID) {
+        int serverIndex = _subscribedServers.indexOf(serverID);
+        return this._expList.get(serverIndex);
+    }
+
+    public Integer GetUserLevelForServer(String serverID) {
+        return Utils.ConvertExpToLevel(GetUserExpForServer(serverID));
+    }
+
+    public Integer GetExpToNextLevelForServer(String serverID) {
+        return Utils.GetExpToNextLevel(GetUserLevelForServer(serverID));
+    }
+
+    public Integer GetProgressToNextLevelForServer(String serverID) {
+        int exp = GetUserExpForServer(serverID);
+        int level = GetUserLevelForServer(serverID);
+        return Utils.GetExpProgress(exp, level);
+    }
+
+    public Integer GetAbsoluteLevelProgressForServer(String serverID) {
+        return (int) ((double) GetUserExpForServer(serverID) / (double) GetExpToNextLevelForServer(serverID) * 100);
     }
 
     // GET/SET METHODS
@@ -107,15 +132,19 @@ public class User {
         this._statusMessage = _statusMessage;
     }
 
-    public Token get_token() {return _token;}
-
-    public void set_token(Token _token){this._token = _token;}
-
     public List<String> get_subscribedServers() {
         return _subscribedServers;
     }
 
     public void set_subscribedServers(List<String> _subscribedServers) {
         this._subscribedServers = _subscribedServers;
+    }
+
+    public List<Integer> get_expList() {
+        return _expList;
+    }
+
+    public void set_expList(List<Integer> _expList) {
+        this._expList = _expList;
     }
 }

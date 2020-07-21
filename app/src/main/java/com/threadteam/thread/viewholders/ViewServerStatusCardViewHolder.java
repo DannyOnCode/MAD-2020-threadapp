@@ -1,6 +1,7 @@
 package com.threadteam.thread.viewholders;
 
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ public class ViewServerStatusCardViewHolder extends RecyclerView.ViewHolder {
     public TextView serverTitle;
     public TextView serverLevel;
     private CardView serverRedirectionCard;
+    public ProgressBar profileXpProgressBar;
 
     public ViewServerStatusCardViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -24,6 +26,7 @@ public class ViewServerStatusCardViewHolder extends RecyclerView.ViewHolder {
         serverTitle = itemView.findViewById(R.id.serverTitleDisplay);
         serverLevel = itemView.findViewById(R.id.levelDisplay);
         serverRedirectionCard = itemView.findViewById(R.id.serverRedirect);
+        profileXpProgressBar = itemView.findViewById(R.id.profileXpProgressBar);
     }
 
 }

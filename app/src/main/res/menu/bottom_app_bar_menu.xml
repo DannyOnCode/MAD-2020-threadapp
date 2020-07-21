@@ -9,7 +9,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/viewServersMenuItem"
-        android:icon="@drawable/round_chat_white_36"
+        android:icon="@drawable/round_home_white_36"
         android:title="View Servers"
         app:showAsAction="always" />
 </menu>
