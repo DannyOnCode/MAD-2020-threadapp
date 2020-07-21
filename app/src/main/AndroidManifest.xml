@@ -11,8 +11,14 @@
         android:roundIcon="@mipmap/thread_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".activities.RegisterActivity"
+        <activity android:name=".activities.MemberProfileActivity" />
+        <activity android:name=".activities.ViewPostDetailsActivity"></activity>
+        <activity android:name=".activities.ServerSettingsActivity" />
+        <activity android:name=".activities.ViewMembersActivity" />
+        <activity android:name=".activities.AddPostActivity" />
+        <activity android:name=".activities.PostsActivity" />
+        <activity
+            android:name=".activities.RegisterActivity"
             android:windowSoftInputMode="adjustResize" />
 
         <activity android:name=".activities.notifyActivity"
@@ -21,20 +27,15 @@
         <activity android:name=".activities.EditProfileActivity"
             android:parentActivityName=".activities.ViewProfileActivity"
             android:windowSoftInputMode="adjustResize" />
-
         <activity android:name=".activities.ViewProfileActivity" />
-
         <activity android:name=".activities.ViewServersActivity" />
-
-        <activity android:name=".activities.AddServerActivity"
-            android:parentActivityName=".activities.ViewServersActivity"
-            android:windowSoftInputMode="adjustResize"/>
-
         <activity
-            android:name=".activities.ChatActivity"
-            android:parentActivityName=".activities.ViewServersActivity" />
-
-        <activity android:name=".activities.LoginActivity"
+            android:name=".activities.AddServerActivity"
+            android:parentActivityName=".activities.ViewServersActivity"
+            android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".activities.ChatActivity" />
+        <activity
+            android:name=".activities.LoginActivity"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

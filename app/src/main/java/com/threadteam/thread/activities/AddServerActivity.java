@@ -1,60 +1,30 @@
 package com.threadteam.thread.activities;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MotionEvent;
+import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.widget.NestedScrollView;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
+import com.threadteam.thread.Utils;
 import com.threadteam.thread.models.Server;
 
-// ADD SERVER ACTIVITY
-//
-// PROGRAMMER-IN-CHARGE:
-// EUGENE LONG, S10193060J
-//
-// DESCRIPTION
-// Allows users to create or join servers one at a time.
-//
-// NAVIGATION
-// PARENT: VIEW SERVERS
-// CHILDREN: N/A
-
-public class AddServerActivity extends AppCompatActivity {
-
-    // LOGGING
-    private LogHandler logHandler = new LogHandler("AddServers Activity");
-
-    // FIREBASE
-    //
-    // currentUser:             CURRENT USER FOR THE CURRENT SESSION
-    // firebaseAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION
-    // databaseRef:             FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION
-    // subscriptionListener:    CHILD EVENT LISTENER FOR RETRIEVING ALL USER'S JOINED/OWNED SERVERS
-
-    private FirebaseUser currentUser;
-    private FirebaseAuth firebaseAuth;
-    private DatabaseReference databaseRef;
+public class AddServerActivity extends _MainBaseActivity {
 
     //DATA STORE
     private String joinServerID;
@@ -73,42 +43,93 @@ public class AddServerActivity extends AppCompatActivity {
     private EditText MakeServerNameEditText;
     private EditText MakeServerDescEditText;
     private Button MakeServerButton;
-    private androidx.appcompat.widget.Toolbar TopNavToolbar;
 
-    // ACTIVITY STATE MANAGEMENT METHODS
+    // DEFAULT SUPER METHODS
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        logHandler.printDefaultLog(LogHandler.STATE_ON_CREATE);
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_addserver);
+    }
 
-        // BIND TOOLBARS
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    // ABSTRACT OVERRIDE METHODS
+
+    @Override
+    int setLayoutIDForContentView() {
+        return R.layout.activity_addserver;
+    }
+
+    @Override
+    AppCompatActivity setCurrentActivity() {
+        return AddServerActivity.this;
+    }
+
+    @Override
+    String setTitleForActivity() {
+        return "Add Server";
+    }
+
+    @Override
+    ImageButton setMainActionButton() {
+        return null;
+    }
+
+    @Override
+    Toolbar setTopNavToolbar() {
         View topNavView = findViewById(R.id.addServerNavbarInclude);
-        TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    }
 
-        logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
+    @Override
+    ActionMenuView setBottomToolbarAMV() {
+        return null;
+    }
 
-        // SETUP TOOLBARS
-        this.setSupportActionBar(TopNavToolbar);
+    @Override
+    void DoAdditionalSetupForToolbars() {
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        TopNavToolbar.setTitle("Add Server");
+    }
 
-        logHandler.printDefaultLog(LogHandler.TOOLBAR_SETUP);
-
-        // BIND VIEW OBJECTS
+    @Override
+    void BindViewObjects() {
         JoinServerIdEditText = findViewById(R.id.joinServerIdEditText);
         JoinServerButton = findViewById(R.id.joinServerButton);
         MakeServerNameEditText = findViewById(R.id.makeServerNameEditText);
         MakeServerDescEditText = findViewById(R.id.makeServerDescEditText);
         MakeServerButton = findViewById(R.id.makeServerButton);
+    }
 
-        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
-
-        // SETUP VIEW OBJECTS
-
+    @Override
+    void SetupViewObjects() {
         JoinServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,27 +161,20 @@ public class AddServerActivity extends AppCompatActivity {
                 }
             }
         });
-
-        logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
-
-        //INITIALISE FIREBASE
-        firebaseAuth = FirebaseAuth.getInstance();
-        currentUser = firebaseAuth.getCurrentUser();
-
-        if(currentUser == null) {
-            logHandler.printDefaultLog(LogHandler.FIREBASE_USER_NOT_FOUND);
-            Intent backToLogin = new Intent(AddServerActivity.this, LoginActivity.class);
-            startActivity(backToLogin);
-            return;
-        }
-        logHandler.printDefaultLog(LogHandler.FIREBASE_USER_FOUND);
-
-        databaseRef = FirebaseDatabase.getInstance().getReference();
-
-        logHandler.printDefaultLog(LogHandler.FIREBASE_INITIALISED);
     }
 
-    // CLASS METHODS
+    @Override
+    void AttachListeners() { }
+
+    @Override
+    void DestroyListeners() { }
+
+    @Override
+    int setCurrentMenuItemID() {
+        return NO_MENU_ITEM_FOR_ACTIVITY;
+    }
+
+    // ACTIVITY SPECIFIC METHODS
 
     private void handleJoinServer() {
         logHandler.printLogWithMessage("User tapped on Join Server; Attempting to join server...");
@@ -184,28 +198,31 @@ public class AddServerActivity extends AppCompatActivity {
                 if(dataSnapshot.getValue() != null) {
                     logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "not null");
                     displayError("User is already subscribed to this server!");
-                } else {
-                    logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "null");
-                    logHandler.printLogWithMessage("Subscribing user to server!");
-
-                    // Subscribe user to server
-                    databaseRef.child("users")
-                               .child(userId)
-                               .child("_subscribedServers")
-                               .child(joinServerID)
-                               .setValue(true);
-
-                    // Add user to list of members
-                    databaseRef.child("members")
-                               .child(joinServerID)
-                               .child(currentUser.getUid())
-                               .setValue(true);
-
-                    logHandler.printLogWithMessage("Server successfully joined; returning user back to ViewServers Activity!");
-                    returnToViewServers();
-
-                    finish();
+                    return;
                 }
+                logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "null");
+                logHandler.printLogWithMessage("Subscribing user to server!");
+
+                // Subscribe user to server
+                databaseRef.child("users")
+                        .child(userId)
+                        .child("_subscribedServers")
+                        .child(joinServerID)
+                        .setValue(0);
+
+                // Add user to list of members
+                databaseRef.child("members")
+                        .child(joinServerID)
+                        .child(currentUser.getUid())
+                        .setValue(0);
+
+                // User join message
+                Utils.SendUserActionSystemMessage(logHandler, databaseRef, userId, " has joined the server!", joinServerID);
+
+                logHandler.printLogWithMessage("Server successfully joined; returning user back to ViewServers Activity!");
+                returnToViewServers();
+
+                finish();
             }
 
             @Override
@@ -233,10 +250,10 @@ public class AddServerActivity extends AppCompatActivity {
                     logHandler.printDatabaseResultLog(".getValue()", "Server Values", "testServerExists", "not null");
                     // Test user subscription and move on in pipeline
                     databaseRef.child("users")
-                               .child(userId)
-                               .child("_subscribedServers")
-                               .child(joinServerID)
-                               .addListenerForSingleValueEvent(testUserNotSubscribed);
+                            .child(userId)
+                            .child("_subscribedServers")
+                            .child(joinServerID)
+                            .addListenerForSingleValueEvent(testUserNotSubscribed);
                 }
             }
 
@@ -266,8 +283,8 @@ public class AddServerActivity extends AppCompatActivity {
                     joinServerID = (String) dataSnapshot.getValue();
                     logHandler.printDatabaseResultLog(".getValue()", "Server ID From Share Code", "shareCodeLookup", joinServerID);
                     databaseRef.child("servers")
-                               .child(joinServerID)
-                               .addListenerForSingleValueEvent(testServerExists);
+                            .child(joinServerID)
+                            .addListenerForSingleValueEvent(testServerExists);
                 }
             }
 
@@ -284,15 +301,15 @@ public class AddServerActivity extends AppCompatActivity {
 
             // Handle Server Share Code
             databaseRef.child("shares")
-                       .child(joinServerID)
-                       .addListenerForSingleValueEvent(shareCodeLookup);
+                    .child(joinServerID)
+                    .addListenerForSingleValueEvent(shareCodeLookup);
 
         } else if (joinServerID.length() > 0) {
             logHandler.printLogWithMessage("User entered a ServerID!");
 
             databaseRef.child("servers")
-                       .child(joinServerID)
-                       .addListenerForSingleValueEvent(testServerExists);
+                    .child(joinServerID)
+                    .addListenerForSingleValueEvent(testServerExists);
         } else {
             JoinServerIdEditText.setError("Server ID can't be empty!");
         }
@@ -322,8 +339,8 @@ public class AddServerActivity extends AppCompatActivity {
         }
 
         databaseRef.child("servers").child(newServerId).setValue(newServer);
-        databaseRef.child("users").child(userId).child("_subscribedServers").child(newServerId).setValue(true);
-        databaseRef.child("members").child(newServerId).child(currentUser.getUid()).setValue(true);
+        databaseRef.child("users").child(userId).child("_subscribedServers").child(newServerId).setValue(0);
+        databaseRef.child("members").child(newServerId).child(currentUser.getUid()).setValue(0);
 
         logHandler.printLogWithMessage("New server details have been pushed to database; returning user back to ViewServers Activity!");
         returnToViewServers();
@@ -337,17 +354,17 @@ public class AddServerActivity extends AppCompatActivity {
     }
 
     private void returnToViewServers() {
-        Intent returnToViewServers = new Intent(AddServerActivity.this, ViewServersActivity.class);
+        Intent returnToViewServers = new Intent(currentActivity, ViewServersActivity.class);
         returnToViewServers.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         startActivityIfNeeded(returnToViewServers, 0);
         logHandler.printActivityIntentLog("ViewServers Activity");
     }
 
     private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) AddServerActivity.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View view  = AddServerActivity.this.getCurrentFocus();
+        InputMethodManager imm = (InputMethodManager) currentActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        View view  =currentActivity.getCurrentFocus();
         if (view == null) {
-            view = new View(AddServerActivity.this);
+            view = new View(currentActivity);
         }
         if (imm != null) {
             logHandler.printLogWithMessage("Hiding keyboard!");
