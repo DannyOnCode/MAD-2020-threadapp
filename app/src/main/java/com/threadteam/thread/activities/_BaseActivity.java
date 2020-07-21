@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.menu.ActionMenuItemView;
@@ -18,11 +20,27 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.LogHandler;
 
 import java.util.HashMap;
+
+import com.threadteam.thread.R;
+import com.threadteam.thread.interfaces.APIService;
+import com.threadteam.thread.notifications.Client;
+import com.threadteam.thread.notifications.Data;
+import com.threadteam.thread.notifications.Sender;
+import com.threadteam.thread.notifications.ThreadResponse;
+import com.threadteam.thread.notifications.Token;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public abstract class _BaseActivity extends AppCompatActivity {
 
@@ -46,6 +64,11 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
     private String title;
     protected AppCompatActivity currentActivity;
+
+    // NOTIFICATIONS
+    //
+    // apiService               THE API SERVICE OBJECT FOR NOTIFICATIONS
+    APIService apiService;
 
     // VIEW OBJECTS
     //
@@ -89,6 +112,9 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
         SetupViewObjects();
         logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
+
+        // NOTIFICATIONS
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
         HandleIntentExtras();
         HandleAdditionalIntentExtras();
@@ -258,6 +284,44 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
             logHandler.printLogWithMessage("Successfully toggled current menu item for " + title + " to " + enabled.toString());
         }
+    }
+
+    protected void sendNotification(String receiver, final String username, final String message, final String _serverId){
+        DatabaseReference tokens = databaseRef.child("tokens");
+        Query query = tokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(currentUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", _serverId);
+
+                    Sender sender = new Sender(data, token.getToken());
+
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<ThreadResponse>() {
+                                @Override
+                                public void onResponse(Call<ThreadResponse> call, Response<ThreadResponse> response) {
+                                    if (response.code() ==200){
+                                        if (response.body().success !=1){
+                                            Toast.makeText(currentActivity,"Failed!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ThreadResponse> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
 }

@@ -29,7 +29,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
+import com.threadteam.thread.interfaces.APIService;
 import com.threadteam.thread.models.ChatMessage;
+import com.threadteam.thread.models.User;
+import com.threadteam.thread.notifications.Client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,6 +49,9 @@ public class ChatActivity extends _ServerBaseActivity {
     private ChatMessageAdapter adapter;
     private Boolean scrollToLatestMessage = false;
     private String username;
+
+    // TEMP
+    boolean notify = false;
 
     // VIEW OBJECTS
     //
@@ -495,6 +501,25 @@ public class ChatActivity extends _ServerBaseActivity {
         } else {
             logHandler.printLogWithMessage("No message was pushed because there was no text after formatting!");
         }
+
+        //ADDED BY BEEF FOR NOTIFICATIONS
+        final String msg = message;
+
+        databaseRef.child("Users").child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                if(notify && user != null){
+                    sendNotification(serverId, user.get_username(), msg, serverId);
+                }
+                notify=false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 }
