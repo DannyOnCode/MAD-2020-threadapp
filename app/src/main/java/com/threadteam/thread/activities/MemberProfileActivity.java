@@ -22,12 +22,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
-import com.threadteam.thread.adapters.MemberProfileAdapter;
-import com.threadteam.thread.adapters.ViewMemberAdapter;
+import com.threadteam.thread.adapters.ProfileAdapter;
 import com.threadteam.thread.models.Server;
 import com.threadteam.thread.models.User;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +37,7 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     // adapter:                 ADAPTER FOR PROFILE RECYCLER VIEW.
     // memberId:                CONTAINS THE ID OF THE MEMBER TO DISPLAY THE PROFILE OF
 
-    private MemberProfileAdapter adapter;
+    private ProfileAdapter adapter;
     private String memberId;
 
     // VIEW OBJECTS
@@ -315,7 +313,7 @@ public class MemberProfileActivity extends _ServerBaseActivity {
 
     @Override
     void SetupViewObjects() {
-        adapter = new MemberProfileAdapter(null, new ArrayList<Server>());
+        adapter = new ProfileAdapter(null, new ArrayList<Server>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         ProfileRecyclerView.setLayoutManager(layoutManager);

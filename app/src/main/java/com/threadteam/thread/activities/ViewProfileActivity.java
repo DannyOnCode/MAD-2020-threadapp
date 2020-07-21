@@ -4,17 +4,14 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,12 +21,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
-import com.threadteam.thread.adapters.MemberProfileAdapter;
-import com.threadteam.thread.adapters.ViewMemberAdapter;
+import com.threadteam.thread.adapters.ProfileAdapter;
 import com.threadteam.thread.models.Server;
 import com.threadteam.thread.models.User;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +36,7 @@ public class ViewProfileActivity extends _MainBaseActivity {
     // adapter:                 ADAPTER FOR PROFILE RECYCLER VIEW.
     // memberId:                CONTAINS THE ID OF THE MEMBER TO DISPLAY THE PROFILE OF
 
-    private MemberProfileAdapter adapter;
+    private ProfileAdapter adapter;
 
     // VIEW OBJECTS
     //
@@ -320,7 +315,7 @@ public class ViewProfileActivity extends _MainBaseActivity {
 
     @Override
     void SetupViewObjects() {
-        adapter = new MemberProfileAdapter(null, new ArrayList<Server>());
+        adapter = new ProfileAdapter(null, new ArrayList<Server>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
         ProfileRecyclerView.setLayoutManager(layoutManager);

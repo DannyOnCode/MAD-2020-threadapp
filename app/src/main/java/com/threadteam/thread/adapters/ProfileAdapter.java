@@ -22,14 +22,14 @@ import com.threadteam.thread.viewholders.ViewServerStatusCardViewHolder;
 
 import java.util.List;
 
-public class MemberProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // DATA STORE
     public User userData;
     public List<Server> serverList;
 
     // CONSTRUCTOR
-    public MemberProfileAdapter(User user, List<Server> servers) {
+    public ProfileAdapter(User user, List<Server> servers) {
         this.userData = user;
         this.serverList = servers;
     }
