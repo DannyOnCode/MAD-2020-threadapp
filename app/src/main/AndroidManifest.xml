@@ -6,9 +6,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/thread"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@mipmap/thread_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.MemberProfileActivity" />
@@ -20,8 +20,11 @@
         <activity
             android:name=".activities.RegisterActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".activities.EditProfileActivity"
+
+        <activity android:name=".activities.notifyActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity android:name=".activities.EditProfileActivity"
             android:parentActivityName=".activities.ViewProfileActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".activities.ViewProfileActivity" />
@@ -41,9 +44,26 @@
             </intent-filter>
         </activity>
 
+        <service android:name=".notifications.ThreadFirebaseIdService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+            </intent-filter>
+        </service>
+
+        <service android:name=".notifications.ThreadFirebaseMessaging"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
     </application>
 
 </manifest>

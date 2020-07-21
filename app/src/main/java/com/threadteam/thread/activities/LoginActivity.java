@@ -25,8 +25,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
+import com.threadteam.thread.notifications.Token;
 
 
 // LOGIN ACTIVITY
@@ -156,6 +160,9 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                        // if successful show toast and move to ViewServerActivity
                         if (task.isSuccessful()) {
+
+                            updateToken(FirebaseInstanceId.getInstance().getToken());
+
                             Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             logHandler.printLogWithMessage("Logged in Successfully");
 
@@ -284,5 +291,11 @@ public class LoginActivity extends AppCompatActivity {
             logHandler.printLogWithMessage("Keyboard Hidden");
 
         }
+    }
+
+    private void updateToken (String token){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Tokens");
+        Token token1 = new Token(token);
+        reference.child(fAuth.getCurrentUser().getUid()).setValue(token1);
     }
 }
