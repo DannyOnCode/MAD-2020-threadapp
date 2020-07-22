@@ -11,12 +11,13 @@ import com.squareup.picasso.Picasso;
 import com.threadteam.thread.R;
 import com.threadteam.thread.Utils;
 import com.threadteam.thread.models.User;
+import com.threadteam.thread.viewholders.ViewMemberDividerViewHolder;
 import com.threadteam.thread.viewholders.ViewMemberViewHolder;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewMemberAdapter extends RecyclerView.Adapter<ViewMemberViewHolder> {
+public class ViewMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // DATA STORE
     public List<User> userList;
@@ -31,7 +32,16 @@ public class ViewMemberAdapter extends RecyclerView.Adapter<ViewMemberViewHolder
 
     @NonNull
     @Override
-    public ViewMemberViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if(viewType == 1) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(
+                    R.layout.activity_partial_members_divider,
+                    parent,
+                    false
+            );
+
+            return new ViewMemberDividerViewHolder(view);
+        }
 
         ViewMemberViewHolder viewHolder;
 
@@ -46,54 +56,72 @@ public class ViewMemberAdapter extends RecyclerView.Adapter<ViewMemberViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewMemberViewHolder holder, int position) {
-        User currentUser = userList.get(position);
-        String nameString = currentUser.get_username();
-        String imageLink = currentUser.get_profileImageURL();
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if(position != 1) {
+            ViewMemberViewHolder thisHolder = (ViewMemberViewHolder) holder;
 
-        int level = currentUser.GetUserLevelForServer(serverId);
-        int exp = currentUser.GetUserExpForServer(serverId);
-        int expToNextLevel = currentUser.GetExpToNextLevelForServer(serverId);
-        int progressToNextLevel = currentUser.GetAbsoluteLevelProgressForServer(serverId);
-        int stage = Utils.ConvertLevelToStage(level);
-        Integer colorInt = Utils.GetDefaultColorIntForStage(stage);
+            if(position > 1) {
+                position -= 1;
+            }
 
-        String title;
-        if(titleList.size() > 0 && !titleList.get(stage).equals("")) {
-            title = titleList.get(stage);
-        } else {
-            title = Utils.GetDefaultTitleForStage(stage);
+            User currentUser = userList.get(position);
+            String nameString = currentUser.get_username();
+            String imageLink = currentUser.get_profileImageURL();
+
+            int level = currentUser.GetUserLevelForServer(serverId);
+            int exp = currentUser.GetUserExpForServer(serverId);
+            int expToNextLevel = currentUser.GetExpToNextLevelForServer(serverId);
+            int progressToNextLevel = currentUser.GetAbsoluteLevelProgressForServer(serverId);
+            int stage = Utils.ConvertLevelToStage(level);
+            Integer colorInt = Utils.GetDefaultColorIntForStage(stage);
+
+            String title;
+            if(titleList.size() > 0 && !titleList.get(stage).equals("")) {
+                title = titleList.get(stage);
+            } else {
+                title = Utils.GetDefaultTitleForStage(stage);
+            }
+
+            String levelString = "Lvl " + level;
+            String expString = exp + "/" + expToNextLevel + " xp";
+
+            thisHolder.MemberName.setText(nameString);
+
+            if(colorInt != null) {
+                thisHolder.MemberName.setTextColor(colorInt);
+            }
+
+            thisHolder.MemberTitle.setText(title);
+            thisHolder.MemberLevel.setText(levelString);
+            thisHolder.MemberProgressBar.setProgress(progressToNextLevel);
+            thisHolder.MemberExp.setText(expString);
+
+            if(imageLink != null) {
+                Picasso.get()
+                        .load(imageLink)
+                        .fit()
+                        .error(R.drawable.profilepictureempty)
+                        .centerCrop()
+                        .into(thisHolder.MemberProfileImageView);
+            } else {
+                thisHolder.MemberProfileImageView.setImageResource(R.drawable.profilepictureempty);
+            }
         }
+    }
 
-        String levelString = "Lvl " + level;
-        String expString = exp + "/" + expToNextLevel + " xp";
-
-        holder.MemberName.setText(nameString);
-
-        if(colorInt != null) {
-            holder.MemberName.setTextColor(colorInt);
+    public int getItemViewType(int position) {
+        if (position == 1) {
+            return 1;
         }
-
-        holder.MemberTitle.setText(title);
-        holder.MemberLevel.setText(levelString);
-        holder.MemberProgressBar.setProgress(progressToNextLevel);
-        holder.MemberExp.setText(expString);
-
-        if(imageLink != null) {
-            Picasso.get()
-                    .load(imageLink)
-                    .fit()
-                    .error(R.drawable.profilepictureempty)
-                    .centerCrop()
-                    .into(holder.MemberProfileImageView);
-        } else {
-            holder.MemberProfileImageView.setImageResource(R.drawable.profilepictureempty);
-        }
+        return 0;
     }
 
     @Override
     public int getItemCount() {
-        return userList.size();
+        if(userList.size() == 0) {
+            return 0;
+        }
+        return userList.size() + 1;
     }
 
 }

@@ -168,15 +168,29 @@ public class ViewMembersActivity extends _ServerBaseActivity {
 
             User newUser = new User(id, username, profileImageURL, "", "", servers, expList);
 
+            // Pre-exist check
             for(int i=0; i<adapter.userList.size(); i++) {
                 if(adapter.userList.get(i).get_id().equals(newUser.get_id())) {
-                    adapter.userList.remove(i);
-                    adapter.userList.add(i, newUser);
-                    adapter.notifyItemChanged(i);
+                    adapter.userList.set(i, newUser);
+                    adapter.notifyItemInserted(i);
                     return;
                 }
             }
 
+            String currUid = currentUser.getUid();
+
+            // Insertion sort by exp that floats current user to top
+            for(int i=0; i<adapter.userList.size(); i++) {
+                if(id.equals(currUid) ||
+                        newUser.GetUserExpForServer(serverId) > adapter.userList.get(i).GetUserExpForServer(serverId) &&
+                                !adapter.userList.get(i).get_id().equals(currUid)) {
+                    adapter.userList.add(i, newUser);
+                    adapter.notifyItemInserted(i);
+                    return;
+                }
+            }
+
+            // If is smallest, then add to back
             adapter.userList.add(adapter.userList.size(), newUser);
             adapter.notifyItemInserted(adapter.userList.size());
         }
