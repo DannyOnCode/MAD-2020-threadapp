@@ -62,12 +62,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
     // DATA STORE
     //
     // title                    TITLE OF THE CURRENT ACTIVITY
-    // serverName               NAME OF CURRENT SERVER
-    // currentActivity          CURRENT ACTIVITY CONTEXT
 
     private String title;
-    private String serverName;
-    private String username;
     protected AppCompatActivity currentActivity;
 
     // NOTIFICATIONS
@@ -312,12 +308,12 @@ public abstract class _BaseActivity extends AppCompatActivity {
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                serverName = (String) dataSnapshot.getValue();
+                final String serverName = (String) dataSnapshot.getValue();
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        username = (String) dataSnapshot.getValue();
+                        String username = (String) dataSnapshot.getValue();
 
                         final String to = "/topics/" + serverId;
 
@@ -367,8 +363,6 @@ public abstract class _BaseActivity extends AppCompatActivity {
                 .child(serverId)
                 .child("_name")
                 .addListenerForSingleValueEvent(getServerName);
-
-
 
     }
 
