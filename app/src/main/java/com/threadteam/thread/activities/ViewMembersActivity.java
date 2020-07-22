@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
@@ -29,6 +30,7 @@ import com.threadteam.thread.models.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class ViewMembersActivity extends _ServerBaseActivity {
@@ -44,6 +46,11 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     // ViewMembersRecyclerView: DISPLAYS ALL MEMBERS IN THE SERVER. USES adapter AS ITS ADAPTER.
 
     private RecyclerView ViewMembersRecyclerView;
+
+    // FIREBASE
+    //
+
+    private HashMap<DatabaseReference, ValueEventListener> listenerHashMap = new HashMap<>();
 
     // INITIALISE LISTENERS
 
@@ -172,7 +179,8 @@ public class ViewMembersActivity extends _ServerBaseActivity {
             for(int i=0; i<adapter.userList.size(); i++) {
                 if(adapter.userList.get(i).get_id().equals(newUser.get_id())) {
                     adapter.userList.set(i, newUser);
-                    adapter.notifyItemInserted(i);
+                    if(i>0) i+= 1;
+                    adapter.notifyItemChanged(i);
                     return;
                 }
             }
@@ -185,14 +193,15 @@ public class ViewMembersActivity extends _ServerBaseActivity {
                         newUser.GetUserExpForServer(serverId) > adapter.userList.get(i).GetUserExpForServer(serverId) &&
                                 !adapter.userList.get(i).get_id().equals(currUid)) {
                     adapter.userList.add(i, newUser);
-                    adapter.notifyItemInserted(i);
+                    adapter.notifyDataSetChanged();
                     return;
                 }
             }
 
             // If is smallest, then add to back
-            adapter.userList.add(adapter.userList.size(), newUser);
-            adapter.notifyItemInserted(adapter.userList.size());
+            int s = adapter.userList.size();
+            adapter.userList.add(s, newUser);
+            adapter.notifyItemInserted(s);
         }
 
         @Override
@@ -224,6 +233,8 @@ public class ViewMembersActivity extends _ServerBaseActivity {
             databaseRef.child("users")
                     .child(userID)
                     .addValueEventListener(getUserListener);
+
+            listenerHashMap.put(databaseRef.child("users").child(userID), getUserListener);
         }
 
         @Override
@@ -358,13 +369,19 @@ public class ViewMembersActivity extends _ServerBaseActivity {
                 new RecyclerTouchListener(this, ViewMembersRecyclerView, new RecyclerViewClickListener() {
                     @Override
                     public void onClick(View view, int position) {
-                        String memberId = adapter.userList.get(position).get_id();
+                        if(position != 1) {
+                            if(position > 1) {
+                                position -= 1;
+                            }
 
-                        Intent goToMemberProfile = new Intent(currentActivity, MemberProfileActivity.class);
-                        PutExtrasForServerIntent(goToMemberProfile);
-                        goToMemberProfile.putExtra("MEMBER_ID", memberId);
-                        currentActivity.startActivity(goToMemberProfile);
-                        logHandler.printActivityIntentLog("View Member Profile");
+                            String memberId = adapter.userList.get(position).get_id();
+
+                            Intent goToMemberProfile = new Intent(currentActivity, MemberProfileActivity.class);
+                            PutExtrasForServerIntent(goToMemberProfile);
+                            goToMemberProfile.putExtra("MEMBER_ID", memberId);
+                            currentActivity.startActivity(goToMemberProfile);
+                            logHandler.printActivityIntentLog("View Member Profile");
+                        }
                     }
                 })
         );
@@ -389,13 +406,15 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     @Override
     void DestroyListeners() {
         if(memberListener != null) {
-            databaseRef.removeEventListener(memberListener);
+            databaseRef.child("members").child(serverId).removeEventListener(memberListener);
         }
         if(getUserListener != null) {
-            databaseRef.removeEventListener(getUserListener);
+            for(DatabaseReference ref : listenerHashMap.keySet()) {
+                ref.removeEventListener(listenerHashMap.get(ref));
+            }
         }
         if(retrieveMemberTitles != null) {
-            databaseRef.removeEventListener(retrieveMemberTitles);
+            databaseRef.child("titles").child(serverId).removeEventListener(retrieveMemberTitles);
         }
     }
 

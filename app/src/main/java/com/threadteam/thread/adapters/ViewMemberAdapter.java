@@ -104,7 +104,11 @@ public class ViewMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         .centerCrop()
                         .into(thisHolder.MemberProfileImageView);
             } else {
-                thisHolder.MemberProfileImageView.setImageResource(R.drawable.profilepictureempty);
+                Picasso.get()
+                        .load(R.drawable.profilepictureempty)
+                        .fit()
+                        .centerCrop()
+                        .into(thisHolder.MemberProfileImageView);
             }
         }
     }
