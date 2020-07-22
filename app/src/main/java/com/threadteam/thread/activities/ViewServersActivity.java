@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
@@ -48,15 +49,20 @@ public class ViewServersActivity extends _MainBaseActivity {
 
     private RecyclerView ViewServerRecyclerView;
 
+    // FIREBASE
+    //
+
+    private HashMap<DatabaseReference, ValueEventListener> listenerHashMap = new HashMap<>();
+
     // LISTENERS
 
-    // addServerOnce:   GETS AND ADDS A SINGLE SERVER TO adapter. SHOULD BE CALLED AS A SingleValueEvent FROM subscriptionListener.
-    //                  CORRECT INVOCATION CODE: databaseRef.child("servers")
-    //                                                      .child(serverId)
-    //                                                      .addListenerForSingleValueEvent(addServerOnce)
-    //                  SHOULD NOT BE USED INDEPENDENTLY.
+    // getServerDetails:    GETS SERVER DETAILS AND UPDATES adapter.
+    //                      CORRECT INVOCATION CODE: databaseRef.child("servers")
+    //                                                          .child(serverId)
+    //                                                          .addListenerForSingleValueEvent(addServerOnce)
+    //                      SHOULD NOT BE USED INDEPENDENTLY.
 
-    final ValueEventListener addServerOnce = new ValueEventListener() {
+    final ValueEventListener getServerDetails = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             // CHECK THAT servers.child(serverId) DOES NOT HAVE A NULL VALUE (SERVER DOES EXIST)
@@ -149,11 +155,12 @@ public class ViewServersActivity extends _MainBaseActivity {
 
             databaseRef.child("servers")
                     .child(serverID)
-                    .addListenerForSingleValueEvent(addServerOnce);
+                    .addValueEventListener(getServerDetails);
+
+            listenerHashMap.put(databaseRef.child("servers").child(serverID), getServerDetails);
         }
 
-        // NOTE: This method is currently empty as there is no way to edit server name or details after
-        //       server creation. May need to be implemented in future versions.
+        // Server detail updates are handled by getServerDetails
 
         @Override
         public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) { }
@@ -307,6 +314,11 @@ public class ViewServersActivity extends _MainBaseActivity {
                        .child(currentUser.getUid())
                        .child("_subscribedServers")
                        .removeEventListener(subscriptionListener);
+        }
+        if(getServerDetails != null) {
+            for(DatabaseReference ref : listenerHashMap.keySet()) {
+                ref.removeEventListener(listenerHashMap.get(ref));
+            }
         }
     }
 
