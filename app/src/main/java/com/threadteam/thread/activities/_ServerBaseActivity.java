@@ -29,8 +29,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.LogHandler;
+import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
-import com.threadteam.thread.Utils;
+import com.threadteam.thread.libraries.Utils;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -147,15 +148,8 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
     void HandleIntentExtras() {
         final Intent dataReceiver = getIntent();
 
-        String isOwnerString = dataReceiver.getStringExtra(IS_OWNER_KEY);
+        isOwner = dataReceiver.getBooleanExtra(IS_OWNER_KEY, false);
         serverId = dataReceiver.getStringExtra(SERVER_ID_KEY);
-
-        if (isOwnerString == null) {
-            logHandler.printGetExtrasResultLog(IS_OWNER_KEY, "null");
-        } else {
-            logHandler.printGetExtrasResultLog(IS_OWNER_KEY, isOwnerString);
-            isOwner = isOwnerString.equals(((Boolean) true).toString());
-        }
 
         if (serverId == null) {
             logHandler.printGetExtrasResultLog(SERVER_ID_KEY, "null");
@@ -524,8 +518,8 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
                             .setValue(currentExp + _exp);
 
                     // Feedback to user on level up
-                    Integer oldLevel = Utils.ConvertExpToLevel(currentExp.intValue());
-                    Integer newLevel = Utils.ConvertExpToLevel(currentExp.intValue() + _exp);
+                    Integer oldLevel = Progression.ConvertExpToLevel(currentExp.intValue());
+                    Integer newLevel = Progression.ConvertExpToLevel(currentExp.intValue() + _exp);
                     if(oldLevel < newLevel) {
 
                         // Announce level up in chat

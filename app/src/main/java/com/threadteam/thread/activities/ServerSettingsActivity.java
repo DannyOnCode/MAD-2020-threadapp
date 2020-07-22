@@ -198,15 +198,13 @@ public class ServerSettingsActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View includeView = findViewById(R.id.serverSettingsNavBarInclude);
-        return (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+    Integer setTopNavToolbarIncludeId() {
+        return R.id.serverSettingsNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.serverSettingsBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    Integer setBottomToolbarAMVIncludeId() {
+        return R.id.serverSettingsBottomToolbarInclude;
     }
 
     @Override

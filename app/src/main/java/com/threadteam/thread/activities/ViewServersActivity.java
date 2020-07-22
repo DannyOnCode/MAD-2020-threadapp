@@ -18,17 +18,13 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
-import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ViewServerAdapter;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.Server;
@@ -249,15 +245,13 @@ public class ViewServersActivity extends _MainBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View topNavView = findViewById(R.id.serversNavBarInclude);
-        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    Integer setTopNavToolbarIncludeId() {
+        return R.id.serversNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    Integer setBottomToolbarAMVIncludeId() {
+        return R.id.serversBottomToolbarInclude;
     }
 
     @Override
@@ -341,25 +335,19 @@ public class ViewServersActivity extends _MainBaseActivity {
         onStop();
     }
 
-    private void handleTransitionIntoServer(Integer position) {
+    private void handleTransitionIntoServer(final Integer position) {
         logHandler.printLogWithMessage("User tapped on a server!");
-        final HashMap<String, String> extraMap = new HashMap<String, String>();
-        extraMap.put("SERVER_ID", adapter.serverList.get(position).get_id());
 
         final ValueEventListener checkIfOwner = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String ownerID = (String) dataSnapshot.child("_ownerID").getValue();
-                extraMap.put("IS_OWNER", ((Boolean) currentUser.getUid().equals(ownerID)).toString());
 
-                Utils.StartActivityOnNewStack(
-                        ViewServersActivity.this,
-                        PostsActivity.class,
-                        "Posts Activity",
-                        extraMap,
-                        logHandler);
-
-                onStop();
+                Intent goToPosts = new Intent(currentActivity, PostsActivity.class);
+                goToPosts.putExtra("SERVER_ID", adapter.serverList.get(position).get_id());
+                goToPosts.putExtra("IS_OWNER", currentUser.getUid().equals(ownerID));
+                currentActivity.startActivity(goToPosts);
+                logHandler.printActivityIntentLog("Posts");
             }
 
             @Override

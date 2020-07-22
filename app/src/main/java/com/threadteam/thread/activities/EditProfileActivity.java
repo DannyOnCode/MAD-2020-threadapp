@@ -155,13 +155,12 @@ public class EditProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View includeView = findViewById(R.id.editProfileInclude);
-        return (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+    Integer setTopNavToolbarIncludeId() {
+        return R.id.editProfileInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
+    Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 

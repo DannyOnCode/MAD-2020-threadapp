@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -27,8 +26,8 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
-import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.models.ChatMessage;
 
@@ -122,9 +121,9 @@ public class ChatActivity extends _ServerBaseActivity {
                 int memberExp = ((Long) snapshot.getValue()).intValue();
                 logHandler.printDatabaseResultLog("snapshot.getValue()", "Member EXP", "mapUsersToTitle", Integer.toString(memberExp));
 
-                int memberLevel = Utils.ConvertExpToLevel(memberExp);
-                int memberStage = Utils.ConvertLevelToStage(memberLevel);
-                int memberColor = Utils.GetDefaultColorIntForStage(memberStage);
+                int memberLevel = Progression.ConvertExpToLevel(memberExp);
+                int memberStage = Progression.ConvertLevelToStage(memberLevel);
+                int memberColor = Progression.GetDefaultColorIntForStage(memberStage);
 
                 colorMap.put(memberId, memberColor);
             }
@@ -335,13 +334,12 @@ public class ChatActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View includeView = findViewById(R.id.chatNavBarInclude);
-        return (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+    Integer setTopNavToolbarIncludeId() {
+        return R.id.chatNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
+    Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 

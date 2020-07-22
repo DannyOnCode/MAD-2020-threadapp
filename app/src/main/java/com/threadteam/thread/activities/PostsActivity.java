@@ -22,16 +22,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
-import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.PostsItemAdapter;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.Post;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class PostsActivity extends _ServerBaseActivity {
 
@@ -264,15 +261,13 @@ public class PostsActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View topNavView = findViewById(R.id.postsNavBarInclude);
-        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    Integer setTopNavToolbarIncludeId() {
+        return R.id.postsNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.postsBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    Integer setBottomToolbarAMVIncludeId() {
+        return R.id.postsBottomToolbarInclude;
     }
 
     @Override

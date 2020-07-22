@@ -299,15 +299,13 @@ public class ViewProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View topNavView = findViewById(R.id.profileNavBarInclude);
-        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    Integer setTopNavToolbarIncludeId() {
+        return R.id.profileNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.profileBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    Integer setBottomToolbarAMVIncludeId() {
+        return R.id.profileBottomToolbarInclude;
     }
 
     @Override

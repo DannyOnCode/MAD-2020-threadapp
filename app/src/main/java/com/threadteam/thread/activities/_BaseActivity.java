@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -102,8 +103,8 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
         logHandler.printDefaultLog(LogHandler.STATE_ON_CREATE);
 
-        TopNavToolbar = setTopNavToolbar();
-        BottomToolbarAMV = setBottomToolbarAMV();
+        BindTopNavToolbar();
+        BindBottomToolbarAMV();
         logHandler.printDefaultLog(LogHandler.TOOLBAR_BOUND);
 
         SetupToolbars();
@@ -196,8 +197,23 @@ public abstract class _BaseActivity extends AppCompatActivity {
     abstract String setTitleForActivity();
     abstract ImageButton setMainActionButton();
 
-    abstract Toolbar setTopNavToolbar();
-    abstract ActionMenuView setBottomToolbarAMV();
+    abstract Integer setTopNavToolbarIncludeId();
+    private void BindTopNavToolbar() {
+        Integer includeId = setTopNavToolbarIncludeId();
+        if(includeId != null) {
+            View topNavView = findViewById(includeId);
+            TopNavToolbar = (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+        }
+    }
+
+    abstract Integer setBottomToolbarAMVIncludeId();
+    private void BindBottomToolbarAMV() {
+        Integer includeId = setBottomToolbarAMVIncludeId();
+        if(includeId != null) {
+            View bottomToolbarView = findViewById(includeId);
+            BottomToolbarAMV = (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+        }
+    }
 
     private void SetupToolbars() {
         if(TopNavToolbar != null) {

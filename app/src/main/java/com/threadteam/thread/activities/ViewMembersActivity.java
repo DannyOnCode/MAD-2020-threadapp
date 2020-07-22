@@ -336,15 +336,13 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View topNavView = findViewById(R.id.viewMembersNavBarInclude);
-        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    Integer setTopNavToolbarIncludeId() {
+        return R.id.viewMembersNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.viewMembersBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    Integer setBottomToolbarAMVIncludeId() {
+        return R.id.viewMembersBottomToolbarInclude;
     }
 
     @Override

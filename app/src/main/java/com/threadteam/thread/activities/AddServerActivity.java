@@ -24,7 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.R;
-import com.threadteam.thread.Utils;
+import com.threadteam.thread.libraries.Utils;
 import com.threadteam.thread.models.Server;
 
 public class AddServerActivity extends _MainBaseActivity {
@@ -107,13 +107,12 @@ public class AddServerActivity extends _MainBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View topNavView = findViewById(R.id.addServerNavbarInclude);
-        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    Integer setTopNavToolbarIncludeId() {
+        return R.id.addServerNavbarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
+    Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 

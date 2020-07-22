@@ -185,13 +185,12 @@ public class AddPostActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View includeView = findViewById(R.id.addPostNavbarInclude);
-        return (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+    Integer setTopNavToolbarIncludeId() {
+        return R.id.addPostNavbarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
+    Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 

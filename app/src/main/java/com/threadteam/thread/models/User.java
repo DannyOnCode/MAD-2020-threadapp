@@ -1,7 +1,7 @@
 package com.threadteam.thread.models;
 
 import com.google.firebase.database.Exclude;
-import com.threadteam.thread.Utils;
+import com.threadteam.thread.libraries.Progression;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,17 +68,17 @@ public class User {
     }
 
     public Integer GetUserLevelForServer(String serverID) {
-        return Utils.ConvertExpToLevel(GetUserExpForServer(serverID));
+        return Progression.ConvertExpToLevel(GetUserExpForServer(serverID));
     }
 
     public Integer GetExpToNextLevelForServer(String serverID) {
-        return Utils.GetExpToNextLevel(GetUserLevelForServer(serverID));
+        return Progression.GetExpToNextLevel(GetUserLevelForServer(serverID));
     }
 
     public Integer GetProgressToNextLevelForServer(String serverID) {
         int exp = GetUserExpForServer(serverID);
         int level = GetUserLevelForServer(serverID);
-        return Utils.GetExpProgress(exp, level);
+        return Progression.GetExpProgress(exp, level);
     }
 
     public Integer GetAbsoluteLevelProgressForServer(String serverID) {
