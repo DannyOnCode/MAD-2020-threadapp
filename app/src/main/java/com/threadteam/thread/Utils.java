@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.activities.ChatActivity;
 import com.threadteam.thread.activities.PostsActivity;
+import com.threadteam.thread.activities._BaseActivity;
 
 import java.util.ArrayList;
 import java.util.Dictionary;
@@ -235,6 +236,8 @@ public class Utils {
                 }
 
                 Utils.SendSystemMessageInChat(databaseRef, username + message, _serverID);
+                
+
             }
 
             @Override

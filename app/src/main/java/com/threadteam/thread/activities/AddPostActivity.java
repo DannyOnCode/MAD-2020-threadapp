@@ -239,6 +239,7 @@ public class AddPostActivity extends _ServerBaseActivity {
                 }
                 else{
                     uploadUserData();
+                    sendNotification(serverId,currentUser.getUid()," uploaded a new post!");
                 }
             }
         });

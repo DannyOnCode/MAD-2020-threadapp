@@ -1,8 +1,5 @@
 package com.threadteam.thread.models;
 
-import android.net.Uri;
-import android.widget.ImageView;
-
 import com.google.firebase.database.Exclude;
 import com.threadteam.thread.Utils;
 
@@ -32,6 +29,8 @@ public class User {
     private String _aboutUsMessage;
     private String _statusMessage;
 
+    private String _token;
+
     @Exclude
     private List<String> _subscribedServers = new ArrayList<String>();
 
@@ -45,7 +44,7 @@ public class User {
 
     }
 
-    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,List<String> _subscribedServers,List<Integer> _expList) {
+    public User(String _id, String _username, String _profileImageURL, String _aboutUsMessage, String _statusMessage,String _token,List<String> _subscribedServers,List<Integer> _expList) {
         if(_aboutUsMessage.trim().equals("")){
             _aboutUsMessage = "No Description";
         }
@@ -58,6 +57,7 @@ public class User {
         this._profileImageURL = _profileImageURL;
         this._aboutUsMessage = _aboutUsMessage;
         this._statusMessage = _statusMessage;
+        this._token = _token;
         this._subscribedServers = _subscribedServers;
         this._expList = _expList;
     }
@@ -130,6 +130,14 @@ public class User {
             _statusMessage = "No Status";
         }
         this._statusMessage = _statusMessage;
+    }
+
+    public String get_token() {
+        return _token;
+    }
+
+    public void set_token(String _token) {
+        this._token = _token;
     }
 
     public List<String> get_subscribedServers() {

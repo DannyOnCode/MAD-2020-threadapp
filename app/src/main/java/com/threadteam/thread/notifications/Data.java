@@ -18,8 +18,7 @@ public class Data {
     public Data(){
     }
 
-    public String getUser() {
-        return user;
+    public String getUser() {        return user;
     }
 
     public void setUser(String user) {

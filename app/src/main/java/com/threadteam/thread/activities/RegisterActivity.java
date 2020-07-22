@@ -2,15 +2,12 @@ package com.threadteam.thread.activities;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.core.widget.NestedScrollView;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -29,8 +26,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.User;
-import com.threadteam.thread.notifications.Token;
-
 
 
 // REGISTER ACTIVITY
@@ -116,8 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
         // INITIALISE FIREBASE
         user = new User();
         reff = FirebaseDatabase.getInstance().getReference().child("users");
-        String token = FirebaseInstanceId.getInstance().getToken();
-        final Token _token = new Token(token);
+        final String _token = FirebaseInstanceId.getInstance().getToken();
 
 
 

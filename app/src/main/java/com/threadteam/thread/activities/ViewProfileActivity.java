@@ -130,6 +130,8 @@ public class ViewProfileActivity extends _MainBaseActivity {
             String profileImageURL = (String) dataSnapshot.child("_profileImageURL").getValue();
             String aboutUsMsg = (String) dataSnapshot.child("_aboutUsMessage").getValue();
             String statusMsg = (String) dataSnapshot.child("_statusMessage").getValue();
+            String token = (String) dataSnapshot.child("_token").getValue();
+
 
             if(id == null) {
                 logHandler.printDatabaseResultLog(".getKey()", "User ID", "getMemberProfile", "null");
@@ -215,7 +217,7 @@ public class ViewProfileActivity extends _MainBaseActivity {
                 expList.add(((Long) snapshot.getValue()).intValue());
             }
 
-            adapter.userData = new User(id, username, profileImageURL, aboutUsMsg, statusMsg, servers, expList);
+            adapter.userData = new User(id, username, profileImageURL, aboutUsMsg, statusMsg, token, servers, expList);
             adapter.notifyDataSetChanged();
         }
 

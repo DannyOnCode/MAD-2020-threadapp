@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -29,10 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
-import com.threadteam.thread.interfaces.APIService;
 import com.threadteam.thread.models.ChatMessage;
-import com.threadteam.thread.models.User;
-import com.threadteam.thread.notifications.Client;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -89,6 +87,8 @@ public class ChatActivity extends _ServerBaseActivity {
             logHandler.printDatabaseErrorLog(databaseError);
         }
     };
+
+
 
     // mapUsersToTitle: MAPS ALL USERS IN SERVER (MEMBERS) TO THEIR RESPECTIVE TITLES BASED ON EXP
     //                  CORRECT INVOCATION CODE: databaseRef.child("members")
@@ -498,28 +498,16 @@ public class ChatActivity extends _ServerBaseActivity {
             logHandler.printLogWithMessage("Message pushed! Setting scrollToLatestMessage = true!");
 
             AddExpForServerMember(currentUser.getUid(), serverId, 1, 60);
+
+
+            sendNotification(serverId, currentUser.getUid(), ": " + formattedMessage.toString());
+            logHandler.printLogWithMessage("Notification sent to users in group! ");
+
         } else {
             logHandler.printLogWithMessage("No message was pushed because there was no text after formatting!");
         }
 
-        //ADDED BY BEEF FOR NOTIFICATIONS
-        final String msg = message;
 
-        databaseRef.child("Users").child(currentUser.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                if(notify && user != null){
-                    sendNotification(serverId, user.get_username(), msg, serverId);
-                }
-                notify=false;
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
     }
 }

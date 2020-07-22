@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageButton;
@@ -34,9 +35,9 @@ import com.threadteam.thread.R;
 import com.threadteam.thread.interfaces.APIService;
 import com.threadteam.thread.notifications.Client;
 import com.threadteam.thread.notifications.Data;
+import com.threadteam.thread.notifications.NotificationModel;
 import com.threadteam.thread.notifications.Sender;
 import com.threadteam.thread.notifications.ThreadResponse;
-import com.threadteam.thread.notifications.Token;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,9 +61,12 @@ public abstract class _BaseActivity extends AppCompatActivity {
     // DATA STORE
     //
     // title                    TITLE OF THE CURRENT ACTIVITY
+    // serverName               NAME OF CURRENT SERVER
     // currentActivity          CURRENT ACTIVITY CONTEXT
 
     private String title;
+    private String serverName;
+    private String username;
     protected AppCompatActivity currentActivity;
 
     // NOTIFICATIONS
@@ -114,7 +118,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
         logHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
 
         // NOTIFICATIONS
-        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+        apiService = Client.getClient().create(APIService.class);
 
         HandleIntentExtras();
         HandleAdditionalIntentExtras();
@@ -286,42 +290,70 @@ public abstract class _BaseActivity extends AppCompatActivity {
         }
     }
 
-    protected void sendNotification(String receiver, final String username, final String message, final String _serverId){
-        DatabaseReference tokens = databaseRef.child("tokens");
-        Query query = tokens.orderByKey().equalTo(receiver);
-        query.addValueEventListener(new ValueEventListener() {
+    protected void sendNotification(final String serverId, final String userId, final String message){
+        logHandler.printLogWithMessage("sendNotification invoked " + serverId  + ", " + userId + ", " + message);
+
+        ValueEventListener getServerName = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(currentUser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message", _serverId);
+                serverName = (String) dataSnapshot.getValue();
 
-                    Sender sender = new Sender(data, token.getToken());
+                ValueEventListener getUsername = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        username = (String) dataSnapshot.getValue();
 
-                    apiService.sendNotification(sender)
-                            .enqueue(new Callback<ThreadResponse>() {
-                                @Override
-                                public void onResponse(Call<ThreadResponse> call, Response<ThreadResponse> response) {
-                                    if (response.code() ==200){
-                                        if (response.body().success !=1){
-                                            Toast.makeText(currentActivity,"Failed!", Toast.LENGTH_SHORT).show();
-                                        }
-                                    }
-                                }
+                        final String to = "/topics/" + serverId;
 
-                                @Override
-                                public void onFailure(Call<ThreadResponse> call, Throwable t) {
+                        final String body = username + message;
 
-                                }
-                            });
-                }
+                        logHandler.printDatabaseResultLog(".getValue()", "Current Server Name", "getServerName", serverName);
+
+                        logHandler.printLogWithMessage("Values sent to Api Service: " + to + ", " + serverName + ", " + body);
+
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body));
+                        Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
+
+                        threadResponseCall.enqueue(new Callback<ThreadResponse>() {
+                            @Override
+                            public void onResponse(Call<ThreadResponse> call, Response<ThreadResponse> response) {
+                                logHandler.printLogWithMessage("Successfully sent notification by using retrofit.");
+                            }
+
+                            @Override
+                            public void onFailure(Call<ThreadResponse> call, Throwable t) {
+                                logHandler.printLogWithMessage("Unsuccessful at sending notification by using retrofit.");
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        logHandler.printDatabaseErrorLog(databaseError);
+                    }
+                };
+
+                databaseRef.child("users")
+                        .child(currentUser.getUid())
+                        .child("_username")
+                        .addListenerForSingleValueEvent(getUsername);
+
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                logHandler.printDatabaseErrorLog(databaseError);
             }
-        });
+        };
+
+        databaseRef.child("servers")
+                .child(serverId)
+                .child("_name")
+                .addListenerForSingleValueEvent(getServerName);
+
+
+
     }
 
 }

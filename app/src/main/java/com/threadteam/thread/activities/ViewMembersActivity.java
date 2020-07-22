@@ -111,6 +111,7 @@ public class ViewMembersActivity extends _ServerBaseActivity {
             String id = (String) dataSnapshot.getKey();
             String username = (String) dataSnapshot.child("_username").getValue();
             String profileImageURL = (String) dataSnapshot.child("_profileImageURL").getValue();
+            String token = (String) dataSnapshot.child("_token").getValue();
 
             if(id == null) {
                 logHandler.printDatabaseResultLog(".getKey()", "User ID", "addUserOnce", "null");
@@ -166,7 +167,7 @@ public class ViewMembersActivity extends _ServerBaseActivity {
                 expList.add(((Long) snapshot.getValue()).intValue());
             }
 
-            User newUser = new User(id, username, profileImageURL, "", "", servers, expList);
+            User newUser = new User(id, username, profileImageURL, "", "",token, servers, expList);
 
             for(int i=0; i<adapter.userList.size(); i++) {
                 if(adapter.userList.get(i).get_id().equals(newUser.get_id())) {

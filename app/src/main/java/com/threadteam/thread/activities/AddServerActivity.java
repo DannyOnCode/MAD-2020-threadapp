@@ -17,9 +17,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.R;
 import com.threadteam.thread.Utils;
 import com.threadteam.thread.models.Server;
@@ -216,10 +219,29 @@ public class AddServerActivity extends _MainBaseActivity {
                         .child(currentUser.getUid())
                         .setValue(0);
 
+                final String server = joinServerID;
+                FirebaseMessaging.getInstance().subscribeToTopic(server).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            logHandler.printLogWithMessage("SUBSCRIBED TO /topics/" + server +" SUCCESSFULLY");
+
+                        }
+                        else{
+                            logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
+                        }
+                    }
+                });
+
                 // User join message
                 Utils.SendUserActionSystemMessage(logHandler, databaseRef, userId, " has joined the server!", joinServerID);
-
                 logHandler.printLogWithMessage("Server successfully joined; returning user back to ViewServers Activity!");
+
+                sendNotification(joinServerID,userId," has joined the server!");
+                logHandler.printLogWithMessage("Users in Server notified of new member!");
+
+
+
                 returnToViewServers();
 
                 finish();

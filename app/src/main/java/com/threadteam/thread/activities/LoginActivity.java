@@ -6,13 +6,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.widget.NestedScrollView;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -28,10 +26,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.User;
-import com.threadteam.thread.notifications.Token;
 
 
 // LOGIN ACTIVITY
@@ -119,7 +117,8 @@ public class LoginActivity extends AppCompatActivity {
 
         // INITIALISE FIREBASE
         fAuth = FirebaseAuth.getInstance();
-
+        reff = FirebaseDatabase.getInstance().getReference().child("users");
+        final String _token = FirebaseInstanceId.getInstance().getToken();
 
         //Validation for if there is a user no login required
         if(fAuth.getCurrentUser() != null){
@@ -163,9 +162,10 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                        // if successful show toast and move to ViewServerActivity
                         if (task.isSuccessful()) {
+                            String UserID = fAuth.getCurrentUser().getUid();
+                            reff.child(UserID).child("_token").setValue(_token);
                             Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             logHandler.printLogWithMessage("Logged in Successfully");
-
                             //NAVIGATE TO VIEW SERVER ACTIVITY
                             startActivity(new Intent(getApplicationContext(), ViewServersActivity.class));
                             logHandler.printActivityIntentLog("View Server Activity");
