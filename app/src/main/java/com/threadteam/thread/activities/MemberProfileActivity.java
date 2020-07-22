@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ProfileAdapter;
@@ -28,6 +29,7 @@ import com.threadteam.thread.models.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class MemberProfileActivity extends _ServerBaseActivity {
@@ -45,6 +47,11 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     // ProfileRecyclerView:     DISPLAYS PROFILE DETAILS FOR SERVER MEMBER. USES adapter AS ITS ADAPTER.
 
     private RecyclerView ProfileRecyclerView;
+
+    // FIREBASE
+    //
+
+    private HashMap<DatabaseReference, ValueEventListener> listenerHashMap = new HashMap<>();
 
     // INITIALISE LISTENERS
 
@@ -198,6 +205,8 @@ public class MemberProfileActivity extends _ServerBaseActivity {
                     databaseRef.child("servers")
                             .child(_serverId)
                             .addValueEventListener(getServerDetails);
+
+                    listenerHashMap.put(databaseRef.child("servers").child(_serverId), getServerDetails);
                 }
 
                 if(snapshot.getValue() == null) {
@@ -350,10 +359,12 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     @Override
     void DestroyListeners() {
         if(getMemberProfile != null) {
-            databaseRef.removeEventListener(getMemberProfile);
+            databaseRef.child("users").child(memberId).removeEventListener(getMemberProfile);
         }
         if(getServerDetails != null) {
-            databaseRef.removeEventListener(getServerDetails);
+            for(DatabaseReference ref : listenerHashMap.keySet()) {
+                ref.removeEventListener(listenerHashMap.get(ref));
+            }
         }
     }
 

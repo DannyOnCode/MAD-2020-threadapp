@@ -434,17 +434,21 @@ public class ChatActivity extends _ServerBaseActivity {
                    .addValueEventListener(mapUsersToTitle);
 
         databaseRef.child("messages")
-                .child(serverId)
-                .addChildEventListener(chatListener);
+                   .child(serverId)
+                   .addChildEventListener(chatListener);
     }
 
     @Override
     void DestroyListeners() {
         if(chatListener != null) {
-            databaseRef.removeEventListener(chatListener);
+            databaseRef.child("messages")
+                       .child(serverId)
+                       .removeEventListener(chatListener);
         }
         if(mapUsersToTitle != null) {
-            databaseRef.removeEventListener(mapUsersToTitle);
+            databaseRef.child("members")
+                       .child(serverId)
+                       .removeEventListener(mapUsersToTitle);
         }
     }
 
