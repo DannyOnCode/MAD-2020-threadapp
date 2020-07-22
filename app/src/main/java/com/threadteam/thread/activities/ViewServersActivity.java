@@ -89,15 +89,22 @@ public class ViewServersActivity extends _MainBaseActivity {
             server.set_id(dataSnapshot.getKey());
 
             // CHECK IF SERVER IS ALREADY DISPLAYED
-            for(Server s: adapter.serverList) {
-                if(s.get_id().equals(server.get_id())) {
-                    return;
+            boolean serverIsDisplayed = false;
+
+            for(int i=0; i<adapter.serverList.size(); i++) {
+                if(adapter.serverList.get(i).get_id().equals(server.get_id())) {
+                    adapter.serverList.set(i, server);
+                    serverIsDisplayed = true;
+                    break;
                 }
             }
 
             // ADD SERVER TO adapter, THEN SORT AND TELL adapter TO UPDATE VIEW BASED ON NEW DATA.
 
-            adapter.serverList.add(server);
+            if(!serverIsDisplayed) {
+                adapter.serverList.add(server);
+            }
+
             Collections.sort(adapter.serverList);
             adapter.notifyDataSetChanged();
         }
@@ -296,7 +303,10 @@ public class ViewServersActivity extends _MainBaseActivity {
     @Override
     void DestroyListeners() {
         if (subscriptionListener != null) {
-            databaseRef.removeEventListener(subscriptionListener);
+            databaseRef.child("users")
+                       .child(currentUser.getUid())
+                       .child("_subscribedServers")
+                       .removeEventListener(subscriptionListener);
         }
     }
 
