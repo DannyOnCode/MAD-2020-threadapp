@@ -20,6 +20,8 @@ import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,13 +29,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.LogHandler;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.threadteam.thread.R;
 import com.threadteam.thread.activities.LoginActivity;
+import com.threadteam.thread.adapters.ViewServerAdapter;
 import com.threadteam.thread.interfaces.APIService;
+import com.threadteam.thread.models.Server;
 import com.threadteam.thread.notifications.Client;
 import com.threadteam.thread.notifications.NotificationModel;
 import com.threadteam.thread.notifications.Sender;
@@ -126,6 +132,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         // NOTIFICATIONS
         apiService = Client.getClient().create(APIService.class);
+
 
         HandleIntentExtras();
         HandleAdditionalIntentExtras();
@@ -567,18 +574,27 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Sends a system notification to all members in a server
+     * Author: Thabith
+     *
+     * @param serverId The current server's id
+     * @param userId The current user's id
+     * @param message The message payload for the notification
+     */
+
     protected void sendSystemNotification(final String serverId, final String userId, final String message){
         logHandler.printLogWithMessage("sendNotification invoked " + serverId  + ", " + userId + ", " + message);
 
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                serverName = (String) dataSnapshot.getValue();
+                final String serverName = (String) dataSnapshot.getValue();
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        username = (String) dataSnapshot.getValue();
+                        String username = (String) dataSnapshot.getValue();
 
                         final String to = "/topics/system" + serverId;
 
@@ -633,18 +649,27 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Sends a posts notification to all members in a server
+     * Author: Thabith
+     *
+     * @param serverId The current server's id
+     * @param userId The current user's id
+     * @param message The message payload for the notification
+     */
+
     protected void sendPostNotification(final String serverId, final String userId, final String message){
         logHandler.printLogWithMessage("sendNotification invoked " + serverId  + ", " + userId + ", " + message);
 
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                serverName = (String) dataSnapshot.getValue();
+                final String serverName = (String) dataSnapshot.getValue();
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        username = (String) dataSnapshot.getValue();
+                        String username = (String) dataSnapshot.getValue();
 
                         final String to = "/topics/posts" + serverId;
 
@@ -680,6 +705,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                 databaseRef.child("users")
                         .child(currentUser.getUid())
                         .child("_username")
+                        .child("_username")
                         .addListenerForSingleValueEvent(getUsername);
 
             }
@@ -694,9 +720,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .child(serverId)
                 .child("_name")
                 .addListenerForSingleValueEvent(getServerName);
-
-
-
     }
 
 }

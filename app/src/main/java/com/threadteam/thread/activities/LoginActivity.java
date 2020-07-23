@@ -23,12 +23,17 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
+import com.threadteam.thread.libraries.Notifications;
 import com.threadteam.thread.models.User;
+import com.threadteam.thread.notifications.NotificationModel;
 
 
 // LOGIN ACTIVITY
@@ -57,9 +62,10 @@ public class LoginActivity extends AppCompatActivity {
 
     // FIREBASE
     //
-    //    // fAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION
+    // fAuth:                FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION.
+    // reff:                 FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION.
     private FirebaseAuth fAuth;
-    private DatabaseReference reff;
+    private DatabaseReference reff, databaseRef;
     private User user;
 
     // VIEW OBJECTS
@@ -117,6 +123,7 @@ public class LoginActivity extends AppCompatActivity {
         // INITIALISE FIREBASE
         fAuth = FirebaseAuth.getInstance();
         reff = FirebaseDatabase.getInstance().getReference().child("users");
+        databaseRef = FirebaseDatabase.getInstance().getReference();
         final String _token = FirebaseInstanceId.getInstance().getToken();
 
         //Validation for if there is a user no login required
@@ -165,6 +172,37 @@ public class LoginActivity extends AppCompatActivity {
                             reff.child(UserID).child("_token").setValue(_token);
                             Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             logHandler.printLogWithMessage("Logged in Successfully");
+
+                            ValueEventListener getNotificationSettings = new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    if(dataSnapshot.getValue() == null) {
+                                        logHandler.printDatabaseResultLog(".getValue()", "Notifications Values", "getNotificationSettings", "null");
+                                        return;
+                                    }
+                                    String messageNotification = (String) dataSnapshot.child("_msg").getValue();
+                                    String systemNotification = (String) dataSnapshot.child("_system").getValue();
+                                    String  postNotification = (String) dataSnapshot.child("_post").getValue();
+
+                                    if(messageNotification.equals("on")){
+                                        Notifications.subscribeMsgNotification(logHandler,databaseRef);
+                                    }
+                                    if(systemNotification.equals("on")){
+                                        Notifications.subscribeSystemNotification(logHandler,databaseRef);
+                                    }
+                                    if(postNotification.equals("on")){
+                                        Notifications.subscribePostsNotification(logHandler,databaseRef);
+                                    }
+                                }
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            };
+                            databaseRef.child("users")
+                                    .child(UserID)
+                                    .child("_notifications")
+                                    .addValueEventListener(getNotificationSettings);
 
                             //NAVIGATE TO VIEW SERVER ACTIVITY
                             startActivity(new Intent(getApplicationContext(), ViewServersActivity.class));

@@ -40,6 +40,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:parentActivityName=".activities.ViewServersActivity"
+            android:windowSoftInputMode="adjustResize" />
+
+        <activity
+            android:name=".activities.SetNotificationsActivity"
+            android:parentActivityName=".activities.SettingsActivity"
+            android:windowSoftInputMode="adjustResize" />
 
         <service android:name=".notifications.ThreadFirebaseIdService"
             android:enabled="true"

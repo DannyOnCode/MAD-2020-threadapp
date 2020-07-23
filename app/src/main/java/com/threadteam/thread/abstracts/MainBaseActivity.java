@@ -10,8 +10,11 @@ import androidx.annotation.Nullable;
 
 import com.threadteam.thread.R;
 import com.threadteam.thread.activities.LoginActivity;
+import com.threadteam.thread.activities.SetNotificationsActivity;
+import com.threadteam.thread.activities.SettingsActivity;
 import com.threadteam.thread.activities.ViewProfileActivity;
 import com.threadteam.thread.activities.ViewServersActivity;
+import com.threadteam.thread.libraries.Notifications;
 
 import java.util.HashMap;
 
@@ -27,9 +30,11 @@ public abstract class MainBaseActivity extends BaseActivity {
     // DATA STORE
     //
     // LOG_OUT_MENU_ITEM_ID:    CONSTANT DECLARING ID FOR THE LOG OUT MENU ITEM.
+    //S
 
     /** Constant declaring the menu item id for the Log Out menu item */
     private final int LOG_OUT_MENU_ITEM_ID = -1;
+    private final int SETTINGS_MENU_ITEM_ID = -2;
 
     /**
      * Handles the onOptionsItemSelected event. Should be used by all subclasses to provide consistent navigation and features.
@@ -66,11 +71,21 @@ public abstract class MainBaseActivity extends BaseActivity {
 
             case LOG_OUT_MENU_ITEM_ID:
                 logHandler.printLogWithMessage("User tapped on Log Out Menu Item!");
+                Notifications.unsubscribeAllNotifications(logHandler,databaseRef);
+
+
                 firebaseAuth.signOut();
 
                 Intent goToLogin = new Intent(currentActivity, LoginActivity.class);
                 startActivity(goToLogin);
                 logHandler.printActivityIntentLog("Login Activity");
+                return true;
+
+            case SETTINGS_MENU_ITEM_ID:
+                logHandler.printLogWithMessage("User tapped on Settings Menu Item!");
+                Intent goToSettings = new Intent(currentActivity, SettingsActivity.class);
+                startActivity(goToSettings);
+                logHandler.printActivityIntentLog("Set Notifications Activity");
                 return true;
         }
 
@@ -89,8 +104,10 @@ public abstract class MainBaseActivity extends BaseActivity {
     @Override
     protected HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
         itemHashMap.put(LOG_OUT_MENU_ITEM_ID, "Log Out");
+        itemHashMap.put(SETTINGS_MENU_ITEM_ID, "Settings");
         return itemHashMap;
     }
+
 
     @Override
     protected void HandleIntentExtras() { }
