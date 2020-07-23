@@ -97,8 +97,6 @@ public abstract class MainBaseActivity extends BaseActivity {
     /**
      * {@inheritDoc}
      * This implementation adds the Log Out menu item to the top navigation bar.
-     * @param itemHashMap
-     * @return
      */
 
     @Override
@@ -120,6 +118,11 @@ public abstract class MainBaseActivity extends BaseActivity {
 
     @Override
     protected void DoAdditionalSetupForFirebase() { }
+
+    /**
+     * {@inheritDoc}
+     * This implementation sets the bottom toolbar menu to the bottom_app_bar_menu menu resource by default.
+     */
 
     @Override
     protected int setBottomToolbarMenuID() {
