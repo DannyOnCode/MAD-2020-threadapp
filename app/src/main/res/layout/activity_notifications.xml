@@ -66,6 +66,7 @@
                 android:id="@+id/incomingMsgSwitch"
                 android:layout_width="0dp"
                 android:layout_height="42dp"
+                android:theme ="@style/switchStyle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -113,6 +114,7 @@
                 android:id="@+id/systemSwitch"
                 android:layout_width="0dp"
                 android:layout_height="42dp"
+                android:theme ="@style/switchStyle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -183,6 +185,7 @@
                 android:id="@+id/postsSwitch"
                 android:layout_width="0dp"
                 android:layout_height="42dp"
+                android:theme ="@style/switchStyle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

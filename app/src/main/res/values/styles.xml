@@ -8,8 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="progressBarStyle" parent="@style/Widget.AppCompat.ProgressBar.Horizontal">
+    <style name="progressBarStyle" parent="Widget.AppCompat.ProgressBar.Horizontal">
         <item name="android:indeterminateDrawable">@drawable/progress_bar_drawable</item>
+    </style>
+
+    <style name="switchStyle" parent="Widget.AppCompat.CompoundButton.Switch">
+        <item name="colorAccent">@color/colorPrimaryDark</item>
     </style>
 
     <style name="RobotoTextEditStyle" parent="Widget.AppCompat.EditText">
