@@ -1,6 +1,5 @@
 package com.threadteam.thread.abstracts;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -12,7 +11,6 @@ import androidx.annotation.Nullable;
 import com.threadteam.thread.R;
 import com.threadteam.thread.activities.LoginActivity;
 import com.threadteam.thread.activities.SetNotificationsActivity;
-import com.threadteam.thread.activities.SettingsActivity;
 import com.threadteam.thread.activities.ViewProfileActivity;
 import com.threadteam.thread.activities.ViewServersActivity;
 import com.threadteam.thread.libraries.Notifications;
@@ -67,7 +65,7 @@ public abstract class MainBaseActivity extends BaseActivity {
                 }
                 return true;
 
-            case R.id.notificatoinsMenuItem:
+            case R.id.notificationsMenuItem:
                 logHandler.printLogWithMessage("User tapped on View Notification Settings Menu Item!");
                 if(currentActivity.getClass() != SetNotificationsActivity.class) {
                     Intent goToNotiSettings = new Intent(currentActivity, SetNotificationsActivity.class);

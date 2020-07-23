@@ -211,6 +211,6 @@ public class SetNotificationsActivity extends MainBaseActivity {
 
     @Override
     protected int setCurrentMenuItemID() {
-        return NO_MENU_ITEM_FOR_ACTIVITY;
+        return R.id.notificationsMenuItem;
     }
 }
