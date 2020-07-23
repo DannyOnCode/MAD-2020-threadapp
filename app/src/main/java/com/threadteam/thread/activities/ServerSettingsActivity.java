@@ -22,11 +22,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.EditMemberTitleAdapter;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class ServerSettingsActivity extends _ServerBaseActivity {
+public class ServerSettingsActivity extends ServerBaseActivity {
 
     // DATA STORE
     //
@@ -172,7 +173,7 @@ public class ServerSettingsActivity extends _ServerBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseServerSettingsConstraintLayout);
     }
 

@@ -31,6 +31,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.threadteam.thread.R;
+import com.threadteam.thread.abstracts.MainBaseActivity;
 import com.threadteam.thread.models.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -48,7 +49,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 // CHILDREN: NONE
 // OTHER: NONE
 
-public class EditProfileActivity extends _MainBaseActivity {
+public class EditProfileActivity extends MainBaseActivity {
 
 
     // DATA STORE

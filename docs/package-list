@@ -1,4 +1,5 @@
 com.threadteam.thread
+com.threadteam.thread.abstracts
 com.threadteam.thread.activities
 com.threadteam.thread.adapters
 com.threadteam.thread.interfaces

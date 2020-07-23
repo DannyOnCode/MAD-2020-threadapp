@@ -1,4 +1,4 @@
-package com.threadteam.thread.activities;
+package com.threadteam.thread.abstracts;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -32,6 +32,7 @@ import com.threadteam.thread.LogHandler;
 import java.util.HashMap;
 
 import com.threadteam.thread.R;
+import com.threadteam.thread.activities.LoginActivity;
 import com.threadteam.thread.interfaces.APIService;
 import com.threadteam.thread.notifications.Client;
 import com.threadteam.thread.notifications.NotificationModel;
@@ -49,7 +50,7 @@ import retrofit2.Response;
  * @since 2.0
  */
 
-public abstract class _BaseActivity extends AppCompatActivity {
+public abstract class BaseActivity extends AppCompatActivity {
 
     // LOGGING
     protected LogHandler logHandler;
@@ -179,7 +180,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
      * The default onStop event for a basic activity.
      * Listeners are detached and destroyed here, if any.
      * The current menu item is also toggled back to normal.
-     * @see _BaseActivity#toggleCurrentMenuItem(Boolean)
+     * @see BaseActivity#toggleCurrentMenuItem(Boolean)
      */
 
     @Override
@@ -194,7 +195,7 @@ public abstract class _BaseActivity extends AppCompatActivity {
     /**
      * The default onPrepareOptionsMenu event for a basic activity.
      * The current menu item's opacity is reduced as feedback that the user is on that current activity, if possible.
-     * @see _BaseActivity#toggleCurrentMenuItem(Boolean)
+     * @see BaseActivity#toggleCurrentMenuItem(Boolean)
      */
 
     @Override

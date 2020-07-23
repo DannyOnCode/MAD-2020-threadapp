@@ -22,6 +22,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ViewPostDetailsAdapter;
@@ -33,7 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class ViewPostDetailsActivity extends  _ServerBaseActivity{
+public class ViewPostDetailsActivity extends ServerBaseActivity {
 
     // DATA STORE
     //

@@ -33,6 +33,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.threadteam.thread.R;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.models.Post;
 
 import java.util.HashMap;
@@ -49,7 +50,7 @@ import java.util.HashMap;
 // PARENT: VIEW POST
 // CHILDREN: N/A
 
-public class AddPostActivity extends _ServerBaseActivity {
+public class AddPostActivity extends ServerBaseActivity {
 
 
     // DATA STORE

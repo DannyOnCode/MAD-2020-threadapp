@@ -24,6 +24,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
@@ -32,7 +33,7 @@ import com.threadteam.thread.models.ChatMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ChatActivity extends _ServerBaseActivity {
+public class ChatActivity extends ServerBaseActivity {
 
     // DATA STORE
     //
@@ -349,7 +350,7 @@ public class ChatActivity extends _ServerBaseActivity {
     }
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseChatConstraintLayout);
     }
 

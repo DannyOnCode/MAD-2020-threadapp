@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
 import com.threadteam.thread.adapters.ViewMemberAdapter;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.User;
 
@@ -31,7 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class ViewMembersActivity extends _ServerBaseActivity {
+public class ViewMembersActivity extends ServerBaseActivity {
 
     // DATA STORE
     //

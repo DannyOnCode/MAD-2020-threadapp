@@ -1,4 +1,4 @@
-package com.threadteam.thread.activities;
+package com.threadteam.thread.abstracts;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.threadteam.thread.R;
+import com.threadteam.thread.activities.LoginActivity;
+import com.threadteam.thread.activities.ViewProfileActivity;
+import com.threadteam.thread.activities.ViewServersActivity;
 
 import java.util.HashMap;
 
@@ -19,7 +22,7 @@ import java.util.HashMap;
  * @since 2.0
  */
 
-public abstract class _MainBaseActivity extends _BaseActivity {
+public abstract class MainBaseActivity extends BaseActivity {
 
     // DATA STORE
     //

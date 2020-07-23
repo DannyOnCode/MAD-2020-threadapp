@@ -23,12 +23,13 @@ import com.google.firebase.database.DatabaseError;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
 import com.threadteam.thread.adapters.PostsItemAdapter;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.Post;
 
 import java.util.ArrayList;
 
-public class PostsActivity extends _ServerBaseActivity {
+public class PostsActivity extends ServerBaseActivity {
 
     // DATA STORE
     //

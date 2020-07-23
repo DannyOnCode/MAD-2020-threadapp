@@ -1,4 +1,4 @@
-package com.threadteam.thread.activities;
+package com.threadteam.thread.abstracts;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -29,6 +29,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.LogHandler;
+import com.threadteam.thread.activities.ChatActivity;
+import com.threadteam.thread.activities.PostsActivity;
+import com.threadteam.thread.activities.ServerSettingsActivity;
+import com.threadteam.thread.activities.ViewMembersActivity;
+import com.threadteam.thread.activities.ViewServersActivity;
 import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
 import com.threadteam.thread.libraries.Utils;
@@ -37,7 +42,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public abstract class _ServerBaseActivity extends _BaseActivity {
+public abstract class ServerBaseActivity extends BaseActivity {
 
     // DATA STORE
     //
@@ -133,7 +138,7 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
 
     // ABSTRACT METHOD DECLARATIONS
 
-    abstract ConstraintLayout setBaseLayer();
+    protected abstract ConstraintLayout setBaseLayer();
 
     // ABSTRACT OVERRIDE METHODS
 

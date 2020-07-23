@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ProfileAdapter;
+import com.threadteam.thread.abstracts.MainBaseActivity;
 import com.threadteam.thread.models.Server;
 import com.threadteam.thread.models.User;
 
@@ -27,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ViewProfileActivity extends _MainBaseActivity {
+public class ViewProfileActivity extends MainBaseActivity {
 
     // DATA STORE
     //

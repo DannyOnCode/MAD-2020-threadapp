@@ -1,11 +1,9 @@
 package com.threadteam.thread.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.R;
+import com.threadteam.thread.abstracts.MainBaseActivity;
 import com.threadteam.thread.libraries.Utils;
 import com.threadteam.thread.models.Server;
 
@@ -32,7 +31,7 @@ import com.threadteam.thread.models.Server;
  * @since 1.0
  */
 
-public class AddServerActivity extends _MainBaseActivity {
+public class AddServerActivity extends MainBaseActivity {
 
     // DATA STORE
     //

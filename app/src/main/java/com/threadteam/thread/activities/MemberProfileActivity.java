@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ProfileAdapter;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.models.Server;
 import com.threadteam.thread.models.User;
 
@@ -30,7 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class MemberProfileActivity extends _ServerBaseActivity {
+public class MemberProfileActivity extends ServerBaseActivity {
 
     // DATA STORE
     //
