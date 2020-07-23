@@ -152,8 +152,8 @@ public class ViewServersActivity extends MainBaseActivity {
             );
 
             databaseRef.child("servers")
-                    .child(serverID)
-                    .addValueEventListener(getServerDetails);
+                       .child(serverID)
+                       .addValueEventListener(getServerDetails);
 
             listenerHashMap.put(databaseRef.child("servers").child(serverID), getServerDetails);
         }

@@ -37,32 +37,53 @@ import com.threadteam.thread.activities.ViewServersActivity;
 import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
 import com.threadteam.thread.libraries.Utils;
+import com.threadteam.thread.popups.ShareServerPopup;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Represents the standard activity layer for threadapp's server activities.
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ */
+
 public abstract class ServerBaseActivity extends BaseActivity {
 
     // DATA STORE
-    //
-    // SHARE_SERVER_MENU_ITEM:  CONSTANT DECLARING ID FOR THE SHARE SERVER MENU ITEM.
-    // LEAVE_SERVER_MENU_ITEM:  CONSTANT DECLARING ID FOR THE LEAVE SERVER MENU ITEM.
-    // shareCode:               CONTAINS THE CURRENT SHARING CODE OF THE SERVER (IF IT EXISTS)
-    //                          ALSO WORKS AS A FLAG FOR THE resetShareCode FUNCTION.
-    // serverId:                CONTAINS CURRENT SERVER ID
-    // isOwner:                 CONTAINS DATA ON WHETHER THE CURRENT USER IS THE OWNER OF THE SERVER
 
+    // PRIVATE FIELDS
+
+    /** The menu identifier for the Share Server Menu Item. */
     private final int SHARE_SERVER_MENU_ITEM = -1;
+
+    /** The menu identifier for the Leave Server Menu Item. */
     private final int LEAVE_SERVER_MENU_ITEM = -2;
 
+    /** The key for the IS_OWNER intent extra. */
     private final String IS_OWNER_KEY = "IS_OWNER";
+
+    /** The key for the SERVER_ID intent extra. */
     private final String SERVER_ID_KEY = "SERVER_ID";
 
-    private String shareCode = null;
+    /** The current Share Server Popup object for the server. */
+    private ShareServerPopup popup;
 
-    protected String serverId;
+    /** Flag indicating whether the current user is the owner of the current server */
     private Boolean isOwner;
+
+    // PROTECTED FIELDS
+
+    /** The current server's identifier. */
+    protected String serverId;
+
+    /**
+     * Handles the onOptionsItemSelected event. Should be used by all subclasses to provide consistent navigation and features.
+     * @param item The item that was selected by the user.
+     * @return A boolean indicating whether the event has been completely handled.
+     */
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -138,9 +159,20 @@ public abstract class ServerBaseActivity extends BaseActivity {
 
     // ABSTRACT METHOD DECLARATIONS
 
+    /**
+     * Should return a ConstraintLayout object that is the root object of the activity's layout.
+     * Used to present the Share Server popup.
+     * @return A single ConstraintLayout that is the root object of the activity's layout.
+     */
+
     protected abstract ConstraintLayout setBaseLayer();
 
     // ABSTRACT OVERRIDE METHODS
+
+    /**
+     * {@inheritDoc}
+     * This implementation adds the Share Server and Leave Server menu items to the top navigation bar.
+     */
 
     @Override
     protected HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
@@ -148,6 +180,11 @@ public abstract class ServerBaseActivity extends BaseActivity {
         itemHashMap.put(LEAVE_SERVER_MENU_ITEM, "Leave Server");
         return itemHashMap;
     }
+
+    /**
+     * {@inheritDoc}
+     * This implementation gets and sets the IS_OWNER and SERVER_ID extras for later use.
+     */
 
     @Override
     protected void HandleIntentExtras() {
@@ -165,6 +202,12 @@ public abstract class ServerBaseActivity extends BaseActivity {
 
     @Override
     protected void HandleAdditionalIntentExtras(){ }
+
+    /**
+     * {@inheritDoc}
+     * This implementation enables the back button on the top navigation bar by default, if possible.
+     */
+
     @Override
     protected void DoAdditionalSetupForToolbars() {
         if(currentActivity.getSupportActionBar() != null) {
@@ -175,6 +218,11 @@ public abstract class ServerBaseActivity extends BaseActivity {
     @Override
     protected void DoAdditionalSetupForFirebase() { }
 
+    /**
+     * {@inheritDoc}
+     * This implementation sets the bottom toolbar menu to the server_menu menu resource by default.
+     */
+
     @Override
     protected int setBottomToolbarMenuID() {
         return R.menu.server_menu;
@@ -182,14 +230,19 @@ public abstract class ServerBaseActivity extends BaseActivity {
 
     // ACTIVITY SPECIFIC METHODS
 
-    private void resetShareCode() {
-        logHandler.printLogWithMessage("Resetting Share Code (if not null)!");
+    /**
+     * Resets the sharing code of the current Share Server Popup when called, if possible.
+     */
 
-        if(shareCode != null) {
-            databaseRef.child("shares").child(String.valueOf(shareCode)).setValue(null);
-            shareCode = null;
+    private void resetShareCode() {
+        if(popup != null) {
+            popup.resetCode();
         }
     }
+
+    /**
+     * Hides the Server Settings Menu Item if the current user is not the owner of the current server.
+     */
 
     private void hideSettingsIfNotOwner() {
         ActionMenuItemView SettingsAMIV = (ActionMenuItemView) currentActivity.findViewById(R.id.settingsMenuItem);
@@ -204,6 +257,10 @@ public abstract class ServerBaseActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Returns the user back to the View Servers activity when called.
+     */
+
     private void returnToViewServers() {
         Intent returnToViewServers = new Intent(currentActivity, ViewServersActivity.class);
         startActivity(returnToViewServers);
@@ -212,149 +269,22 @@ public abstract class ServerBaseActivity extends BaseActivity {
         resetShareCode();
     }
 
+    /**
+     * Initialises and displays the Share Server popup.
+     */
+
     private void showShareServerPopup(ConstraintLayout baseLayer) {
-        // LOGGING FOR SHARE SERVER POPUP WINDOW
-        LogHandler popupLogHandler = new LogHandler("ShareServerPopupWindow");
-
-        popupLogHandler.printLogWithMessage("Configuring Popup!");
-
-        View popupView = LayoutInflater.from(this.getBaseContext()).inflate(
-                R.layout.activity_shareserver, baseLayer, false
-        );
-
-        final PopupWindow shareCodePopup = new PopupWindow(
-                popupView,
-                (int) (baseLayer.getWidth() * 0.8),
-                (int) (baseLayer.getHeight() *0.8),
-                true);
-        shareCodePopup.setTouchable(true);
-        shareCodePopup.showAtLocation(baseLayer, Gravity.CENTER, 0 ,0);
-        shareCodePopup.setOnDismissListener(new PopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss() {
-                resetShareCode();
-            }
-        });
-
-        popupLogHandler.printLogWithMessage("Completed configuring Popup!");
-
-        // BIND VIEW OBJECTS
-
-        ConstraintLayout BaseShareCodeConstraintLayout = popupView
-                .findViewById(R.id.baseShareCodeConstraintLayout);
-        Toolbar PopupToolbar = popupView.findViewById(R.id.shareCodeToolbar);
-        final Button RefreshCodeButton = popupView.findViewById(R.id.refreshCodeButton);
-        final TextView ShareCodeTextView = popupView.findViewById(R.id.shareCodeTextView);
-        final TextView ShareCodeDescTextView = popupView.findViewById(R.id.shareCodeDescTextView);
-        final TextView CodeExpiryTextView = popupView.findViewById(R.id.codeExpiryTextView);
-
-        popupLogHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_BOUND);
-
-        // SETUP VIEW OBJECTS
-
-        PopupToolbar.setTitle("Share Server Code");
-        RefreshCodeButton.setText("GET CODE");
-        ShareCodeTextView.setText("------");
-
-        final CountDownTimer codeTimer = new CountDownTimer(10*60*1000, 1000) {
-            @Override
-            public void onTick(long millisUntilFinished) {
-                long mins = TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished);
-                long secs = TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - (mins * 60);
-                CodeExpiryTextView.setText(String.format(Locale.ENGLISH, "expires in %02d:%02d", mins, secs));
-            }
-
-            @Override
-            public void onFinish() {
-                logHandler.printLogWithMessage("Timer has ended!");
-
-                RefreshCodeButton.setText("GET CODE");
-                ShareCodeTextView.setText("------");
-                ShareCodeDescTextView.setText(R.string.share_code_noCode);
-                CodeExpiryTextView.setText("expires in 00:00:00");
-
-                resetShareCode();
-            }
-        };
-
-        popupLogHandler.printDefaultLog(LogHandler.VIEW_OBJECTS_SETUP);
-
-        // INITIALISE LISTENERS
-
-        // sharesListener:  CHECKS THAT THERE IS NO IDENTICAL SHARE CODE IN SHARES AND CHANGES THE SHARE CODE IF
-        //                  NECESSARY, TILL THERE IS NO CONFLICT IN THE DATABASE. AFTER THIS, PAIRS THE SHARE CODE
-        //                  WITH THE CURRENT SERVER ID AND REFLECTS THE UPDATE GRAPHICALLY BY UPDATING ShareCodeTextView,
-        //                  RefreshCodeButton, ShareCodeDescTextView AND STARTS codeTimer.
-        //                  CORRECT INVOCATION CODE: databaseRef.child("shares")
-        //                                                      .child(shareCode)
-        //                                                      .addListenerForSingleValueEvent(sharesListener)
-        //                  SHOULD NOT BE USED INDEPENDENTLY.
-
-        final ValueEventListener sharesListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                while (dataSnapshot.getValue() != null) {
-                    shareCode = Utils.GenerateAlphanumericID(6);
-                }
-
-                databaseRef.child("shares").child(shareCode).setValue(serverId);
-
-                ShareCodeTextView.setText(shareCode);
-                RefreshCodeButton.setText("REFRESH");
-                ShareCodeDescTextView.setText(R.string.share_code_hasCode);
-                codeTimer.start();
-
-                logHandler.printLogWithMessage("Code generated successfully, timer started!");
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                logHandler.printDatabaseErrorLog(databaseError);
-            }
-        };
-
-        popupLogHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
-
-        RefreshCodeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // FOR REFRESH
-                resetShareCode();
-                codeTimer.cancel();
-                logHandler.printLogWithMessage("Timer has been cancelled (if not null)!");
-
-                // GET CODE
-                shareCode = Utils.GenerateAlphanumericID(6);
-                databaseRef.child("shares")
-                        .child(shareCode)
-                        .addListenerForSingleValueEvent(sharesListener);
-            }
-        });
-
-        popupView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shareCodePopup.dismiss();
-                codeTimer.cancel();
-            }
-        });
+        popup = new ShareServerPopup(baseLayer, currentActivity.getBaseContext(), databaseRef, serverId);
+        popup.present();
     }
 
-    private void handleLeaveServerAlert() {
+    /**
+     * Deletes a server by unsubscribing all its members, then deleting all linked data.
+     * @param _serverId The id of the server to delete.
+     */
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(currentActivity);
-        final String currentUID = currentUser.getUid();
-        builder.setTitle("Leave Server?");
-
-        // deleteServer:    REMOVES ALL SUBSCRIPTIONS FOR A SINGLE SERVER ACROSS ALL ITS MEMBERS
-        //                  INCLUDING THE OWNER, THEN DELETES ALL DATA PERTAINING TO IT AND SENDS
-        //                  THE USER BACK TO THE ViewServers Activity
-        //                  CORRECT INVOCATION CODE: databaseRef.child("members")
-        //                                                      .child(serverId)
-        //                                                      .addListenerForSingleValueEvent(deleteServer)
-        //                  SHOULD NOT BE USED INDEPENDENTLY.
-
-        final ValueEventListener deleteServer = new ValueEventListener() {
+    private void deleteServer(final String _serverId) {
+        final ValueEventListener removeSubscriptionsListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for(DataSnapshot data : dataSnapshot.getChildren()) {
@@ -366,15 +296,17 @@ public abstract class ServerBaseActivity extends BaseActivity {
                     String userID = data.getKey();
                     logHandler.printDatabaseResultLog(".getChildren().Key()", "Subscribed User ID", "deleteServer", userID);
 
-                    databaseRef.child("users").child(userID).child("_subscribedServers").child(serverId).setValue(null);
+                    databaseRef.child("users").child(userID).child("_subscribedServers").child(_serverId).setValue(null);
                 }
 
                 // DELETE ALL SERVER DATA AFTER MEMBERS ARE GONE
-                databaseRef.child("servers").child(serverId).setValue(null);
-                databaseRef.child("messages").child(serverId).setValue(null);
-                databaseRef.child("members").child(serverId).setValue(null);
-                databaseRef.child("titles").child(serverId).setValue(null);
-                databaseRef.child("posts").child(serverId).setValue(null);
+                databaseRef.child("messages").child(_serverId).setValue(null);
+                databaseRef.child("members").child(_serverId).setValue(null);
+                databaseRef.child("titles").child(_serverId).setValue(null);
+                databaseRef.child("posts").child(_serverId).setValue(null);
+
+                // DELETE SERVER LAST BECAUSE OWNER ID IS REQUIRED FOR RULES
+                databaseRef.child("servers").child(_serverId).setValue(null);
 
                 logHandler.printLogWithMessage("Server is completely deleted! Returning user back to View Server Activity!");
                 returnToViewServers();
@@ -386,138 +318,129 @@ public abstract class ServerBaseActivity extends BaseActivity {
             }
         };
 
-        // presentDialog:   GETS OWNER ID AND COMPARES IT TO CURRENT USER'S ID, THEN ADAPTS THE ALERT DIALOG
-        //                  ACCORDINGLY. FOLLOWING THIS, RUNS THE REST OF THE LEAVE SERVER LOGIC.
-        //                  CORRECT INVOCATION CODE: databaseRef.child("servers")
-        //                                                      .child(serverId)
-        //                                                      .addListenerForSingleValueEvent(presentDialog)
+        databaseRef.child("members")
+                   .child(_serverId)
+                   .addListenerForSingleValueEvent(removeSubscriptionsListener);
+    }
 
-        ValueEventListener presentDialog = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.child("_ownerID").getValue() == null) {
-                    logHandler.printDatabaseResultLog(".child(\"_ownerID\").getValue()", "Server Owner ID", "getServerOwner", "null");
-                    return;
+    /**
+     * Contextually handles the Leave Server action.
+     */
+
+    private void handleLeaveServerAlert() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(currentActivity);
+        final String currentUID = currentUser.getUid();
+        builder.setTitle("Leave Server?");
+
+        if(isOwner) {
+
+            // User is server owner
+            builder.setMessage("Are you sure you want to leave the server? As the owner, this will delete the server for everyone as well!");
+            builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    logHandler.printLogWithMessage("Deleting server for all users!");
+                    deleteServer(serverId);
                 }
+            });
 
-                final String serverOwnerID = (String) dataSnapshot.child("_ownerID").getValue();
+        } else {
 
-                if(serverOwnerID == null) {
-                    logHandler.printLogWithMessage("Could not cast value of dataSnapshot.child(\"_ownerID\").getValue() to String! Aborting Leave Server function!");
-                    return;
-                }
+            // User is just a subscriber
+            builder.setMessage("Are you sure you want to leave the server? You'll have to re-enter another Server Share Code if you want to rejoin the server!");
+            builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-                logHandler.printDatabaseResultLog(".child(\"_ownerID\").getValue()", "Server Owner ID", "getServerOwner", serverOwnerID);
+                    logHandler.printLogWithMessage("Removing server subscription for user!");
+                    databaseRef.child("users").child(currentUID).child("_subscribedServers").child(serverId).setValue(null);
+                    databaseRef.child("members").child(serverId).child(currentUID).setValue(null);
 
-                if(serverOwnerID.equals(currentUID)) {
+                    // Send user left server notification in chat
+                    Utils.SendUserActionSystemMessage(logHandler, databaseRef, currentUID, " left the server! :(", serverId);
 
-                    // User is server owner
-                    builder.setMessage("Are you sure you want to leave the server? As the owner, this will delete the server for everyone as well!");
-                    builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
+                    final String server = serverId;
+
+                    //Remove Server Chat Notifications for user
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(server).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/" + server +" SUCCESSFULLY");
 
-                            logHandler.printLogWithMessage("Deleting server for all users!");
-                            databaseRef.child("members")
-                                    .child(serverId)
-                                    .addListenerForSingleValueEvent(deleteServer);
-
+                            }
+                            else{
+                                logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
+                            }
                         }
                     });
 
-                } else {
-
-                    // User is just a subscriber
-                    builder.setMessage("Are you sure you want to leave the server? You'll have to re-enter another Server Share Code if you want to rejoin the server!");
-                    builder.setNegativeButton("Yes, leave the server", new DialogInterface.OnClickListener() {
+                    //Remove Server System Notifications for user
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic("system" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/system" + server +" SUCCESSFULLY");
 
-                            logHandler.printLogWithMessage("Removing server subscription for user!");
-                            databaseRef.child("users").child(currentUID).child("_subscribedServers").child(serverId).setValue(null);
-                            databaseRef.child("members").child(serverId).child(currentUID).setValue(null);
-
-                            // Send user left server notification in chat
-                            Utils.SendUserActionSystemMessage(logHandler, databaseRef, currentUID, " left the server! :(", serverId);
-
-                            final String server = serverId;
-
-                            //Remove Server Chat Notifications for user
-                            FirebaseMessaging.getInstance().unsubscribeFromTopic(server).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/" + server +" SUCCESSFULLY");
-
-                                    }
-                                    else{
-                                        logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
-                                    }
-                                }
-                            });
-
-                            //Remove Server System Notifications for user
-                            FirebaseMessaging.getInstance().unsubscribeFromTopic("system" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/system" + server +" SUCCESSFULLY");
-
-                                    }
-                                    else{
-                                        logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
-                                    }
-                                }
-                            });
-
-                            //Remove Server Posts Notifications for user
-                            FirebaseMessaging.getInstance().unsubscribeFromTopic("posts" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/posts" + server +" SUCCESSFULLY");
-
-                                    }
-                                    else{
-                                        logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
-                                    }
-                                }
-                            });
-
-                            //Send user left server notification in push notification
-                            sendSystemNotification(serverId, currentUID," has left the server! :(");
-                            logHandler.printLogWithMessage("Users in Server notified of leaving member!");
-
-
-                            logHandler.printLogWithMessage("Returning user back to View Server Activity!");
-                            returnToViewServers();
+                            }
+                            else{
+                                logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
+                            }
                         }
                     });
 
+                    //Remove Server Posts Notifications for user
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic("posts" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/posts" + server +" SUCCESSFULLY");
+
+                            }
+                            else{
+                                logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
+                            }
+                        }
+                    });
+
+                    //Send user left server notification in push notification
+                    sendSystemNotification(serverId, currentUID," has left the server! :(");
+                    logHandler.printLogWithMessage("Users in Server notified of leaving member!");
+
+
+                    logHandler.printLogWithMessage("Returning user back to View Server Activity!");
+                    returnToViewServers();
                 }
+            });
 
-                builder.setNeutralButton("Cancel", null);
-                builder.create().show();
-                logHandler.printLogWithMessage("Presenting Leave Server Dialog!");
-            }
+        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                logHandler.printDatabaseErrorLog(databaseError);
-            }
-        };
-
-        databaseRef.child("servers")
-                .child(serverId)
-                .addListenerForSingleValueEvent(presentDialog);
+        builder.setNeutralButton("Cancel", null);
+        builder.create().show();
+        logHandler.printLogWithMessage("Presenting Leave Server Dialog!");
     }
 
     // PROTECTED CONVENIENCE METHODS
 
+    /**
+     * Convenience method for adding default SERVER_ID and IS_OWNER extras into an intent
+     * @param intent The intent for which the default extras should be put for.
+     */
+
     protected void PutExtrasForServerIntent(Intent intent) {
         intent.putExtra(SERVER_ID_KEY, serverId);
-        intent.putExtra(IS_OWNER_KEY, isOwner.toString());
+        intent.putExtra(IS_OWNER_KEY, isOwner);
     }
+
+    /**
+     * Increments the experience points of a single server member.
+     * @param _userId The id of the member to add experience for.
+     * @param _serverId The id of the server that the member is in to add exp for.
+     * @param _exp The value of exp to increment.
+     * @param _secondsCooldown The number of seconds until which that member can get exp again.
+     */
 
     protected void AddExpForServerMember(final String _userId, final String _serverId, final int _exp, int _secondsCooldown) {
         String PREF_FILE = "cooldownPref";
