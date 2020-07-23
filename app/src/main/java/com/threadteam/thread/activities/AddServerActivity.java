@@ -220,6 +220,16 @@ public class AddServerActivity extends _MainBaseActivity {
                         .setValue(0);
 
                 final String server = joinServerID;
+
+                // User join message
+                Utils.SendUserActionSystemMessage(logHandler, databaseRef, userId, " has joined the server!", joinServerID);
+                logHandler.printLogWithMessage("Server successfully joined; returning user back to ViewServers Activity!");
+
+                //User join Notification
+                sendSystemNotification(joinServerID,userId," has joined the server!");
+                logHandler.printLogWithMessage("Users in Server notified of new member!");
+
+                //Server Chat Notifications for user
                 FirebaseMessaging.getInstance().subscribeToTopic(server).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
@@ -233,14 +243,34 @@ public class AddServerActivity extends _MainBaseActivity {
                     }
                 });
 
-                // User join message
-                Utils.SendUserActionSystemMessage(logHandler, databaseRef, userId, " has joined the server!", joinServerID);
-                logHandler.printLogWithMessage("Server successfully joined; returning user back to ViewServers Activity!");
 
-                sendNotification(joinServerID,userId," has joined the server!");
-                logHandler.printLogWithMessage("Users in Server notified of new member!");
+                //Server System Notifications for user
+                FirebaseMessaging.getInstance().subscribeToTopic("system" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            logHandler.printLogWithMessage("SUBSCRIBED TO /topics/system" +server +" SUCCESSFULLY");
 
+                        }
+                        else{
+                            logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
+                        }
+                    }
+                });
 
+                //Server Posts Notifications for user
+                FirebaseMessaging.getInstance().subscribeToTopic("posts" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            logHandler.printLogWithMessage("SUBSCRIBED TO /topics/posts" +server +" SUCCESSFULLY");
+
+                        }
+                        else{
+                            logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
+                        }
+                    }
+                });
 
                 returnToViewServers();
 

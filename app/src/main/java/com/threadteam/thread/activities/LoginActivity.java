@@ -166,6 +166,7 @@ public class LoginActivity extends AppCompatActivity {
                             reff.child(UserID).child("_token").setValue(_token);
                             Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             logHandler.printLogWithMessage("Logged in Successfully");
+
                             //NAVIGATE TO VIEW SERVER ACTIVITY
                             startActivity(new Intent(getApplicationContext(), ViewServersActivity.class));
                             logHandler.printActivityIntentLog("View Server Activity");

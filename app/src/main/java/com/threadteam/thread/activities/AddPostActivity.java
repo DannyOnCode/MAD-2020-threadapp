@@ -239,7 +239,6 @@ public class AddPostActivity extends _ServerBaseActivity {
                 }
                 else{
                     uploadUserData();
-                    sendNotification(serverId,currentUser.getUid()," uploaded a new post!");
                 }
             }
         });
@@ -359,6 +358,10 @@ public class AddPostActivity extends _ServerBaseActivity {
                             }
                         });
 
+                        //Notify users of new post
+                        sendPostNotification(serverId,currentUser.getUid()," uploaded a new post!");
+
+
                     } else
                     {
                         logHandler.printLogWithMessage("Upload failed at uploadUserData: " + task.getException().getMessage());
@@ -396,6 +399,9 @@ public class AddPostActivity extends _ServerBaseActivity {
                     mProgressBar.setVisibility(View.INVISIBLE);
                 }
             });
+
+            //Notify users of new post
+            sendPostNotification(serverId,currentUser.getUid()," uploaded a new post!");
         }
     }
 }

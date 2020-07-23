@@ -442,7 +442,8 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
                             Utils.SendUserActionSystemMessage(logHandler, databaseRef, currentUID, " left the server! :(", serverId);
 
                             final String server = serverId;
-                            //Remove server notifications for user
+
+                            //Remove Server Chat Notifications for user
                             FirebaseMessaging.getInstance().unsubscribeFromTopic(server).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -456,8 +457,36 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
                                 }
                             });
 
+                            //Remove Server System Notifications for user
+                            FirebaseMessaging.getInstance().unsubscribeFromTopic("system" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/system" + server +" SUCCESSFULLY");
+
+                                    }
+                                    else{
+                                        logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
+                                    }
+                                }
+                            });
+
+                            //Remove Server Posts Notifications for user
+                            FirebaseMessaging.getInstance().unsubscribeFromTopic("posts" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/posts" + server +" SUCCESSFULLY");
+
+                                    }
+                                    else{
+                                        logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
+                                    }
+                                }
+                            });
+
                             //Send user left server notification in push notification
-                            sendNotification(serverId, currentUID," has left the server! :(");
+                            sendSystemNotification(serverId, currentUID," has left the server! :(");
                             logHandler.printLogWithMessage("Users in Server notified of leaving member!");
 
 
@@ -530,7 +559,7 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
 
                         // Announce level up in chat
                         Utils.SendUserActionSystemMessage(logHandler, databaseRef, _userId, " has leveled up! " + oldLevel + " -> " + newLevel, _serverId);
-                        sendNotification(serverId,_userId," has leveled up! " + oldLevel + " -> " + newLevel + " !");
+                        sendSystemNotification(serverId,_userId," has leveled up! " + oldLevel + " -> " + newLevel + " !");
 
                         Toast.makeText(getApplicationContext(), "You leveled up! Current level: " + newLevel.toString(), Toast.LENGTH_SHORT).show();
                     }

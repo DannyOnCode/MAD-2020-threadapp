@@ -356,4 +356,136 @@ public abstract class _BaseActivity extends AppCompatActivity {
 
     }
 
+    protected void sendSystemNotification(final String serverId, final String userId, final String message){
+        logHandler.printLogWithMessage("sendNotification invoked " + serverId  + ", " + userId + ", " + message);
+
+        ValueEventListener getServerName = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                serverName = (String) dataSnapshot.getValue();
+
+                ValueEventListener getUsername = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        username = (String) dataSnapshot.getValue();
+
+                        final String to = "/topics/system" + serverId;
+
+                        final String body = username + message;
+
+                        logHandler.printDatabaseResultLog(".getValue()", "Current Server Name", "getServerName", serverName);
+
+                        logHandler.printLogWithMessage("Values sent to Api Service: " + to + ", " + serverName + ", " + body);
+
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body));
+                        Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
+
+                        threadResponseCall.enqueue(new Callback<ThreadResponse>() {
+                            @Override
+                            public void onResponse(Call<ThreadResponse> call, Response<ThreadResponse> response) {
+                                logHandler.printLogWithMessage("Successfully sent notification by using retrofit.");
+                            }
+
+                            @Override
+                            public void onFailure(Call<ThreadResponse> call, Throwable t) {
+                                logHandler.printLogWithMessage("Unsuccessful at sending notification by using retrofit.");
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        logHandler.printDatabaseErrorLog(databaseError);
+                    }
+                };
+
+                databaseRef.child("users")
+                        .child(currentUser.getUid())
+                        .child("_username")
+                        .addListenerForSingleValueEvent(getUsername);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                logHandler.printDatabaseErrorLog(databaseError);
+            }
+        };
+
+        databaseRef.child("servers")
+                .child(serverId)
+                .child("_name")
+                .addListenerForSingleValueEvent(getServerName);
+
+
+
+    }
+
+    protected void sendPostNotification(final String serverId, final String userId, final String message){
+        logHandler.printLogWithMessage("sendNotification invoked " + serverId  + ", " + userId + ", " + message);
+
+        ValueEventListener getServerName = new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                serverName = (String) dataSnapshot.getValue();
+
+                ValueEventListener getUsername = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        username = (String) dataSnapshot.getValue();
+
+                        final String to = "/topics/posts" + serverId;
+
+                        final String body = username + message;
+
+                        logHandler.printDatabaseResultLog(".getValue()", "Current Server Name", "getServerName", serverName);
+
+                        logHandler.printLogWithMessage("Values sent to Api Service: " + to + ", " + serverName + ", " + body);
+
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body));
+                        Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
+
+                        threadResponseCall.enqueue(new Callback<ThreadResponse>() {
+                            @Override
+                            public void onResponse(Call<ThreadResponse> call, Response<ThreadResponse> response) {
+                                logHandler.printLogWithMessage("Successfully sent notification by using retrofit.");
+                            }
+
+                            @Override
+                            public void onFailure(Call<ThreadResponse> call, Throwable t) {
+                                logHandler.printLogWithMessage("Unsuccessful at sending notification by using retrofit.");
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        logHandler.printDatabaseErrorLog(databaseError);
+                    }
+                };
+
+                databaseRef.child("users")
+                        .child(currentUser.getUid())
+                        .child("_username")
+                        .addListenerForSingleValueEvent(getUsername);
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                logHandler.printDatabaseErrorLog(databaseError);
+            }
+        };
+
+        databaseRef.child("servers")
+                .child(serverId)
+                .child("_name")
+                .addListenerForSingleValueEvent(getServerName);
+
+
+
+    }
+
 }
