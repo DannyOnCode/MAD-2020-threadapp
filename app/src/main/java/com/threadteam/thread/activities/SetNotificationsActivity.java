@@ -123,12 +123,7 @@ public class SetNotificationsActivity extends MainBaseActivity {
 
     @Override
     protected Integer setBottomToolbarAMVIncludeId() {
-        return null;
-    }
-
-    @Override
-    protected void DoAdditionalSetupForToolbars() {
-        this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        return R.id.notificationBottomToolbarInclude;
     }
 
     @Override

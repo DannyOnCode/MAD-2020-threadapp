@@ -1,5 +1,6 @@
 package com.threadteam.thread.abstracts;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -34,7 +35,6 @@ public abstract class MainBaseActivity extends BaseActivity {
 
     /** Constant declaring the menu item id for the Log Out menu item */
     private final int LOG_OUT_MENU_ITEM_ID = -1;
-    private final int SETTINGS_MENU_ITEM_ID = -2;
 
     /**
      * Handles the onOptionsItemSelected event. Should be used by all subclasses to provide consistent navigation and features.
@@ -69,6 +69,18 @@ public abstract class MainBaseActivity extends BaseActivity {
                 }
                 return true;
 
+            case R.id.notificatoinsMenuItem:
+                logHandler.printLogWithMessage("User tapped on View Notification Settings Menu Item!");
+                if(currentActivity.getClass() != SetNotificationsActivity.class) {
+                    Intent goToNotiSettings = new Intent(currentActivity, SetNotificationsActivity.class);
+                    currentActivity.startActivity(goToNotiSettings);
+                    logHandler.printActivityIntentLog("View Notification Settings");
+
+                    toggleCurrentMenuItem(true);
+                }
+                return true;
+
+
             case LOG_OUT_MENU_ITEM_ID:
                 logHandler.printLogWithMessage("User tapped on Log Out Menu Item!");
                 Notifications.unsubscribeAllNotifications(logHandler,databaseRef);
@@ -81,12 +93,7 @@ public abstract class MainBaseActivity extends BaseActivity {
                 logHandler.printActivityIntentLog("Login Activity");
                 return true;
 
-            case SETTINGS_MENU_ITEM_ID:
-                logHandler.printLogWithMessage("User tapped on Settings Menu Item!");
-                Intent goToSettings = new Intent(currentActivity, SettingsActivity.class);
-                startActivity(goToSettings);
-                logHandler.printActivityIntentLog("Set Notifications Activity");
-                return true;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -102,7 +109,6 @@ public abstract class MainBaseActivity extends BaseActivity {
     @Override
     protected HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
         itemHashMap.put(LOG_OUT_MENU_ITEM_ID, "Log Out");
-        itemHashMap.put(SETTINGS_MENU_ITEM_ID, "Settings");
         return itemHashMap;
     }
 
