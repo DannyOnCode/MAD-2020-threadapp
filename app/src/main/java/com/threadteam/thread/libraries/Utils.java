@@ -11,24 +11,22 @@ import com.threadteam.thread.LogHandler;
 import java.util.HashMap;
 import java.util.Random;
 
-// UTILS CONVENIENCE CLASS
-//
-// PROGRAMMER-IN-CHARGE:
-// N/A
-//
-// DESCRIPTION
-// CONTAINS CONVENIENCE METHODS THAT SHOULD BE
-// AVAILABLE APPLICATION WIDE. EACH METHOD HAS
-// DIFFERENT IN-CHARGES.
+/**
+ * Wrapper for general convenience methods.
+ * These should be available application wide.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 1.0
+ */
 
 public class Utils {
 
-    // NAME:                GenerateAlphanumericID
-    // IN-CHARGE:           EUGENE LONG, S10193060J
-    // DESCRIPTION:         GENERATES A RANDOM ALPHANUMERIC IDENTIFIER STRING length CHARACTERS LONG
-    // INPUTS:
-    // length:              INTEGER SPECIFYING LENGTH OF THE ALPHANUMERIC STRING
-    // RETURN VALUE:        A STRING THAT IS length CHARACTERS LONG
+    /**
+     * Generates a random series of alphanumeric characters length characters long.
+     * @param length The number of alphanumeric characters to generate.
+     * @return A random alphanumeric string length characters long.
+     */
 
     public static String GenerateAlphanumericID(int length) {
         String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -46,6 +44,13 @@ public class Utils {
         return result.toString();
     }
 
+    /**
+     * Sends a system message in chat.
+     * @param databaseRef The current DatabaseReference for the activity.
+     * @param message The message to be sent in the chat.
+     * @param _serverId The id of the server in which the chat exists.
+     */
+
     public static void SendSystemMessageInChat(@NonNull DatabaseReference databaseRef, @NonNull String message, @NonNull String _serverId) {
         HashMap<String, Object> chatMessageHashMap = new HashMap<>();
         chatMessageHashMap.put("_senderUID", "SYSTEM");
@@ -54,6 +59,15 @@ public class Utils {
         chatMessageHashMap.put("timestamp", System.currentTimeMillis());
         databaseRef.child("messages").child(_serverId).push().setValue(chatMessageHashMap);
     }
+
+    /**
+     * Sends a system message in chat with a user's username.
+     * @param logHandler The LogHandler for the current activity.
+     * @param databaseRef The DatabaseReference for the current activity.
+     * @param _userID The id of the user to fetch the username from.
+     * @param message The message to be sent in the chat.
+     * @param _serverID The id of the server in which the chat exists.
+     */
 
     public static void SendUserActionSystemMessage(final LogHandler logHandler,
                                                    final DatabaseReference databaseRef,

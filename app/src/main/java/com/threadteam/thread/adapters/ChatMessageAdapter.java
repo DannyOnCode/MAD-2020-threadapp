@@ -29,6 +29,7 @@ import java.util.Locale;
  *
  * @see IncomingChatMessageViewHolder
  * @see OutgoingChatMessageViewHolder
+ * @see SystemChatMessageViewHolder
  */
 
 public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
