@@ -23,12 +23,25 @@ import java.util.List;
 // ADAPTER USED BY ViewServerRecyclerView in ViewServersActivity
 // USES ViewServerViewHolder
 
+/**
+ * Handles binding server data to ViewServerViewHolder for display.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 1.0
+ *
+ * @see ViewServerViewHolder
+ */
+
 public class ViewServerAdapter extends RecyclerView.Adapter<ViewServerViewHolder> {
 
     // DATA STORE
+
+    /** Contains all server data to be presented. */
     public List<Server> serverList;
 
     // CONSTRUCTOR
+
     public ViewServerAdapter(List<Server> servers) { this.serverList = servers; }
 
     @NonNull

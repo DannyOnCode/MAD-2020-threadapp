@@ -22,7 +22,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
-import com.threadteam.thread.adapters.EditMemberTitleAdapter;
 import com.threadteam.thread.adapters.ViewMemberAdapter;
 import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;

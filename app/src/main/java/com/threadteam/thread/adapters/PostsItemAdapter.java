@@ -20,12 +20,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Handles binding of post object data to PostsItemViewHolder
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ *
+ * @see PostsItemViewHolder
+ */
+
 public class PostsItemAdapter extends RecyclerView.Adapter<PostsItemViewHolder> {
 
     // DATA STORE
+
+    /** Contains all posts to be presented. */
     public List<Post> postList;
 
     // CONSTRUCTOR
+
     public PostsItemAdapter(List<Post> posts) { this.postList = posts; }
 
     @NonNull

@@ -22,13 +22,31 @@ import com.threadteam.thread.viewholders.ViewServerStatusCardViewHolder;
 
 import java.util.List;
 
+/**
+ * Handles binding a user's profile and account details to the appropriate view holders for display.
+ *
+ * @author Eugene Long
+ * @author Danny Chan
+ * @version 2.0
+ * @since 1.0
+ *
+ * @see ViewProfileCardViewHolder
+ * @see ViewDividerViewHolder
+ * @see ViewServerStatusCardViewHolder
+ */
+
 public class ProfileAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // DATA STORE
+
+    /** Contains the user data to be displayed. */
     public User userData;
+
+    /** Contains the servers that the user is subscribed to for display. */
     public List<Server> serverList;
 
     // CONSTRUCTOR
+
     public ProfileAdapter(User user, List<Server> servers) {
         this.userData = user;
         this.serverList = servers;

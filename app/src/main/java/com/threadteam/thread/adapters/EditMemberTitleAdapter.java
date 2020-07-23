@@ -18,8 +18,20 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * Handles binding the text fields from EditMemberTitleViewHolder to the appropriate data
+ * Also handles storage of custom title data mapped to each text field.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ *
+ * @see EditMemberTitleViewHolder
+ */
+
 public class EditMemberTitleAdapter extends RecyclerView.Adapter<EditMemberTitleViewHolder> {
 
+    /** Contains all title data entered in the text fields. Consistently updated to reflect the text fields' content. */
     public List<String> titleData = new ArrayList<>(Collections.nCopies(10, ""));
 
     @NonNull

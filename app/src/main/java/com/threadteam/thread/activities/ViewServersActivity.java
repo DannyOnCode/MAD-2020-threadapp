@@ -37,7 +37,7 @@ import java.util.HashMap;
  *
  * @author Eugene Long
  * @version 2.0
- * @since 2.0
+ * @since 1.0
  */
 
 public class ViewServersActivity extends MainBaseActivity {
@@ -48,8 +48,6 @@ public class ViewServersActivity extends MainBaseActivity {
     private ViewServerAdapter adapter;
 
     // VIEW OBJECTS
-    //
-    // ViewServerRecyclerView:  DISPLAYS ALL SERVERS A USER JOINED/OWNS. USES adapter AS ITS ADAPTER.
 
     /**
      * Displays all members currently in the server, along with selected details.

@@ -20,23 +20,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-// CHAT MESSAGE ADAPTER CLASS
-//
-// PROGRAMMER-IN-CHARGE:
-// EUGENE LONG, S10193060J
-//
-// DESCRIPTION
-// ADAPTER USED BY ChatMessageRecyclerView in ChatActivity
-// USES IncomingChatMessageViewHolder, OutgoingChatMessageViewHolder
+/**
+ * Handles binding of chat messages to the appropriate view holders
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 1.0
+ *
+ * @see IncomingChatMessageViewHolder
+ * @see OutgoingChatMessageViewHolder
+ */
 
 public class ChatMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     //DATA STORE
+
+    /** Contains all chat message objects to be displayed. */
     public List<ChatMessage> chatMessageList;
+
+    /** Contains a hash map mapping user ids to color ints. */
     public HashMap<String, Integer> userColorMap = new HashMap<>();
+
+    /** Contains the current user's id. */
     public String currentUserUID;
 
     // CONSTRUCTOR
+
     public ChatMessageAdapter(List<ChatMessage> chatMessages) {
         this.chatMessageList = chatMessages;
     }

@@ -17,14 +17,33 @@ import com.threadteam.thread.viewholders.ViewMemberViewHolder;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles binding user, title and associated server data to the appropriate view holder
+ * to display a list of all members in the current server.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ *
+ * @see ViewMemberViewHolder
+ * @see ViewMemberDividerViewHolder
+ */
+
 public class ViewMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // DATA STORE
+
+    /** Contains all users' data to be displayed. */
     public List<User> userList;
+
+    /** Contains custom title data for the current server. */
     public List<String> titleList = new ArrayList<>();
+
+    /** Contains the current server id. */
     public String serverId;
 
     // CONSTRUCTOR
+
     public ViewMemberAdapter(List<User> users, String serverId) {
         this.userList = users;
         this.serverId = serverId;
