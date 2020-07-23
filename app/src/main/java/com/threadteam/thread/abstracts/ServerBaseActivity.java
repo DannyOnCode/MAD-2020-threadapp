@@ -35,6 +35,7 @@ import java.util.HashMap;
 
 /**
  * Represents the standard activity layer for threadapp's server activities.
+ *
  * @author Eugene Long
  * @version 2.0
  * @since 2.0
@@ -274,6 +275,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
      */
 
     private void deleteServer(final String _serverId) {
+
         final ValueEventListener removeSubscriptionsListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

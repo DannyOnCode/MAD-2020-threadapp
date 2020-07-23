@@ -51,6 +51,7 @@ import retrofit2.Response;
 
 /**
  * Represents the standard basic activity layer for threadapp.
+ *
  * @author Eugene Long
  * @version 2.0
  * @since 2.0

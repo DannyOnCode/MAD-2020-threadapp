@@ -33,42 +33,53 @@ import com.threadteam.thread.models.ChatMessage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * This activity class handles displaying and interacting with the server's main chat.
+ * Notification portion is handled by Thabith.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 1.0
+ */
+
 public class ChatActivity extends ServerBaseActivity {
 
     // DATA STORE
-    //
-    // adapter:                 ADAPTER FOR CHAT MESSAGE RECYCLER VIEW.
-    //                          HANDLES STORAGE OF DISPLAYED CHAT MESSAGE DATA AS WELL.
-    // scrollToLatestMessage:   TOGGLE FOR SCROLL TO BOTTOM UPON MESSAGE ADDED. DOES THIS ACTION IF TRUE.
-    // username:                CONTAINS CURRENT USER'S USERNAME. USED TO SEND MESSAGES.
 
+    /** Adapter object for ChatMessageRecyclerView. */
     private ChatMessageAdapter adapter;
+
+    /** Flag for scrolling to the latest message upon a new message being sent. */
     private Boolean scrollToLatestMessage = false;
+
+    /** Stores the current user's username. Used when sending messages. */
     private String username;
 
-    // TEMP
-    boolean notify = false;
-
     // VIEW OBJECTS
-    //
-    // ChatMessageRecyclerView: DISPLAYS ALL CHAT MESSAGES IN THE SERVER. USES adapter AS ITS ADAPTER.
-    // MessageEditText:         CONTAINS TEXT DATA TO BE SENT UPON USER TAPPING SendMsgButton.
-    // SendMsgButton:           TRIGGERS SENDING OF TEXT DATA TO THE SERVER
 
+    /**
+     * Handles the display of all chat messages in the server.
+     * Uses ChatMessageAdapter as its adapter.
+     * @see ChatMessageAdapter
+     */
     private RecyclerView ChatMessageRecyclerView;
+
+    /** Allows the user to key in a message to be sent in the chat. */
     private EditText MessageEditText;
+
+    /** Triggers the send message logic. */
     private ImageButton SendMsgButton;
 
     // INITIALISE LISTENERS
 
-    // getUsername:     RETRIEVES CURRENT USER'S USERNAME
-    //                  CORRECT INVOCATION CODE: databaseRef.child("users")
-    //                                                      .child(currentUser.getUid())
-    //                                                      .child("_username")
-    //                                                      .addListenerForSingleValueEvent(getUsername)
-    //                  SHOULD NOT BE USED INDEPENDENTLY.
+    /**
+     *  Retrieves the username of the current user.
+     *
+     *  Database Path:      root/users/(currentUser.getUid())/_username
+     *  Usage:              Single ValueEventListener
+     */
 
-    ValueEventListener getUsername = new ValueEventListener() {
+    private ValueEventListener getUsername = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if(dataSnapshot.getValue() == null) {
@@ -86,14 +97,14 @@ public class ChatActivity extends ServerBaseActivity {
         }
     };
 
+    /**
+     *  Maps all server members to their respective titles based on their current exp.
+     *
+     *  Database Path:      root/members/(serverId)
+     *  Usage:              ValueEventListener
+     */
 
-
-    // mapUsersToTitle: MAPS ALL USERS IN SERVER (MEMBERS) TO THEIR RESPECTIVE TITLES BASED ON EXP
-    //                  CORRECT INVOCATION CODE: databaseRef.child("members")
-    //                                                      .child(serverId)
-    //                                                      .addValueEventListener(mapUsersToTitle)
-
-    ValueEventListener mapUsersToTitle = new ValueEventListener() {
+    private ValueEventListener mapUsersToTitle = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if(dataSnapshot.getValue() == null) {
@@ -137,12 +148,12 @@ public class ChatActivity extends ServerBaseActivity {
         }
     };
 
-    // chatListener:    HANDLES LOADING OF ALL CHAT MESSAGES, AS WELL AS UPDATING THE ADAPTER
-    //                  ON MESSAGE ADDED/DELETED/CHANGED EVENTS
-    //                  CORRECT INVOCATION CODE: databaseRef.child("messages")
-    //                                                      .child(serverId)
-    //                                                      .addChildEventListener(chatListener)
-    //                  SHOULD BE CANCELLED UPON ACTIVITY STOP!
+    /**
+     *  Handles the loading of chat messages into the adapter on message added/deleted/changed events.
+     *
+     *  Database Path:      root/messages/(serverId)
+     *  Usage:              ChildEventListener
+     */
 
     private ChildEventListener chatListener = new ChildEventListener() {
 
@@ -294,6 +305,11 @@ public class ChatActivity extends ServerBaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * {@inheritDoc}
+     * This implementation overrides the back button to send the user back to the Posts activity instead of View Servers.
+     */
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -360,7 +376,8 @@ public class ChatActivity extends ServerBaseActivity {
         SendMsgButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage();
+                String message = MessageEditText.getText().toString();
+                sendMessage(message);
             }
         });
 
@@ -456,15 +473,51 @@ public class ChatActivity extends ServerBaseActivity {
 
     // ACTIVITY SPECIFIC METHODS
 
-    private void sendMessage() {
+    /**
+     * Formats, checks and sends a message in the chat.
+     * @param message The message to send in the chat
+     */
+
+    private void sendMessage(String message) {
 
         if(username == null) {
             logHandler.printLogWithMessage("Username is null (which it shouldn't be)! Aborting sendMessage()!");
             return;
         }
 
-        String message = MessageEditText.getText().toString();
+        String formattedMessage = formatMessage(message);
+        logHandler.printLogWithMessage("User submitted message: " + message + " and was it was formatted as: " + formattedMessage);
 
+        MessageEditText.setText(null);
+
+        if(checkMessageIsValid(message)) {
+            HashMap<String, Object> chatMessageHashMap = new HashMap<>();
+            chatMessageHashMap.put("_senderUID", currentUser.getUid());
+            chatMessageHashMap.put("_sender", username);
+            chatMessageHashMap.put("_message", formattedMessage);
+            chatMessageHashMap.put("timestamp", System.currentTimeMillis());
+            databaseRef.child("messages").child(serverId).push().setValue(chatMessageHashMap);
+
+            scrollToLatestMessage = true;
+            logHandler.printLogWithMessage("Message sent! Setting scrollToLatestMessage = true!");
+
+            AddExpForServerMember(currentUser.getUid(), serverId, 1, 60);
+
+            sendNotification(serverId, currentUser.getUid(), ": " + formattedMessage);
+            logHandler.printLogWithMessage("Notification sent to users in group! ");
+
+        } else {
+            logHandler.printLogWithMessage("Message was not sent because it was invalid!");
+        }
+    }
+
+    /**
+     * Formats a message to prepare it for sending to chat
+     * @param message The message to format
+     * @return The formatted message
+     */
+
+    private String formatMessage(String message) {
         // Stop newline spamming by doing some formatting
         String[] messageLines = message.split("\n");
         StringBuilder formattedMessage = new StringBuilder();
@@ -483,32 +536,16 @@ public class ChatActivity extends ServerBaseActivity {
 
         // do a final trim
         formattedMessage = new StringBuilder(formattedMessage.toString().trim());
-        logHandler.printLogWithMessage("User submitted message: " + message + " and was it was formatted as: " + formattedMessage.toString());
+        return formattedMessage.toString();
+    }
 
-        MessageEditText.setText(null);
+    /**
+     * Checks if a message is valid for sending to chat
+     * @param message The message to check
+     * @return A boolean representing the validity of the message
+     */
 
-        if(formattedMessage.length() > 0) {
-            HashMap<String, Object> chatMessageHashMap = new HashMap<>();
-            chatMessageHashMap.put("_senderUID", currentUser.getUid());
-            chatMessageHashMap.put("_sender", username);
-            chatMessageHashMap.put("_message", formattedMessage.toString());
-            chatMessageHashMap.put("timestamp", System.currentTimeMillis());
-            databaseRef.child("messages").child(serverId).push().setValue(chatMessageHashMap);
-
-            scrollToLatestMessage = true;
-            logHandler.printLogWithMessage("Message pushed! Setting scrollToLatestMessage = true!");
-
-            AddExpForServerMember(currentUser.getUid(), serverId, 1, 60);
-
-
-            sendNotification(serverId, currentUser.getUid(), ": " + formattedMessage.toString());
-            logHandler.printLogWithMessage("Notification sent to users in group! ");
-
-        } else {
-            logHandler.printLogWithMessage("No message was pushed because there was no text after formatting!");
-        }
-
-
-
+    private Boolean checkMessageIsValid(String message) {
+        return message.length() > 0;
     }
 }

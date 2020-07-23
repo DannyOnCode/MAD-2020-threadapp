@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 /**
  * Represents the standard activity layer for threadapp's main activities.
+ *
  * @author Eugene Long
  * @version 2.0
  * @since 2.0
@@ -28,9 +29,6 @@ import java.util.HashMap;
 public abstract class MainBaseActivity extends BaseActivity {
 
     // DATA STORE
-    //
-    // LOG_OUT_MENU_ITEM_ID:    CONSTANT DECLARING ID FOR THE LOG OUT MENU ITEM.
-    //S
 
     /** Constant declaring the menu item id for the Log Out menu item */
     private final int LOG_OUT_MENU_ITEM_ID = -1;
@@ -105,7 +103,6 @@ public abstract class MainBaseActivity extends BaseActivity {
         itemHashMap.put(SETTINGS_MENU_ITEM_ID, "Settings");
         return itemHashMap;
     }
-
 
     @Override
     protected void HandleIntentExtras() { }

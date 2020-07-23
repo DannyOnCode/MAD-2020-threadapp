@@ -26,6 +26,7 @@ import com.threadteam.thread.models.Server;
 
 /**
  * This activity class handles the addition and creation of servers.
+ *
  * @author Eugene Long
  * @version 2.0
  * @since 1.0
@@ -34,24 +35,25 @@ import com.threadteam.thread.models.Server;
 public class AddServerActivity extends MainBaseActivity {
 
     // DATA STORE
-    //
-    // joinServerID:            STORES THE ID OF THE SERVER TO BE JOINED
 
+    /** Stores the identifier of the server that the user is trying to join. */
     private String joinServerID;
 
     // VIEW OBJECTS
-    //
-    // JoinServerIdEditText:    ALLOWS USER TO ENTER THE SERVER ID OR SHARE CODE TO JOIN A SERVER.
-    // JoinServerButton:        TRIGGERS JOIN SERVER LOGIC.
-    // MakeServerNameEditText:  ALLOWS USER TO ENTER THE NAME FOR A NEW SERVER.
-    // MakeServerDescEditText:  ALLOWS USER TO ENTER THE DESCRIPTION FOR A NEW SERVER.
-    // JoinServerButton:        TRIGGERS CREATE SERVER LOGIC.
-    // TopNavToolbar:           TOOLBAR OBJECT THAT HANDLES UPWARDS NAVIGATION AND THE TITLE
 
+    /** Allows the user to enter the server id or share code of the server they want to join */
     private EditText JoinServerIdEditText;
+
+    /** When clicked, triggers the Join Server logic */
     private Button JoinServerButton;
+
+    /** Allows the user to enter a name for a new server. */
     private EditText MakeServerNameEditText;
+
+    /** Allows the user to enter a description for a new server. */
     private EditText MakeServerDescEditText;
+
+    /** When clicked, triggers the Make Server logic */
     private Button MakeServerButton;
 
     // DEFAULT SUPER METHODS
@@ -196,24 +198,24 @@ public class AddServerActivity extends MainBaseActivity {
         final String userId = currentUser.getUid();
         joinServerID = JoinServerIdEditText.getText().toString();
 
-        // testUserNotSubscribed:   TESTS IF USER IS ALREADY SUBSCRIBED. IF THEY ARE NOT, SUBSCRIBE THE USER.
-        //                          THIS IS THE END OF THE JOIN SERVER PIPELINE.
-        //                          CORRECT INVOCATION CODE: databaseRef.child("users")
-        //                                                              .child(userId)
-        //                                                              .child("_subscribedServers")
-        //                                                              .child(joinServerID)
-        //                                                              .addListenerForSingleValueEvent(testUserNotSubscribed);
-        //                          SHOULD NOT BE USED INDEPENDENTLY.
+        /*
+         *  Subscribes the user if they have no existing subscription.
+         *  Belongs to the Join Server Pipeline
+         *  ShareCodeLookup -> TestServerExists -> [SubscribeUserToServer]
+         *
+         *  Database Path:      root/users/(userId)/_subscribedServers/(joinServerId)
+         *  Usage:              Single ValueEventListener
+         */
 
-        final ValueEventListener testUserNotSubscribed = new ValueEventListener() {
+        final ValueEventListener subscribeUserToServer = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null) {
-                    logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "not null");
+                    logHandler.printDatabaseResultLog(".getValue()", "Test Value", "subscribeUserToServer", "not null");
                     displayError("User is already subscribed to this server!");
                     return;
                 }
-                logHandler.printDatabaseResultLog(".getValue()", "Test Value", "testUserNotSubscribed", "null");
+                logHandler.printDatabaseResultLog(".getValue()", "Test Value", "subscribeUserToServer", "null");
                 logHandler.printLogWithMessage("Subscribing user to server!");
 
                 // Subscribe user to server
@@ -294,12 +296,14 @@ public class AddServerActivity extends MainBaseActivity {
             }
         };
 
-        // testServerExists:    TESTS IF SERVER EXISTS FOR A SERVER ID. IF IT DOES, PROCEED TO CHECK IF USER IS
-        //                      SUBSCRIBED AND MOVE ON IN THE PIPELINE.
-        //                      THIS CONTINUES THE JOIN SERVER PIPELINE.
-        //                      CORRECT INVOCATION CODE:  databaseRef.child("servers")
-        //                                                           .child(joinServerID)
-        //                                                           .addListenerForSingleValueEvent(testServerExists);
+        /*
+         *  Tests if the server exists for JoinServerId. Moves on in the pipeline only if the server exists.
+         *  Belongs to the Join Server Pipeline
+         *  ShareCodeLookup -> ShareCodeLookup -> [TestServerExists] -> SubscribeUserToServer
+         *
+         *  Database Path:      root/servers/(joinServerID)
+         *  Usage:              Single ValueEventListener
+         */
 
         final ValueEventListener testServerExists = new ValueEventListener() {
             @Override
@@ -315,7 +319,7 @@ public class AddServerActivity extends MainBaseActivity {
                             .child(userId)
                             .child("_subscribedServers")
                             .child(joinServerID)
-                            .addListenerForSingleValueEvent(testUserNotSubscribed);
+                            .addListenerForSingleValueEvent(subscribeUserToServer);
                 }
             }
 
@@ -326,12 +330,15 @@ public class AddServerActivity extends MainBaseActivity {
             }
         };
 
-        // shareCodeLookup:     CHECKS IF A 6-DIGIT ALPHANUMERIC ENTRY IS A SHARE CODE BY LOOKING UP THE ID. IF
-        //                      IT IS A VALID SHARE CODE, RETRIEVE THE SERVER ID AND PASS IT TO testServerExists.
-        //                      THIS IS THE START OF THE JOIN SERVER PIPELINE.
-        //                      CORRECT INVOCATION CODE:  databaseRef.child("shares")
-        //                                                           .child(joinServerID)
-        //                                                           .addListenerForSingleValueEvent(shareCodeLookup);
+        /*
+         *  Optional Pipeline. Checks if a 6-digit alphanumeric entry is a valid server share code.
+         *  If valid, retrieves the server's id and calls the next stage in the pipeline.
+         *  Belongs to the Join Server Pipeline
+         *  ShareCodeLookup -> [ShareCodeLookup] -> TestServerExists -> SubscribeUserToServer
+         *
+         *  Database Path:      root/shares/(shareCode)
+         *  Usage:              Single ValueEventListener
+         */
 
         ValueEventListener shareCodeLookup = new ValueEventListener() {
             @Override
