@@ -31,42 +31,29 @@ public class Notifications {
     public static void subscribeMsgNotification(final LogHandler logHandler, DatabaseReference databaseRef){
         logHandler.printLogWithMessage("subscribeMsgNotification invoked");
 
-        ChildEventListener getServers = new ChildEventListener() {
+        ValueEventListener getServers = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                String server = (String) dataSnapshot.getKey();
-                final String topic = server;
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    String server = (String) data.getKey();
+                    final String topic = server;
 
-                logHandler.printLogWithMessage("topic: " + topic);
+                    logHandler.printLogWithMessage("topic: " + topic);
 
 
-                FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            logHandler.printLogWithMessage("SUBSCRIBED TO /topics/" + topic +" SUCCESSFULLY");
+                    FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                logHandler.printLogWithMessage("SUBSCRIBED TO /topics/" + topic +" SUCCESSFULLY");
 
+                            }
+                            else{
+                                logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
+                            }
                         }
-                        else{
-                            logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                    });
+                }
             }
 
             @Override
@@ -78,102 +65,70 @@ public class Notifications {
         databaseRef.child("users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("_subscribedServers")
-                .addChildEventListener(getServers);
+                .addValueEventListener(getServers);
     }
 
     public static void subscribeSystemNotification(final LogHandler logHandler, DatabaseReference databaseRef){
 
-        ChildEventListener getServers = new ChildEventListener() {
+        ValueEventListener getServers = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    String server = (String) data.getKey();
+                    final String topic = "system" + server;
 
-                String server = (String) dataSnapshot.getKey();
-                final String topic = "system" + server;
-
-                logHandler.printLogWithMessage("topic: " + topic);
+                    logHandler.printLogWithMessage("topic: " + topic);
 
 
-                FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            logHandler.printLogWithMessage("SUBSCRIBED TO /topics/" + topic +" SUCCESSFULLY");
+                    FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                logHandler.printLogWithMessage("SUBSCRIBED TO /topics/" + topic + " SUCCESSFULLY");
 
+                            } else {
+                                logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
+                            }
                         }
-                        else{
-                            logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
-                        }
-                    }
-                });
+                    });
+                }
             }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
             }
         };
-
         databaseRef.child("users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("_subscribedServers")
-                .addChildEventListener(getServers);
+                .addValueEventListener(getServers);
 
     }
 
     public static void subscribePostsNotification(final LogHandler logHandler, DatabaseReference databaseRef){
 
-        ChildEventListener getServers = new ChildEventListener() {
+        ValueEventListener getServers = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    String server = (String) data.getKey();
+                    final String topic = "posts" + server;
 
-                String server = (String) dataSnapshot.getKey();
-                final String topic = "posts" + server;
-
-                logHandler.printLogWithMessage("topic: " + topic);
+                    logHandler.printLogWithMessage("topic: " + topic);
 
 
-                FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            logHandler.printLogWithMessage("SUBSCRIBED TO /topics/" + topic +" SUCCESSFULLY");
+                    FirebaseMessaging.getInstance().subscribeToTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                logHandler.printLogWithMessage("SUBSCRIBED TO /topics/" + topic +" SUCCESSFULLY");
 
+                            }
+                            else{
+                                logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
+                            }
                         }
-                        else{
-                            logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                    });
+                }
             }
 
             @Override
@@ -181,11 +136,10 @@ public class Notifications {
 
             }
         };
-
         databaseRef.child("users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("_subscribedServers")
-                .addChildEventListener(getServers);
+                .addValueEventListener(getServers);
 
     }
 
@@ -197,43 +151,29 @@ public class Notifications {
 
     public static void unsubscribeMsgNotification(final LogHandler logHandler, DatabaseReference databaseRef){
 
-        ChildEventListener getServers = new ChildEventListener() {
+        ValueEventListener getServers = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    String server = (String) data.getKey();
+                    final String topic = server;
 
-                String server = (String) dataSnapshot.getKey();
-                final String topic = server;
-
-                logHandler.printLogWithMessage("topic: " + topic);
+                    logHandler.printLogWithMessage("topic: " + topic);
 
 
-                FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/" + topic +" SUCCESSFULLY");
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/" + topic +" SUCCESSFULLY");
 
+                            }
+                            else{
+                                logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
+                            }
                         }
-                        else{
-                            logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                    });
+                }
             }
 
             @Override
@@ -241,53 +181,37 @@ public class Notifications {
 
             }
         };
-
         databaseRef.child("users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("_subscribedServers")
-                .addChildEventListener(getServers);
-
+                .addValueEventListener(getServers);
     }
 
     public static void unsubscribeSystemNotification(final LogHandler logHandler, DatabaseReference databaseRef){
 
-        ChildEventListener getServers = new ChildEventListener() {
+        ValueEventListener getServers = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    String server = (String) data.getKey();
+                    final String topic = "system" + server;
 
-                String server = (String) dataSnapshot.getKey();
-                final String topic = "system" + server;
-
-                logHandler.printLogWithMessage("topic: " + topic);
+                    logHandler.printLogWithMessage("topic: " + topic);
 
 
-                FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/" + topic +" SUCCESSFULLY");
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/" + topic +" SUCCESSFULLY");
 
+                            }
+                            else{
+                                logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
+                            }
                         }
-                        else{
-                            logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                    });
+                }
             }
 
             @Override
@@ -295,53 +219,38 @@ public class Notifications {
 
             }
         };
-
         databaseRef.child("users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("_subscribedServers")
-                .addChildEventListener(getServers);
+                .addValueEventListener(getServers);
 
     }
 
     public static void unsubscribePostsNotification(final LogHandler logHandler, DatabaseReference databaseRef){
 
-        ChildEventListener getServers = new ChildEventListener() {
+        ValueEventListener getServers = new ValueEventListener() {
             @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot data : dataSnapshot.getChildren()) {
+                    String server = (String) data.getKey();
+                    final String topic = "posts" + server;
 
-                String server = (String) dataSnapshot.getKey();
-                final String topic = "posts" + server;
-
-                logHandler.printLogWithMessage("topic: " + topic);
+                    logHandler.printLogWithMessage("topic: " + topic);
 
 
-                FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/" + topic +" SUCCESSFULLY");
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(topic).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                logHandler.printLogWithMessage("UNSUBSCRIBED FROM /topics/" + topic +" SUCCESSFULLY");
 
+                            }
+                            else{
+                                logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
+                            }
                         }
-                        else{
-                            logHandler.printLogWithMessage("COULD NOT UNSUBSCRIBE");
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                    });
+                }
             }
 
             @Override
@@ -349,10 +258,9 @@ public class Notifications {
 
             }
         };
-
         databaseRef.child("users")
                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .child("_subscribedServers")
-                .addChildEventListener(getServers);
+                .addValueEventListener(getServers);
     }
 }
