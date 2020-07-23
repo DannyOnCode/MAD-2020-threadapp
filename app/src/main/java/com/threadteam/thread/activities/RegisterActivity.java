@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.renderscript.Sampler;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
@@ -23,8 +24,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.User;
@@ -83,6 +88,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     private String _aboutUsMessage;
     private String _statusMessage;
+    private int TotalUsers;
+    private String cfmemail;
+    private String cfmpassword;
 
     // ACTIVITY STATE MANAGEMENT METHODS
 
@@ -120,9 +128,9 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 final String username = _UserName.getText().toString().trim();
-                String email = _Email.getText().toString().trim();
+                cfmemail = _Email.getText().toString().trim();
                 String password =  _Password.getText().toString().trim();
-                String cfmpassword = _CfmPassword.getText().toString().trim();
+                cfmpassword = _CfmPassword.getText().toString().trim();
 
                 //Close keyboard upon button press
                 closeKeyboard();
@@ -143,7 +151,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 //Validation if Email Field is empty
-                if(TextUtils.isEmpty(email)){
+                if(TextUtils.isEmpty(cfmemail)){
                     _Email.setError("Email is required");
                     logHandler.printLogWithMessage("No Email Inputted");
 
@@ -180,40 +188,38 @@ public class RegisterActivity extends AppCompatActivity {
                 progressBar.setVisibility(View.VISIBLE);
                 progressBar.getProgress();
 
-                //register user into firebase
-                fAuth.createUserWithEmailAndPassword(email,cfmpassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                TotalUsers = 0;
+
+                ValueEventListener canSignUp = new ValueEventListener() {
                     @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        // if successful show toast, register User and move to ViewServerActivity
-
-                        if(task.isSuccessful()){
-                            //ADD VALUES TO DATABASE
-                            user.set_username(username);
-                            user.set_aboutUsMessage(_aboutUsMessage);
-                            user.set_statusMessage(_statusMessage);
-                            String UserID  = fAuth.getCurrentUser().getUid();
-                            reff.child(UserID).setValue(user);
-
-                            Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
-                            logHandler.printLogWithMessage("Registered Successfully");
-
-                            //NAVIGATE TO VIEW SERVER ACTIVITY
-                            startActivity(new Intent(getApplicationContext(),ViewServersActivity.class));
-                            logHandler.printActivityIntentLog("View Server Activity");
-
-
-                            finish();
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            if (snapshot.getKey() == null) {
+                                TotalUsers += 0;
+                            }
+                            else{
+                                TotalUsers += 1;
+                            }
                         }
+                        logHandler.printLogWithMessage("Total Number of Users : "+ TotalUsers);
+                        if(TotalUsers < 500){
+                            //register user into firebase
+                            RegisterUser(username);
+                            return;
 
-                        // if unsuccessful show toast and try again
+                        }
                         else{
-                            Toast.makeText(RegisterActivity.this,task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            logHandler.printLogWithMessage("Registration Unsuccessful");
-
                             progressBar.setVisibility(View.INVISIBLE);
+                            Toast.makeText(RegisterActivity.this, "Total User Count is Maxed, Please contact the developers for a key", Toast.LENGTH_SHORT).show();
                         }
                     }
-                });
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        logHandler.printDatabaseErrorLog(databaseError);
+                    }
+                };
+                reff.addListenerForSingleValueEvent(canSignUp);
             }
         });
 
@@ -241,5 +247,42 @@ public class RegisterActivity extends AppCompatActivity {
 
         }
 
+    }
+
+
+    private void RegisterUser(final String username){
+        fAuth.createUserWithEmailAndPassword(cfmemail,cfmpassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                // if successful show toast, register User and move to ViewServerActivity
+
+                if(task.isSuccessful()){
+                    //ADD VALUES TO DATABASE
+                    user.set_username(username);
+                    user.set_aboutUsMessage(_aboutUsMessage);
+                    user.set_statusMessage(_statusMessage);
+                    String UserID  = fAuth.getCurrentUser().getUid();
+                    reff.child(UserID).setValue(user);
+
+                    Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
+                    logHandler.printLogWithMessage("Registered Successfully");
+
+                    //NAVIGATE TO VIEW SERVER ACTIVITY
+                    startActivity(new Intent(getApplicationContext(),ViewServersActivity.class));
+                    logHandler.printActivityIntentLog("View Server Activity");
+
+
+                    finish();
+                }
+
+                // if unsuccessful show toast and try again
+                else{
+                    Toast.makeText(RegisterActivity.this,task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    logHandler.printLogWithMessage("Registration Unsuccessful");
+
+                    progressBar.setVisibility(View.INVISIBLE);
+                }
+            }
+        });
     }
 }
