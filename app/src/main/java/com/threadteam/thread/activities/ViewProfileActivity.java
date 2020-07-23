@@ -10,8 +10,6 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ProfileAdapter;
+import com.threadteam.thread.abstracts.MainBaseActivity;
 import com.threadteam.thread.models.Server;
 import com.threadteam.thread.models.User;
 
@@ -29,7 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class ViewProfileActivity extends _MainBaseActivity {
+public class ViewProfileActivity extends MainBaseActivity {
 
     // DATA STORE
     //
@@ -267,22 +266,22 @@ public class ViewProfileActivity extends _MainBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_view_profile;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ViewProfileActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "View Profile";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.profileBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
         Drawable icon = ContextCompat.getDrawable(this, R.drawable.round_create_white_24);
@@ -299,24 +298,22 @@ public class ViewProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View topNavView = findViewById(R.id.profileNavBarInclude);
-        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    protected Integer setTopNavToolbarIncludeId() {
+        return R.id.profileNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.profileBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    protected Integer setBottomToolbarAMVIncludeId() {
+        return R.id.profileBottomToolbarInclude;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         ProfileRecyclerView = (RecyclerView) findViewById(R.id.viewProfileRecyclerView);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new ProfileAdapter(null, new ArrayList<Server>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -326,14 +323,14 @@ public class ViewProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .addValueEventListener(getUserData);
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(getUserData != null) {
             databaseRef.removeEventListener(getUserData);
         }
@@ -343,7 +340,7 @@ public class ViewProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.viewProfileMenuItem;
     }
 

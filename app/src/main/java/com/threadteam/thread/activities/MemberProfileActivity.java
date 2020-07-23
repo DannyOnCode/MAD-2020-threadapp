@@ -11,8 +11,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ProfileAdapter;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.models.Server;
 import com.threadteam.thread.models.User;
 
@@ -32,7 +31,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class MemberProfileActivity extends _ServerBaseActivity {
+public class MemberProfileActivity extends ServerBaseActivity {
 
     // DATA STORE
     //
@@ -277,27 +276,27 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseViewProfileConstraintLayout);
     }
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_view_profile;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return MemberProfileActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "View Member Profile";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.profileBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
         mainActionButton.setVisibility(View.GONE);
@@ -305,24 +304,22 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View topNavView = findViewById(R.id.profileNavBarInclude);
-        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    protected Integer setTopNavToolbarIncludeId() {
+        return R.id.profileNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.profileBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    protected Integer setBottomToolbarAMVIncludeId() {
+        return null;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         ProfileRecyclerView = (RecyclerView) findViewById(R.id.viewProfileRecyclerView);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new ProfileAdapter(null, new ArrayList<Server>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -332,7 +329,7 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void HandleAdditionalIntentExtras() {
+    protected void HandleAdditionalIntentExtras() {
         final Intent dataReceiver = getIntent();
         String MEMBER_ID_KEY = "MEMBER_ID";
 
@@ -350,14 +347,14 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                    .child(memberId)
                    .addValueEventListener(getMemberProfile);
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(getMemberProfile != null) {
             databaseRef.child("users").child(memberId).removeEventListener(getMemberProfile);
         }
@@ -369,7 +366,7 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.membersMenuItem;
     }
 

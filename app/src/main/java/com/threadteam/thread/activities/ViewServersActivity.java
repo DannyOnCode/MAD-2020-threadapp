@@ -11,25 +11,20 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
-import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ViewServerAdapter;
+import com.threadteam.thread.abstracts.MainBaseActivity;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.Server;
 
@@ -37,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
-public class ViewServersActivity extends _MainBaseActivity {
+public class ViewServersActivity extends MainBaseActivity {
 
     // DATA STORE
     //
@@ -234,34 +229,32 @@ public class ViewServersActivity extends _MainBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ViewServersActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "View Servers";
     }
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_view_servers;
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View topNavView = findViewById(R.id.serversNavBarInclude);
-        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    protected Integer setTopNavToolbarIncludeId() {
+        return R.id.serversNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    protected Integer setBottomToolbarAMVIncludeId() {
+        return R.id.serversBottomToolbarInclude;
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
 
@@ -279,12 +272,12 @@ public class ViewServersActivity extends _MainBaseActivity {
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         ViewServerRecyclerView = (RecyclerView) findViewById(R.id.viewServerRecyclerView);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new ViewServerAdapter(new ArrayList<Server>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -303,7 +296,7 @@ public class ViewServersActivity extends _MainBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_subscribedServers")
@@ -311,7 +304,7 @@ public class ViewServersActivity extends _MainBaseActivity {
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if (subscriptionListener != null) {
             databaseRef.child("users")
                        .child(currentUser.getUid())
@@ -326,7 +319,7 @@ public class ViewServersActivity extends _MainBaseActivity {
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.viewServersMenuItem;
     }
 
@@ -341,25 +334,19 @@ public class ViewServersActivity extends _MainBaseActivity {
         onStop();
     }
 
-    private void handleTransitionIntoServer(Integer position) {
+    private void handleTransitionIntoServer(final Integer position) {
         logHandler.printLogWithMessage("User tapped on a server!");
-        final HashMap<String, String> extraMap = new HashMap<String, String>();
-        extraMap.put("SERVER_ID", adapter.serverList.get(position).get_id());
 
         final ValueEventListener checkIfOwner = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String ownerID = (String) dataSnapshot.child("_ownerID").getValue();
-                extraMap.put("IS_OWNER", ((Boolean) currentUser.getUid().equals(ownerID)).toString());
 
-                Utils.StartActivityOnNewStack(
-                        ViewServersActivity.this,
-                        PostsActivity.class,
-                        "Posts Activity",
-                        extraMap,
-                        logHandler);
-
-                onStop();
+                Intent goToPosts = new Intent(currentActivity, PostsActivity.class);
+                goToPosts.putExtra("SERVER_ID", adapter.serverList.get(position).get_id());
+                goToPosts.putExtra("IS_OWNER", currentUser.getUid().equals(ownerID));
+                currentActivity.startActivity(goToPosts);
+                logHandler.printActivityIntentLog("Posts");
             }
 
             @Override

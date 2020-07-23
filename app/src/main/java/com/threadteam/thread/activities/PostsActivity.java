@@ -11,8 +11,6 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -22,18 +20,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
-import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.PostsItemAdapter;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 import com.threadteam.thread.models.Post;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
-public class PostsActivity extends _ServerBaseActivity {
+public class PostsActivity extends ServerBaseActivity {
 
     // DATA STORE
     //
@@ -227,22 +223,22 @@ public class PostsActivity extends _ServerBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_posts;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return PostsActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Posts";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.postsBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
 
@@ -264,29 +260,27 @@ public class PostsActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View topNavView = findViewById(R.id.postsNavBarInclude);
-        return (Toolbar) topNavView.findViewById(R.id.topNavToolbar);
+    protected Integer setTopNavToolbarIncludeId() {
+        return R.id.postsNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.postsBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    protected Integer setBottomToolbarAMVIncludeId() {
+        return R.id.postsBottomToolbarInclude;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         PostsRecyclerView = (RecyclerView) findViewById(R.id.postsRecyclerView);
     }
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.basePostsConstraintLayout);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new PostsItemAdapter(new ArrayList<Post>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -326,21 +320,21 @@ public class PostsActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("posts")
                 .child(serverId)
                 .addChildEventListener(postListener);
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(postListener != null) {
             databaseRef.removeEventListener(postListener);
         }
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.postsMenuItem;
     }
 

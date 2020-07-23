@@ -3,8 +3,6 @@ package com.threadteam.thread.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -13,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.renderscript.Sampler;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -25,11 +22,10 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
+import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
-import com.threadteam.thread.Utils;
-import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.adapters.ViewPostDetailsAdapter;
-import com.threadteam.thread.models.ChatMessage;
 import com.threadteam.thread.models.Post;
 import com.threadteam.thread.models.PostMessage;
 
@@ -38,7 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-public class ViewPostDetailsActivity extends  _ServerBaseActivity{
+public class ViewPostDetailsActivity extends ServerBaseActivity {
 
     // DATA STORE
     //
@@ -264,14 +260,14 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
             }
 
             userExp = userExpList.get(senderUID);
-            int level = Utils.ConvertExpToLevel(userExp);
-            int stage = Utils.ConvertLevelToStage(level);
-            Integer colorInt = Utils.GetDefaultColorIntForStage(stage);
+            int level = Progression.ConvertExpToLevel(userExp);
+            int stage = Progression.ConvertLevelToStage(level);
+            Integer colorInt = Progression.GetDefaultColorIntForStage(stage);
             String title;
             if(titleData.size() > 0 && !titleData.get(stage).equals("")) {
                 title = titleData.get(stage);
             } else {
-                title = Utils.GetDefaultTitleForStage(stage);
+                title = Progression.GetDefaultTitleForStage(stage);
             }
 
             postMessage.set_level(String.valueOf(level));
@@ -308,12 +304,12 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
 
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseViewPostConstraintLayout);
     }
 
     @Override
-    void HandleAdditionalIntentExtras(){
+    protected void HandleAdditionalIntentExtras(){
         final Intent dataReceiver = getIntent();
         postID = dataReceiver.getStringExtra("POST_ID");
 
@@ -330,45 +326,44 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
     }
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_view_post;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ViewPostDetailsActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Post";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         return null;
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View includeView = findViewById(R.id.viewPostNavBarInclude);
-        return (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+    protected Integer setTopNavToolbarIncludeId() {
+        return R.id.viewPostNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         viewPostDetailsRecyclerView = findViewById(R.id.viewPostRecyclerView);
         CommentEditText = findViewById(R.id.commentEditText);
         SendCommentButton = findViewById(R.id.sendCommentButton);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         SendCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -425,7 +420,7 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_username")
@@ -451,7 +446,7 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(getPostDetails != null) {
             databaseRef.removeEventListener(getPostDetails);
         }
@@ -467,7 +462,7 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return NO_MENU_ITEM_FOR_ACTIVITY;
     }
 

@@ -1,4 +1,4 @@
-package com.threadteam.thread.activities;
+package com.threadteam.thread.abstracts;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -29,14 +29,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.LogHandler;
+import com.threadteam.thread.activities.ChatActivity;
+import com.threadteam.thread.activities.PostsActivity;
+import com.threadteam.thread.activities.ServerSettingsActivity;
+import com.threadteam.thread.activities.ViewMembersActivity;
+import com.threadteam.thread.activities.ViewServersActivity;
+import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
-import com.threadteam.thread.Utils;
+import com.threadteam.thread.libraries.Utils;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public abstract class _ServerBaseActivity extends _BaseActivity {
+public abstract class ServerBaseActivity extends BaseActivity {
 
     // DATA STORE
     //
@@ -132,30 +138,23 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
 
     // ABSTRACT METHOD DECLARATIONS
 
-    abstract ConstraintLayout setBaseLayer();
+    protected abstract ConstraintLayout setBaseLayer();
 
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
+    protected HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
         itemHashMap.put(SHARE_SERVER_MENU_ITEM, "Share Server");
         itemHashMap.put(LEAVE_SERVER_MENU_ITEM, "Leave Server");
         return itemHashMap;
     }
 
     @Override
-    void HandleIntentExtras() {
+    protected void HandleIntentExtras() {
         final Intent dataReceiver = getIntent();
 
-        String isOwnerString = dataReceiver.getStringExtra(IS_OWNER_KEY);
+        isOwner = dataReceiver.getBooleanExtra(IS_OWNER_KEY, false);
         serverId = dataReceiver.getStringExtra(SERVER_ID_KEY);
-
-        if (isOwnerString == null) {
-            logHandler.printGetExtrasResultLog(IS_OWNER_KEY, "null");
-        } else {
-            logHandler.printGetExtrasResultLog(IS_OWNER_KEY, isOwnerString);
-            isOwner = isOwnerString.equals(((Boolean) true).toString());
-        }
 
         if (serverId == null) {
             logHandler.printGetExtrasResultLog(SERVER_ID_KEY, "null");
@@ -165,19 +164,19 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
     }
 
     @Override
-    void HandleAdditionalIntentExtras(){ }
+    protected void HandleAdditionalIntentExtras(){ }
     @Override
-    void DoAdditionalSetupForToolbars() {
+    protected void DoAdditionalSetupForToolbars() {
         if(currentActivity.getSupportActionBar() != null) {
             currentActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
     @Override
-    void DoAdditionalSetupForFirebase() { }
+    protected void DoAdditionalSetupForFirebase() { }
 
     @Override
-    int setBottomToolbarMenuID() {
+    protected int setBottomToolbarMenuID() {
         return R.menu.server_menu;
     }
 
@@ -553,8 +552,8 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
                             .setValue(currentExp + _exp);
 
                     // Feedback to user on level up
-                    Integer oldLevel = Utils.ConvertExpToLevel(currentExp.intValue());
-                    Integer newLevel = Utils.ConvertExpToLevel(currentExp.intValue() + _exp);
+                    Integer oldLevel = Progression.ConvertExpToLevel(currentExp.intValue());
+                    Integer newLevel = Progression.ConvertExpToLevel(currentExp.intValue() + _exp);
                     if(oldLevel < newLevel) {
 
                         // Announce level up in chat

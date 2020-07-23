@@ -8,8 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.squareup.picasso.Picasso;
+import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
-import com.threadteam.thread.Utils;
 import com.threadteam.thread.models.User;
 import com.threadteam.thread.viewholders.ViewMemberDividerViewHolder;
 import com.threadteam.thread.viewholders.ViewMemberViewHolder;
@@ -72,14 +72,14 @@ public class ViewMemberAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             int exp = currentUser.GetUserExpForServer(serverId);
             int expToNextLevel = currentUser.GetExpToNextLevelForServer(serverId);
             int progressToNextLevel = currentUser.GetAbsoluteLevelProgressForServer(serverId);
-            int stage = Utils.ConvertLevelToStage(level);
-            Integer colorInt = Utils.GetDefaultColorIntForStage(stage);
+            int stage = Progression.ConvertLevelToStage(level);
+            Integer colorInt = Progression.GetDefaultColorIntForStage(stage);
 
             String title;
             if(titleList.size() > 0 && !titleList.get(stage).equals("")) {
                 title = titleList.get(stage);
             } else {
-                title = Utils.GetDefaultTitleForStage(stage);
+                title = Progression.GetDefaultTitleForStage(stage);
             }
 
             String levelString = "Lvl " + level;

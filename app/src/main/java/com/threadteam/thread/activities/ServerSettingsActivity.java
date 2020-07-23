@@ -3,22 +3,16 @@ package com.threadteam.thread.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -28,11 +22,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.EditMemberTitleAdapter;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
 
 import java.util.HashMap;
 import java.util.List;
 
-public class ServerSettingsActivity extends _ServerBaseActivity {
+
+
+public class ServerSettingsActivity extends ServerBaseActivity {
 
     // DATA STORE
     //
@@ -178,39 +175,37 @@ public class ServerSettingsActivity extends _ServerBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseServerSettingsConstraintLayout);
     }
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_server_settings;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ServerSettingsActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Server Settings";
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View includeView = findViewById(R.id.serverSettingsNavBarInclude);
-        return (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+    protected Integer setTopNavToolbarIncludeId() {
+        return R.id.serverSettingsNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
-        View bottomToolbarView = findViewById(R.id.serverSettingsBottomToolbarInclude);
-        return (ActionMenuView) bottomToolbarView.findViewById(R.id.bottomToolbarAMV);
+    protected Integer setBottomToolbarAMVIncludeId() {
+        return R.id.serverSettingsBottomToolbarInclude;
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.serverSettingsBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
         mainActionButton.setVisibility(View.GONE);
@@ -218,7 +213,7 @@ public class ServerSettingsActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         EditServerTitleEditText = (EditText) findViewById(R.id.editServerTitleEditText);
         EditServerDescEditText = (EditText) findViewById(R.id.editServerDescEditText);
         EditServerDetailsApplyButton = (Button) findViewById(R.id.editServerDetailsApplyButton);
@@ -229,7 +224,7 @@ public class ServerSettingsActivity extends _ServerBaseActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new EditMemberTitleAdapter();
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -254,7 +249,7 @@ public class ServerSettingsActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("servers")
                    .child(serverId)
                    .addListenerForSingleValueEvent(retrieveServerDetails);
@@ -265,10 +260,10 @@ public class ServerSettingsActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void DestroyListeners() { }
+    protected void DestroyListeners() { }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.settingsMenuItem;
     }
 

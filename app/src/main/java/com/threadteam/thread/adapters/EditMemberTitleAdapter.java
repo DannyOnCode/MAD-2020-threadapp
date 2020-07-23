@@ -10,8 +10,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
-import com.threadteam.thread.Utils;
 import com.threadteam.thread.viewholders.EditMemberTitleViewHolder;
 
 import java.util.ArrayList;
@@ -40,8 +40,8 @@ public class EditMemberTitleAdapter extends RecyclerView.Adapter<EditMemberTitle
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull EditMemberTitleViewHolder holder, final int position) {
-        Integer level = Utils.ConvertStageToMinLevel(position);
-        String title = Utils.GetDefaultTitleForStage(position);
+        Integer level = Progression.ConvertStageToMinLevel(position);
+        String title = Progression.GetDefaultTitleForStage(position);
 
         holder.EditMemberTitleLvl.setText(level.toString());
         holder.EditMemberTitleEditText.setHint(title);

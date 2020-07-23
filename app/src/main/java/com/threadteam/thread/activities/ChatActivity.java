@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -16,8 +15,6 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.ActionMenuView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -27,15 +24,16 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.threadteam.thread.abstracts.ServerBaseActivity;
+import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
-import com.threadteam.thread.Utils;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.models.ChatMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ChatActivity extends _ServerBaseActivity {
+public class ChatActivity extends ServerBaseActivity {
 
     // DATA STORE
     //
@@ -122,9 +120,9 @@ public class ChatActivity extends _ServerBaseActivity {
                 int memberExp = ((Long) snapshot.getValue()).intValue();
                 logHandler.printDatabaseResultLog("snapshot.getValue()", "Member EXP", "mapUsersToTitle", Integer.toString(memberExp));
 
-                int memberLevel = Utils.ConvertExpToLevel(memberExp);
-                int memberStage = Utils.ConvertLevelToStage(memberLevel);
-                int memberColor = Utils.GetDefaultColorIntForStage(memberStage);
+                int memberLevel = Progression.ConvertExpToLevel(memberExp);
+                int memberStage = Progression.ConvertLevelToStage(memberLevel);
+                int memberColor = Progression.GetDefaultColorIntForStage(memberStage);
 
                 colorMap.put(memberId, memberColor);
             }
@@ -315,51 +313,50 @@ public class ChatActivity extends _ServerBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_chat;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ChatActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Chat";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         return null;
     }
 
     @Override
-    Toolbar setTopNavToolbar() {
-        View includeView = findViewById(R.id.chatNavBarInclude);
-        return (Toolbar) includeView.findViewById(R.id.topNavToolbar);
+    protected Integer setTopNavToolbarIncludeId() {
+        return R.id.chatNavBarInclude;
     }
 
     @Override
-    ActionMenuView setBottomToolbarAMV() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         ChatMessageRecyclerView = findViewById(R.id.chatMessageRecyclerView);
         MessageEditText = findViewById(R.id.messageEditText);
         SendMsgButton = findViewById(R.id.sendMsgButton);
     }
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseChatConstraintLayout);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         SendMsgButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -418,12 +415,12 @@ public class ChatActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void DoAdditionalSetupForFirebase() {
+    protected void DoAdditionalSetupForFirebase() {
         adapter.currentUserUID = currentUser.getUid();
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_username")
@@ -439,7 +436,7 @@ public class ChatActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(chatListener != null) {
             databaseRef.child("messages")
                        .child(serverId)
@@ -453,7 +450,7 @@ public class ChatActivity extends _ServerBaseActivity {
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return NO_MENU_ITEM_FOR_ACTIVITY;
     }
 
