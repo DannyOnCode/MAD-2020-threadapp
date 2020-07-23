@@ -32,33 +32,46 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+/**
+ * This activity class displays all the servers that the current user is in.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ */
+
 public class ViewServersActivity extends MainBaseActivity {
 
     // DATA STORE
-    //
-    // adapter:                 ADAPTER FOR VIEW SERVER RECYCLER VIEW.
-    //                          HANDLES STORAGE OF DISPLAYED SERVER DATA AS WELL.
 
+    /** Adapter object for ViewServerRecyclerView. */
     private ViewServerAdapter adapter;
 
     // VIEW OBJECTS
     //
     // ViewServerRecyclerView:  DISPLAYS ALL SERVERS A USER JOINED/OWNS. USES adapter AS ITS ADAPTER.
 
+    /**
+     * Displays all members currently in the server, along with selected details.
+     * Uses ViewServerAdapter as its adapter.
+     * @see ViewServerAdapter
+     */
+
     private RecyclerView ViewServerRecyclerView;
 
     // FIREBASE
-    //
 
+    /** Stores a map of all listener-spawned value event listeners to be destroyed later */
     private HashMap<DatabaseReference, ValueEventListener> listenerHashMap = new HashMap<>();
 
     // LISTENERS
 
-    // getServerDetails:    GETS SERVER DETAILS AND UPDATES adapter.
-    //                      CORRECT INVOCATION CODE: databaseRef.child("servers")
-    //                                                          .child(serverId)
-    //                                                          .addListenerForSingleValueEvent(addServerOnce)
-    //                      SHOULD NOT BE USED INDEPENDENTLY.
+    /**
+     *  Retrieves server details for a serverId and loads them into the adapter.
+     *
+     *  Database Path:      root/servers/(serverId)
+     *  Usage:              ValueEventListener
+     */
 
     final ValueEventListener getServerDetails = new ValueEventListener() {
         @Override
@@ -119,13 +132,12 @@ public class ViewServersActivity extends MainBaseActivity {
         }
     };
 
-    // subscriptionListener:    GETS ALL SUBSCRIBED (JOINED/OWNED) SERVERS FROM A USER AND CALLS addServerOnce FOR EACH SERVER ID.
-    //                          ALSO GETS CALLED IF SERVERS ARE ADDED/REMOVED/CHANGED AND UPDATES adapter ACCORDINGLY.
-    //                          CORRECT INVOCATION CODE: databaseRef.child("servers")
-    //                                                              .child(currentUser.getUid())
-    //                                                              .child("_subscribedServers")
-    //                                                              .addChildEventListener(subscriptionListener)
-    //                          SHOULD BE CANCELLED UPON ACTIVITY DESTROYED!
+    /**
+     *  Handles the attaching of value event listeners to the current user's subscribed servers to get their details.
+     *
+     *  Database Path:      root/users/(currentUser.getUid())/_subscribedServers
+     *  Usage:              ChildEventListener
+     */
 
     final ChildEventListener subscriptionListener = new ChildEventListener() {
         @Override
@@ -165,11 +177,28 @@ public class ViewServersActivity extends MainBaseActivity {
 
         @Override
         public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            if (dataSnapshot.getKey() == null) {
+                logHandler.printDatabaseResultLog(
+                        ".getKey()",
+                        "ServerID",
+                        "subscriptionListener",
+                        "null"
+                );
+                return;
+            }
+
+            String serverID = dataSnapshot.getKey();
+
             logHandler.printLogWithMessage("Server removed! Deleting chat message!");
             for(Server server : adapter.serverList) {
                 if(server.get_id().equals(dataSnapshot.getKey())) {
                     adapter.serverList.remove(server);
                     adapter.notifyDataSetChanged();
+
+                    // Detach listener
+                    databaseRef.child("servers").child(serverID).removeEventListener(getServerDetails);
+                    listenerHashMap.remove(databaseRef.child("servers").child(serverID));
                     return;
                 }
             }
@@ -325,6 +354,10 @@ public class ViewServersActivity extends MainBaseActivity {
 
     // ACTIVITY SPECIFIC METHODS
 
+    /**
+     * Sends user to the Add Server Activity.
+     */
+
     private void handleAddServer() {
         logHandler.printLogWithMessage("User tapped on Add Server!");
 
@@ -333,6 +366,12 @@ public class ViewServersActivity extends MainBaseActivity {
         logHandler.printActivityIntentLog("Add Server Activity");
         onStop();
     }
+
+    /**
+     * Sends user to the Posts Activity as a landing page for the set of server activities.
+     * Calculates and adds in the SERVER_ID and IS_OWNER extras as well.
+     * @param position The index of the server the user clicked on.
+     */
 
     private void handleTransitionIntoServer(final Integer position) {
         logHandler.printLogWithMessage("User tapped on a server!");
