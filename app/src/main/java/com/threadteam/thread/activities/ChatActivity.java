@@ -35,9 +35,9 @@ import java.util.HashMap;
 
 /**
  * This activity class handles displaying and interacting with the server's main chat.
- * Notification portion is handled by Thabith.
  *
- * @author Eugene Long
+ * @author Main: Eugene Long
+ * @author Notfications: Thabith
  * @version 2.0
  * @since 1.0
  */

@@ -31,36 +31,49 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * This activity class displays the profile of a server member.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ */
+
 public class MemberProfileActivity extends ServerBaseActivity {
 
     // DATA STORE
-    //
-    // adapter:                 ADAPTER FOR PROFILE RECYCLER VIEW.
-    // memberId:                CONTAINS THE ID OF THE MEMBER TO DISPLAY THE PROFILE OF
 
+    /** Adapter object for ProfileRecyclerView. */
     private ProfileAdapter adapter;
+
+    /** Stores the id of the member whose profile is to be displayed. */
     private String memberId;
 
     // VIEW OBJECTS
-    //
-    // ProfileRecyclerView:     DISPLAYS PROFILE DETAILS FOR SERVER MEMBER. USES adapter AS ITS ADAPTER.
+
+    /**
+     * Handles the display of the member's profile.
+     * Uses ProfileAdapter as its adapter.
+     * @see ProfileAdapter
+     */
 
     private RecyclerView ProfileRecyclerView;
 
     // FIREBASE
-    //
 
+    /** Stores a map of all listener-spawned value event listeners to be destroyed later */
     private HashMap<DatabaseReference, ValueEventListener> listenerHashMap = new HashMap<>();
 
     // INITIALISE LISTENERS
 
-    // getServerDetails:    GETS AND ADDS A SINGLE SERVER TO adapter. SHOULD BE CALLED AS A SingleValueEvent FROM subscriptionListener.
-    //                      CORRECT INVOCATION CODE: databaseRef.child("servers")
-    //                                                          .child(serverId)
-    //                                                          .addValueEventListener(getServerDetails)
-    //                      SHOULD NOT BE USED INDEPENDENTLY.
+    /**
+     *  Retrieves the real-time details of a server for a server id and stores it in the adapter.
+     *
+     *  Database Path:      root/servers/(serverId)
+     *  Usage:              ValueEventListener
+     */
 
-    final ValueEventListener getServerDetails = new ValueEventListener() {
+    private final ValueEventListener getServerDetails = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             // CHECK THAT servers.child(serverId) DOES NOT HAVE A NULL VALUE (SERVER DOES EXIST)
@@ -92,6 +105,11 @@ public class MemberProfileActivity extends ServerBaseActivity {
             // ADD ID BACK TO server FROM THE dataSnapshot's KEY.
             server.set_id(dataSnapshot.getKey());
 
+            // Check if server was removed
+            if(!adapter.userData.get_subscribedServers().contains(server.get_id())) {
+                return;
+            }
+
             boolean serverUpdated = false;
 
             // CHECK IF SERVER IS ALREADY DISPLAYED. UPDATE IF ALREADY DISPLAYED
@@ -119,13 +137,14 @@ public class MemberProfileActivity extends ServerBaseActivity {
         }
     };
 
-    // getMemberProfile:    USED TO RETRIEVE USER DATA
-    //                      CORRECT INVOCATION CODE: databaseRef.child("users")
-    //                                                          .child(memberID)
-    //                                                          .addValueEventListener(getMemberProfile)
-    //                      SHOULD NOT BE USED INDEPENDENTLY.
+    /**
+     *  Retrieves the member's user data and stores it in the adapter.
+     *
+     *  Database Path:      root/users/(memberID)
+     *  Usage:              ValueEventListener
+     */
 
-    ValueEventListener getMemberProfile = new ValueEventListener() {
+    private ValueEventListener getMemberProfile = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             if(dataSnapshot.getValue() == null) {
@@ -188,26 +207,6 @@ public class MemberProfileActivity extends ServerBaseActivity {
                         "addUserOnce",
                         _serverId);
 
-                // ADD VALUE EVENT LISTENER TO SERVER FOR SERVER ID IF USER DID NOT ALREADY HAVE THIS SERVER LOADED
-                boolean isNew = true;
-
-                if(adapter.serverList != null) {
-                    for(Server s : adapter.serverList) {
-                        if(s.get_id().equals(_serverId)) {
-                            isNew = false;
-                            break;
-                        }
-                    }
-                }
-
-                if(isNew) {
-                    databaseRef.child("servers")
-                            .child(_serverId)
-                            .addValueEventListener(getServerDetails);
-
-                    listenerHashMap.put(databaseRef.child("servers").child(_serverId), getServerDetails);
-                }
-
                 if(snapshot.getValue() == null) {
                     logHandler.printDatabaseResultLog(
                             ".child(\"_subscribedServers\").getChildren().getValue()",
@@ -227,6 +226,55 @@ public class MemberProfileActivity extends ServerBaseActivity {
             }
 
             adapter.userData = new User(id, username, profileImageURL, aboutUsMsg, statusMsg, token, servers, expList);
+
+            List<Server> oldServerList = adapter.serverList;
+
+            for(String _serverId : adapter.userData.get_subscribedServers()) {
+                // ADD VALUE EVENT LISTENER TO SERVER FOR SERVER ID IF USER DID NOT ALREADY HAVE THIS SERVER LOADED
+                boolean isNew = true;
+
+                if(adapter.serverList != null) {
+                    for(Server s : adapter.serverList) {
+                        if(s.get_id().equals(_serverId)) {
+                            isNew = false;
+                            break;
+                        }
+                    }
+                }
+
+                if(isNew) {
+                    databaseRef.child("servers")
+                            .child(_serverId)
+                            .addValueEventListener(getServerDetails);
+
+                    listenerHashMap.put(databaseRef.child("servers").child(_serverId), getServerDetails);
+                }
+            }
+
+            // Check if a server was removed
+            if(oldServerList != null && oldServerList.size() > 0) {
+                for(Server oldServer : oldServerList) {
+                    // If the server was removed
+                    if(!adapter.userData.get_subscribedServers().contains(oldServer.get_id())) {
+                        // Detach old listener
+                        databaseRef.child("servers")
+                                   .child(oldServer.get_id())
+                                   .removeEventListener(getServerDetails);
+
+                        listenerHashMap.remove(databaseRef.child("servers").child(oldServer.get_id()));
+
+                        // Remove server from server list
+                        for(int i=0; i<adapter.serverList.size(); i++) {
+                            if(adapter.serverList.get(i).get_id().equals(oldServer.get_id())) {
+                                adapter.serverList.remove(i);
+                                adapter.notifyDataSetChanged();
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
             adapter.notifyDataSetChanged();
         }
 
@@ -328,6 +376,11 @@ public class MemberProfileActivity extends ServerBaseActivity {
         ProfileRecyclerView.setAdapter(adapter);
     }
 
+    /**
+     * {@inheritDoc}
+     * This implementation retrieves an additional extra MEMBER_ID from the intent.
+     */
+
     @Override
     protected void HandleAdditionalIntentExtras() {
         final Intent dataReceiver = getIntent();
@@ -370,6 +423,11 @@ public class MemberProfileActivity extends ServerBaseActivity {
         return R.id.membersMenuItem;
     }
 
+    /**
+     * {@inheritDoc}
+     * This implementation overrides the back button to send the user back to View Members instead of View Servers
+     */
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
@@ -383,6 +441,10 @@ public class MemberProfileActivity extends ServerBaseActivity {
     }
 
     // ACTIVITY SPECIFIC METHODS
+
+    /**
+     * Returns the user back to the View Members activity
+     */
 
     private void returnToViewMembers() {
         Intent goToViewMembers = new Intent(currentActivity, ViewMembersActivity.class);

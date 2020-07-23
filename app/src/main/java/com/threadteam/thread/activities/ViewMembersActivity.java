@@ -22,6 +22,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.RecyclerTouchListener;
+import com.threadteam.thread.adapters.EditMemberTitleAdapter;
 import com.threadteam.thread.adapters.ViewMemberAdapter;
 import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
@@ -32,31 +33,44 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * This activity class displays all the members in the current server.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ */
+
 public class ViewMembersActivity extends ServerBaseActivity {
 
     // DATA STORE
-    //
-    // adapter:                 ADAPTER FOR VIEW MEMBER RECYCLER VIEW.
 
+    /** Adapter object for ViewMembersRecyclerView. */
     private ViewMemberAdapter adapter;
 
     // VIEW OBJECTS
-    //
-    // ViewMembersRecyclerView: DISPLAYS ALL MEMBERS IN THE SERVER. USES adapter AS ITS ADAPTER.
+
+    /**
+     * Displays all members currently in the server, along with selected details.
+     * Uses ViewMemberAdapter as its adapter.
+     * @see ViewMemberAdapter
+     */
 
     private RecyclerView ViewMembersRecyclerView;
 
     // FIREBASE
-    //
 
+    /** Stores a map of all listener-spawned value event listeners to be destroyed later */
     private HashMap<DatabaseReference, ValueEventListener> listenerHashMap = new HashMap<>();
 
     // INITIALISE LISTENERS
 
-    // retrieveMemberTitles:        RETRIEVES MEMBER TITLES AND LOADS IT INTO adapter
-    //                              CORRECT INVOCATION CODE: databaseRef.child("titles")
-    //                                                                  .child(serverId)
-    //                                                                  .addValueEventListener(retrieveMemberTitles)
+    /**
+     *  Retrieves all member titles for the current server and loads it into the adapter.
+     *
+     *  Database Path:      root/titles/(serverId)
+     *  Usage:              ValueEventListener
+     */
 
     private ValueEventListener retrieveMemberTitles = new ValueEventListener() {
         @Override
@@ -98,19 +112,20 @@ public class ViewMembersActivity extends ServerBaseActivity {
         }
     };
 
-    // getUserListener: GETS AND ADDS A SINGLE USER TO adapter IF USER DOESN'T EXIST, ELSE UPDATES IT.
-    //                  CORRECT INVOCATION CODE: databaseRef.child("users")
-    //                                                      .child(userID)
-    //                                                      .addValueEventListener(getUserListener)
-    //                  SHOULD NOT BE USED INDEPENDENTLY.
+    /**
+     *  Retrieves all user details for a user id and loads it into the adapter. Sorts users by their experience.
+     *
+     *  Database Path:      root/users/(userID)
+     *  Usage:              ValueEventListener
+     */
 
-    private ValueEventListener getUserListener = new ValueEventListener() {
+    private ValueEventListener getUserDetails = new ValueEventListener() {
 
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
             if(dataSnapshot.getValue() == null) {
-                logHandler.printDatabaseResultLog(".getValue()", "User Values", "addUserOnce", "null");
+                logHandler.printDatabaseResultLog(".getValue()", "User Values", "getUserDetails", "null");
                 return;
             }
 
@@ -120,20 +135,20 @@ public class ViewMembersActivity extends ServerBaseActivity {
             String token = (String) dataSnapshot.child("_token").getValue();
 
             if(id == null) {
-                logHandler.printDatabaseResultLog(".getKey()", "User ID", "addUserOnce", "null");
+                logHandler.printDatabaseResultLog(".getKey()", "User ID", "getUserDetails", "null");
                 return;
             }
             else if(username == null) {
-                logHandler.printDatabaseResultLog(".child(\"_username\").getValue()", "Username", "addUserOnce", "null");
+                logHandler.printDatabaseResultLog(".child(\"_username\").getValue()", "Username", "getUserDetails", "null");
                 return;
             }
             else if(profileImageURL == null) {
-                logHandler.printDatabaseResultLog(".child(\"_profileImageURL\").getValue()", "Profile Image URL", "addUserOnce", "null");
+                logHandler.printDatabaseResultLog(".child(\"_profileImageURL\").getValue()", "Profile Image URL", "getUserDetails", "null");
             }
 
             logHandler.printDatabaseResultLog(".getKey()", "User ID", "addUserOnce", id);
-            logHandler.printDatabaseResultLog(".child(\"_username\").getValue()", "Username", "addUserOnce", username);
-            logHandler.printDatabaseResultLog(".child(\"_profileImageURL\").getValue()", "Profile Image URL", "addUserOnce", profileImageURL);
+            logHandler.printDatabaseResultLog(".child(\"_username\").getValue()", "Username", "getUserDetails", username);
+            logHandler.printDatabaseResultLog(".child(\"_profileImageURL\").getValue()", "Profile Image URL", "getUserDetails", profileImageURL);
 
 
             List<String> servers = new ArrayList<>();
@@ -145,28 +160,28 @@ public class ViewMembersActivity extends ServerBaseActivity {
                     logHandler.printDatabaseResultLog(
                             ".child(\"_subscribedServers\").getChildren().getKey()",
                             "Server ID",
-                            "addUserOnce",
+                            "getUserDetails",
                             "null");
                     break;
                 }
                 logHandler.printDatabaseResultLog(
                         ".child(\"_subscribedServers\").getChildren().getKey()",
                         "Server ID",
-                        "addUserOnce",
+                        "getUserDetails",
                         snapshot.getKey());
 
                 if(snapshot.getValue() == null) {
                     logHandler.printDatabaseResultLog(
                             ".child(\"_subscribedServers\").getChildren().getValue()",
                             "Server EXP",
-                            "addUserOnce",
+                            "getUserDetails",
                             "null");
                     break;
                 }
                 logHandler.printDatabaseResultLog(
                         ".child(\"_subscribedServers\").getChildren().getKey()",
                         "Server ID",
-                        "addUserOnce",
+                        "getUserDetails",
                         ((Long) snapshot.getValue()).toString());
 
                 servers.add(snapshot.getKey());
@@ -174,6 +189,11 @@ public class ViewMembersActivity extends ServerBaseActivity {
             }
 
             User newUser = new User(id, username, profileImageURL, "", "",token, servers, expList);
+
+            // Check if user left
+            if(!newUser.get_subscribedServers().contains(serverId)) {
+                return;
+            }
 
             // Pre-exist check
             for(int i=0; i<adapter.userList.size(); i++) {
@@ -217,6 +237,13 @@ public class ViewMembersActivity extends ServerBaseActivity {
     //                                                      .addChildEventListener(memberListener)
     //                  SHOULD BE CANCELLED UPON ACTIVITY STOP!
 
+    /**
+     *  Handles the attaching of value event listeners to all members to get their user details.
+     *
+     *  Database Path:      root/users/(userID)
+     *  Usage:              ValueEventListener
+     */
+
     private ChildEventListener memberListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -232,9 +259,9 @@ public class ViewMembersActivity extends ServerBaseActivity {
 
             databaseRef.child("users")
                     .child(userID)
-                    .addValueEventListener(getUserListener);
+                    .addValueEventListener(getUserDetails);
 
-            listenerHashMap.put(databaseRef.child("users").child(userID), getUserListener);
+            listenerHashMap.put(databaseRef.child("users").child(userID), getUserDetails);
         }
 
         @Override
@@ -258,6 +285,13 @@ public class ViewMembersActivity extends ServerBaseActivity {
                 if(adapter.userList.get(i).get_id() != null && adapter.userList.get(i).get_id().equals(userID)) {
                     adapter.userList.remove(i);
                     adapter.notifyItemRemoved(i);
+
+                    // DETACH LISTENER
+                    databaseRef.child("users")
+                               .child(userID)
+                               .removeEventListener(getUserDetails);
+
+                    listenerHashMap.remove(databaseRef.child("users").child(userID));
                     return;
                 }
             }
@@ -364,26 +398,31 @@ public class ViewMembersActivity extends ServerBaseActivity {
         ViewMembersRecyclerView.setAdapter(adapter);
 
         ViewMembersRecyclerView.addOnItemTouchListener(
-                new RecyclerTouchListener(this, ViewMembersRecyclerView, new RecyclerViewClickListener() {
-                    @Override
-                    public void onClick(View view, int position) {
-                        if(position != 1) {
-                            if(position > 1) {
-                                position -= 1;
-                            }
-
-                            String memberId = adapter.userList.get(position).get_id();
-
-                            Intent goToMemberProfile = new Intent(currentActivity, MemberProfileActivity.class);
-                            PutExtrasForServerIntent(goToMemberProfile);
-                            goToMemberProfile.putExtra("MEMBER_ID", memberId);
-                            currentActivity.startActivity(goToMemberProfile);
-                            logHandler.printActivityIntentLog("View Member Profile");
-                        }
+            new RecyclerTouchListener(this, ViewMembersRecyclerView, new RecyclerViewClickListener() {
+                @Override
+                public void onClick(View view, int position) {
+                if(position != 1) {
+                    if(position > 1) {
+                        position -= 1;
                     }
-                })
+
+                    String memberId = adapter.userList.get(position).get_id();
+
+                    Intent goToMemberProfile = new Intent(currentActivity, MemberProfileActivity.class);
+                    PutExtrasForServerIntent(goToMemberProfile);
+                    goToMemberProfile.putExtra("MEMBER_ID", memberId);
+                    currentActivity.startActivity(goToMemberProfile);
+                    logHandler.printActivityIntentLog("View Member Profile");
+                }
+                }
+            })
         );
     }
+
+    /**
+     * {@inheritDoc}
+     * This implementation loads serverId into the adapter.
+     */
 
     @Override
     protected void DoAdditionalSetupForFirebase() {
@@ -406,7 +445,7 @@ public class ViewMembersActivity extends ServerBaseActivity {
         if(memberListener != null) {
             databaseRef.child("members").child(serverId).removeEventListener(memberListener);
         }
-        if(getUserListener != null) {
+        if(getUserDetails != null) {
             for(DatabaseReference ref : listenerHashMap.keySet()) {
                 ref.removeEventListener(listenerHashMap.get(ref));
             }

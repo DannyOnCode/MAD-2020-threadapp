@@ -29,30 +29,43 @@ import com.threadteam.thread.models.Post;
 
 import java.util.ArrayList;
 
+/**
+ * This activity class handles displaying the server's posts.
+ *
+ * @author Eugene Long
+ * @author Notfications: Thabith
+ * @version 2.0
+ * @since 2.0
+ */
+
 public class PostsActivity extends ServerBaseActivity {
 
     // DATA STORE
-    //
-    // adapter:                 ADAPTER FOR POSTS RECYCLER VIEW.
-    // scrollToLatestPost:      TOGGLE FOR SCROLL TO BOTTOM UPON POST ADDED. DOES THIS ACTION IF TRUE.
 
+    /** Adapter object for PostsRecyclerView. */
     private PostsItemAdapter adapter;
+
+    /** Flag for scrolling to the latest post upon a new post being sent. */
     private Boolean scrollToLatestPost = false;
 
     // VIEW OBJECTS
-    //
-    // PostsRecyclerView:       DISPLAYS ALL POSTS IN THE SERVER. USES adapter AS ITS ADAPTER.
+
+    /**
+     * Handles the display of all server posts.
+     * Uses PostsItemAdapter as its adapter.
+     * @see PostsItemAdapter
+     */
 
     private RecyclerView PostsRecyclerView;
 
     // INITIALISE LISTENERS
 
-    // postListener:    HANDLES LOADING OF ALL POSTS, AS WELL AS UPDATING THE ADAPTER
-    //                  ON MESSAGE ADDED/DELETED/CHANGED EVENTS
-    //                  CORRECT INVOCATION CODE: databaseRef.child("posts")
-    //                                                      .child(serverId)
-    //                                                      .addChildEventListener(postListener)
-    //                  SHOULD BE CANCELLED UPON ACTIVITY STOP!
+    /**
+     *  Handles the loading of posts into the adapter on post added/deleted/changed events.
+     *
+     *  Database Path:      root/posts/(serverId)
+     *  Usage:              ChildEventListener
+     */
 
     private ChildEventListener postListener = new ChildEventListener() {
 
@@ -339,6 +352,12 @@ public class PostsActivity extends ServerBaseActivity {
     }
 
     // ACTIVITY SPECIFIC METHODS
+
+    /**
+     * Sends the user to the ViewPostDetails activity and loads the appropriate data based on which post the user clicked.
+     * @param position The index of the post the user clicked on.
+     * @see ViewPostDetailsActivity
+     */
 
     private void handleTransitionIntoPost(Integer position) {
         logHandler.printLogWithMessage("User tapped on a server!");

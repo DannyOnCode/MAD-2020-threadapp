@@ -27,14 +27,19 @@ import com.threadteam.thread.abstracts.ServerBaseActivity;
 import java.util.HashMap;
 import java.util.List;
 
-
+/**
+ * This activity class handles the settings for a server.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ */
 
 public class ServerSettingsActivity extends ServerBaseActivity {
 
     // DATA STORE
-    //
-    // adapter:                     ADAPTER FOR EDIT MESSAGE TITLES
 
+    /** Adapter object for EditMemberTitleRecyclerView. */
     private EditMemberTitleAdapter adapter;
 
     // VIEW OBJECTS
@@ -45,20 +50,34 @@ public class ServerSettingsActivity extends ServerBaseActivity {
     // EditServerDetailsApplyButton:    APPLIES CHANGES TO SERVER TITLE AND DESCRIPTION ONCE CLICKED
     // EditMemberTitlesApplyButton:     APPLIES CHANGES TO MEMBER TITLES ONCE CLICKED
 
+    /** Allows the user to key in a new server title. */
     private EditText EditServerTitleEditText;
+
+    /** Allows the user to key in a new server description. */
     private EditText EditServerDescEditText;
+
+    /** Applies the new server title and description when triggered. */
     private Button EditServerDetailsApplyButton;
 
+    /**
+     * Allows the user to view and edit existing member titles for the server.
+     * Uses EditMemberTitleAdapter as its adapter.
+     * @see EditMemberTitleAdapter
+     */
+
     private RecyclerView EditMemberTitleRecyclerView;
+
+    /** Applies the new member titles (if any) when triggered. */
     private Button EditMemberTitlesApplyButton;
 
     // INITIALISE LISTENERS
 
-    // retrieveServerDetails:       RETRIEVES CURRENT SERVER'S NAME AND DESCRIPTION AND PRE-FILLS IT INTO
-    //                              THE APPROPRIATE EDIT TEXT OBJECTS AS
-    //                              CORRECT INVOCATION CODE: databaseRef.child("servers")
-    //                                                                  .child(serverId)
-    //                                                                  .addListenerForSingleValueEvent(retrieveServerDetails)
+    /**
+     *  Retrieves the current server's name and description, then pre-fills it into the appropriate text fields.
+     *
+     *  Database Path:      root/servers/(serverId)
+     *  Usage:              Single ValueEventListener
+     */
 
     private ValueEventListener retrieveServerDetails = new ValueEventListener() {
         @Override
@@ -88,11 +107,12 @@ public class ServerSettingsActivity extends ServerBaseActivity {
         }
     };
 
-    // retrieveMemberTitles:        RETRIEVES MEMBER TITLES AND PRE-FILLS IT INTO
-    //                              THE APPROPRIATE EDIT TEXT OBJECTS AS
-    //                              CORRECT INVOCATION CODE: databaseRef.child("titles")
-    //                                                                  .child(serverId)
-    //                                                                  .addListenerForSingleValueEvent(retrieveMemberTitles)
+    /**
+     *  Retrieves the current server's member titles, then pre-fills it into the appropriate text fields.
+     *
+     *  Database Path:      root/titles/(serverId)
+     *  Usage:              Single ValueEventListener
+     */
 
     private ValueEventListener retrieveMemberTitles = new ValueEventListener() {
         @Override
@@ -269,6 +289,10 @@ public class ServerSettingsActivity extends ServerBaseActivity {
 
     // ACTIVITY SPECIFIC METHODS
 
+    /**
+     * Updates the current server's name and description to the value of their respective text fields.
+     */
+
     private void HandleApplyServerDetailChanges() {
         String newName = EditServerTitleEditText.getText().toString().trim();
         String newDesc = EditServerDescEditText.getText().toString().trim();
@@ -293,6 +317,10 @@ public class ServerSettingsActivity extends ServerBaseActivity {
                    .child("_desc")
                    .setValue(newDesc);
     }
+
+    /**
+     * Updates the current server's member titles to the value of their respective text fields.
+     */
 
     private void HandleApplyMemberTitleChanges() {
         List<String> newTitles = adapter.titleData;
