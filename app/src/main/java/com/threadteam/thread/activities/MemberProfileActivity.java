@@ -275,27 +275,27 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseViewProfileConstraintLayout);
     }
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_view_profile;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return MemberProfileActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "View Member Profile";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.profileBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
         mainActionButton.setVisibility(View.GONE);
@@ -303,22 +303,22 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.profileNavBarInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         ProfileRecyclerView = (RecyclerView) findViewById(R.id.viewProfileRecyclerView);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new ProfileAdapter(null, new ArrayList<Server>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -328,7 +328,7 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void HandleAdditionalIntentExtras() {
+    protected void HandleAdditionalIntentExtras() {
         final Intent dataReceiver = getIntent();
         String MEMBER_ID_KEY = "MEMBER_ID";
 
@@ -346,14 +346,14 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                    .child(memberId)
                    .addValueEventListener(getMemberProfile);
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(getMemberProfile != null) {
             databaseRef.child("users").child(memberId).removeEventListener(getMemberProfile);
         }
@@ -365,7 +365,7 @@ public class MemberProfileActivity extends _ServerBaseActivity {
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.membersMenuItem;
     }
 

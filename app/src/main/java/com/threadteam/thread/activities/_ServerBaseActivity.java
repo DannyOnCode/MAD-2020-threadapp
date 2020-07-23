@@ -138,14 +138,14 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
+    protected HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
         itemHashMap.put(SHARE_SERVER_MENU_ITEM, "Share Server");
         itemHashMap.put(LEAVE_SERVER_MENU_ITEM, "Leave Server");
         return itemHashMap;
     }
 
     @Override
-    void HandleIntentExtras() {
+    protected void HandleIntentExtras() {
         final Intent dataReceiver = getIntent();
 
         isOwner = dataReceiver.getBooleanExtra(IS_OWNER_KEY, false);
@@ -159,19 +159,19 @@ public abstract class _ServerBaseActivity extends _BaseActivity {
     }
 
     @Override
-    void HandleAdditionalIntentExtras(){ }
+    protected void HandleAdditionalIntentExtras(){ }
     @Override
-    void DoAdditionalSetupForToolbars() {
+    protected void DoAdditionalSetupForToolbars() {
         if(currentActivity.getSupportActionBar() != null) {
             currentActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }
 
     @Override
-    void DoAdditionalSetupForFirebase() { }
+    protected void DoAdditionalSetupForFirebase() { }
 
     @Override
-    int setBottomToolbarMenuID() {
+    protected int setBottomToolbarMenuID() {
         return R.menu.server_menu;
     }
 

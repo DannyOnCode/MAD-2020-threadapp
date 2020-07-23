@@ -228,32 +228,32 @@ public class ViewServersActivity extends _MainBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ViewServersActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "View Servers";
     }
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_view_servers;
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.serversNavBarInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return R.id.serversBottomToolbarInclude;
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.serversBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
 
@@ -271,12 +271,12 @@ public class ViewServersActivity extends _MainBaseActivity {
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         ViewServerRecyclerView = (RecyclerView) findViewById(R.id.viewServerRecyclerView);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new ViewServerAdapter(new ArrayList<Server>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -295,7 +295,7 @@ public class ViewServersActivity extends _MainBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_subscribedServers")
@@ -303,7 +303,7 @@ public class ViewServersActivity extends _MainBaseActivity {
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if (subscriptionListener != null) {
             databaseRef.child("users")
                        .child(currentUser.getUid())
@@ -318,7 +318,7 @@ public class ViewServersActivity extends _MainBaseActivity {
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.viewServersMenuItem;
     }
 

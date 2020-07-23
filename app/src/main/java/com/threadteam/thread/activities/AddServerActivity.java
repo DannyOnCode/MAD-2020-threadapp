@@ -25,9 +25,19 @@ import com.threadteam.thread.R;
 import com.threadteam.thread.libraries.Utils;
 import com.threadteam.thread.models.Server;
 
+/**
+ * This activity class handles the addition and creation of servers.
+ * @author Eugene Long
+ * @version 2.0
+ * @since 1.0
+ */
+
 public class AddServerActivity extends _MainBaseActivity {
 
-    //DATA STORE
+    // DATA STORE
+    //
+    // joinServerID:            STORES THE ID OF THE SERVER TO BE JOINED
+
     private String joinServerID;
 
     // VIEW OBJECTS
@@ -85,42 +95,42 @@ public class AddServerActivity extends _MainBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_addserver;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return AddServerActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Add Server";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         return null;
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.addServerNavbarInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 
     @Override
-    void DoAdditionalSetupForToolbars() {
+    protected void DoAdditionalSetupForToolbars() {
         this.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         JoinServerIdEditText = findViewById(R.id.joinServerIdEditText);
         JoinServerButton = findViewById(R.id.joinServerButton);
         MakeServerNameEditText = findViewById(R.id.makeServerNameEditText);
@@ -129,7 +139,7 @@ public class AddServerActivity extends _MainBaseActivity {
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         JoinServerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,17 +174,21 @@ public class AddServerActivity extends _MainBaseActivity {
     }
 
     @Override
-    void AttachListeners() { }
+    protected void AttachListeners() { }
 
     @Override
-    void DestroyListeners() { }
+    protected void DestroyListeners() { }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return NO_MENU_ITEM_FOR_ACTIVITY;
     }
 
     // ACTIVITY SPECIFIC METHODS
+
+    /**
+     * This function tests if a user can join a server, and subscribes them to the server if possible.
+     */
 
     private void handleJoinServer() {
         logHandler.printLogWithMessage("User tapped on Join Server; Attempting to join server...");
@@ -334,6 +348,10 @@ public class AddServerActivity extends _MainBaseActivity {
         }
     }
 
+    /**
+     * This function validates the input from the user and attempts to make a server if successful.
+     */
+
     private void handleMakeServer() {
         logHandler.printLogWithMessage("User tapped on Create Server; Attempting to create server...");
         hideKeyboard();
@@ -367,10 +385,19 @@ public class AddServerActivity extends _MainBaseActivity {
         finish();
     }
 
+    /**
+     * This function displays an error message to the user while logging it
+     * @param message A string containing the error message
+     */
+
     private void displayError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         logHandler.printLogWithMessage(message);
     }
+
+    /**
+     * This function sends the user back to the View Servers Activity
+     */
 
     private void returnToViewServers() {
         Intent returnToViewServers = new Intent(currentActivity, ViewServersActivity.class);
@@ -379,15 +406,4 @@ public class AddServerActivity extends _MainBaseActivity {
         logHandler.printActivityIntentLog("ViewServers Activity");
     }
 
-    private void hideKeyboard() {
-        InputMethodManager imm = (InputMethodManager) currentActivity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        View view  =currentActivity.getCurrentFocus();
-        if (view == null) {
-            view = new View(currentActivity);
-        }
-        if (imm != null) {
-            logHandler.printLogWithMessage("Hiding keyboard!");
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
 }

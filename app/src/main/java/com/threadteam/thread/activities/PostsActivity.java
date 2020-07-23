@@ -222,22 +222,22 @@ public class PostsActivity extends _ServerBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_posts;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return PostsActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Posts";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.postsBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
 
@@ -259,27 +259,27 @@ public class PostsActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.postsNavBarInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return R.id.postsBottomToolbarInclude;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         PostsRecyclerView = (RecyclerView) findViewById(R.id.postsRecyclerView);
     }
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.basePostsConstraintLayout);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new PostsItemAdapter(new ArrayList<Post>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -319,21 +319,21 @@ public class PostsActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("posts")
                 .child(serverId)
                 .addChildEventListener(postListener);
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(postListener != null) {
             databaseRef.removeEventListener(postListener);
         }
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.postsMenuItem;
     }
 

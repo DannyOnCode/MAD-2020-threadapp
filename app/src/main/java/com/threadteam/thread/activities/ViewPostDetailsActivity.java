@@ -303,12 +303,12 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
 
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseViewPostConstraintLayout);
     }
 
     @Override
-    void HandleAdditionalIntentExtras(){
+    protected void HandleAdditionalIntentExtras(){
         final Intent dataReceiver = getIntent();
         postID = dataReceiver.getStringExtra("POST_ID");
 
@@ -325,44 +325,44 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
     }
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_view_post;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ViewPostDetailsActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Post";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         return null;
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.viewPostNavBarInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         viewPostDetailsRecyclerView = findViewById(R.id.viewPostRecyclerView);
         CommentEditText = findViewById(R.id.commentEditText);
         SendCommentButton = findViewById(R.id.sendCommentButton);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         SendCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -419,7 +419,7 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_username")
@@ -445,7 +445,7 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(getPostDetails != null) {
             databaseRef.removeEventListener(getPostDetails);
         }
@@ -461,7 +461,7 @@ public class ViewPostDetailsActivity extends  _ServerBaseActivity{
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return NO_MENU_ITEM_FOR_ACTIVITY;
     }
 

@@ -265,22 +265,22 @@ public class ViewProfileActivity extends _MainBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_view_profile;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ViewProfileActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "View Profile";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.profileBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
         Drawable icon = ContextCompat.getDrawable(this, R.drawable.round_create_white_24);
@@ -297,22 +297,22 @@ public class ViewProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.profileNavBarInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return R.id.profileBottomToolbarInclude;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         ProfileRecyclerView = (RecyclerView) findViewById(R.id.viewProfileRecyclerView);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new ProfileAdapter(null, new ArrayList<Server>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -322,14 +322,14 @@ public class ViewProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .addValueEventListener(getUserData);
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(getUserData != null) {
             databaseRef.removeEventListener(getUserData);
         }
@@ -339,7 +339,7 @@ public class ViewProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.viewProfileMenuItem;
     }
 

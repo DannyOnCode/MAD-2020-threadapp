@@ -312,37 +312,37 @@ public class ChatActivity extends _ServerBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_chat;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ChatActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Chat";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         return null;
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.chatNavBarInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         ChatMessageRecyclerView = findViewById(R.id.chatMessageRecyclerView);
         MessageEditText = findViewById(R.id.messageEditText);
         SendMsgButton = findViewById(R.id.sendMsgButton);
@@ -355,7 +355,7 @@ public class ChatActivity extends _ServerBaseActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         SendMsgButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -414,12 +414,12 @@ public class ChatActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void DoAdditionalSetupForFirebase() {
+    protected void DoAdditionalSetupForFirebase() {
         adapter.currentUserUID = currentUser.getUid();
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_username")
@@ -435,7 +435,7 @@ public class ChatActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(chatListener != null) {
             databaseRef.child("messages")
                        .child(serverId)
@@ -449,7 +449,7 @@ public class ChatActivity extends _ServerBaseActivity {
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return NO_MENU_ITEM_FOR_ACTIVITY;
     }
 

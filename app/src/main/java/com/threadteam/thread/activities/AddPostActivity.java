@@ -158,42 +158,42 @@ public class AddPostActivity extends _ServerBaseActivity {
 
     // ABSTRACT OVERRIDE METHODS
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseAddPostItemConstraintLayout);
     }
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_addpost;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return AddPostActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Add Post";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         return null;
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.addPostNavbarInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         mChooseImage = (ImageView) findViewById(R.id.postImageView);
         mDisplayImage = (ImageView) findViewById(R.id.postImageView);
         mConfirmButton = (Button) findViewById(R.id.confirmPostButton);
@@ -203,7 +203,7 @@ public class AddPostActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         // INITIALISE FIREBASE
         mStorageRef = FirebaseStorage.getInstance().getReference("posts");
 
@@ -243,21 +243,21 @@ public class AddPostActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .addValueEventListener(userDataListener);
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(userDataListener != null) {
             databaseRef.removeEventListener(userDataListener);
         }
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return NO_MENU_ITEM_FOR_ACTIVITY;
     }
 

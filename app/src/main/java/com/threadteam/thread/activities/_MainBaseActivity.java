@@ -12,13 +12,27 @@ import com.threadteam.thread.R;
 
 import java.util.HashMap;
 
+/**
+ * Represents the standard activity layer for threadapp's main activities.
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ */
+
 public abstract class _MainBaseActivity extends _BaseActivity {
 
     // DATA STORE
     //
     // LOG_OUT_MENU_ITEM_ID:    CONSTANT DECLARING ID FOR THE LOG OUT MENU ITEM.
 
+    /** Constant declaring the menu item id for the Log Out menu item */
     private final int LOG_OUT_MENU_ITEM_ID = -1;
+
+    /**
+     * Handles the onOptionsItemSelected event. Should be used by all subclasses to provide consistent navigation and features.
+     * @param item The item that was selected by the user.
+     * @return A boolean indicating whether the event has been completely handled.
+     */
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -62,26 +76,33 @@ public abstract class _MainBaseActivity extends _BaseActivity {
 
     // ABSTRACT OVERRIDE METHODS
 
+    /**
+     * {@inheritDoc}
+     * This implementation adds the Log Out menu item to the top navigation bar.
+     * @param itemHashMap
+     * @return
+     */
+
     @Override
-    HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
+    protected HashMap<Integer, String> setItemsForTopNavToolbar(HashMap<Integer, String> itemHashMap) {
         itemHashMap.put(LOG_OUT_MENU_ITEM_ID, "Log Out");
         return itemHashMap;
     }
 
     @Override
-    void HandleIntentExtras() { }
+    protected void HandleIntentExtras() { }
 
     @Override
-    void HandleAdditionalIntentExtras(){}
+    protected void HandleAdditionalIntentExtras(){ }
 
     @Override
-    void DoAdditionalSetupForToolbars() { }
+    protected void DoAdditionalSetupForToolbars() { }
 
     @Override
-    void DoAdditionalSetupForFirebase() { }
+    protected void DoAdditionalSetupForFirebase() { }
 
     @Override
-    int setBottomToolbarMenuID() {
+    protected int setBottomToolbarMenuID() {
         return R.menu.bottom_app_bar_menu;
     }
 

@@ -311,22 +311,22 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     // ABSTRACT OVERRIDE METHODS
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_view_members;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return ViewMembersActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "View Members";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         View bottomToolbarView = findViewById(R.id.viewMembersBottomToolbarInclude);
         ImageButton mainActionButton = (ImageButton) bottomToolbarView.findViewById(R.id.mainActionFAB);
         mainActionButton.setVisibility(View.GONE);
@@ -334,27 +334,27 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.viewMembersNavBarInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return R.id.viewMembersBottomToolbarInclude;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         ViewMembersRecyclerView = (RecyclerView) findViewById(R.id.viewMembersRecyclerView);
     }
 
     @Override
-    ConstraintLayout setBaseLayer() {
+    protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseViewMembersConstraintLayout);
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         adapter = new ViewMemberAdapter(new ArrayList<User>(), "");
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -385,12 +385,12 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void DoAdditionalSetupForFirebase() {
+    protected void DoAdditionalSetupForFirebase() {
         adapter.serverId = serverId;
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         databaseRef.child("members")
                    .child(serverId)
                    .addChildEventListener(memberListener);
@@ -401,7 +401,7 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
         if(memberListener != null) {
             databaseRef.child("members").child(serverId).removeEventListener(memberListener);
         }
@@ -416,7 +416,7 @@ public class ViewMembersActivity extends _ServerBaseActivity {
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return R.id.membersMenuItem;
     }
 

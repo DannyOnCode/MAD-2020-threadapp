@@ -128,37 +128,37 @@ public class EditProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    int setLayoutIDForContentView() {
+    protected int setLayoutIDForContentView() {
         return R.layout.activity_editprofile;
     }
 
     @Override
-    AppCompatActivity setCurrentActivity() {
+    protected AppCompatActivity setCurrentActivity() {
         return EditProfileActivity.this;
     }
 
     @Override
-    String setTitleForActivity() {
+    protected String setTitleForActivity() {
         return "Edit Profile";
     }
 
     @Override
-    ImageButton setMainActionButton() {
+    protected ImageButton setMainActionButton() {
         return null;
     }
 
     @Override
-    Integer setTopNavToolbarIncludeId() {
+    protected Integer setTopNavToolbarIncludeId() {
         return R.id.editProfileInclude;
     }
 
     @Override
-    Integer setBottomToolbarAMVIncludeId() {
+    protected Integer setBottomToolbarAMVIncludeId() {
         return null;
     }
 
     @Override
-    void BindViewObjects() {
+    protected void BindViewObjects() {
         mButtonChooseImage = (ImageView) findViewById(R.id.buttonSelectImage);
         mDisplayImage = (CircleImageView) findViewById(R.id.userProfilePictureEdit);
         mConfirmButton = (Button) findViewById(R.id.confirmButton);
@@ -170,7 +170,7 @@ public class EditProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    void SetupViewObjects() {
+    protected void SetupViewObjects() {
         // SETUP VIEW OBJECTS
         //Populate Buttons with Listeners
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
@@ -215,7 +215,7 @@ public class EditProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    void AttachListeners() {
+    protected void AttachListeners() {
         // Input all current User data
         databaseRef.child("users")
                 .child(currentUser.getUid())
@@ -223,12 +223,12 @@ public class EditProfileActivity extends _MainBaseActivity {
     }
 
     @Override
-    void DestroyListeners() {
+    protected void DestroyListeners() {
 
     }
 
     @Override
-    int setCurrentMenuItemID() {
+    protected int setCurrentMenuItemID() {
         return NO_MENU_ITEM_FOR_ACTIVITY;
     }
 
