@@ -573,12 +573,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                serverName = (String) dataSnapshot.getValue();
+                final String serverName = (String) dataSnapshot.getValue();
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        username = (String) dataSnapshot.getValue();
+                        String username = (String) dataSnapshot.getValue();
 
                         final String to = "/topics/system" + serverId;
 
@@ -639,12 +639,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                serverName = (String) dataSnapshot.getValue();
+                final String serverName = (String) dataSnapshot.getValue();
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        username = (String) dataSnapshot.getValue();
+                        String username = (String) dataSnapshot.getValue();
 
                         final String to = "/topics/posts" + serverId;
 
