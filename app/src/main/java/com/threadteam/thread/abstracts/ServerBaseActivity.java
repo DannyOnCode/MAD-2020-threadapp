@@ -5,21 +5,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.CountDownTimer;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.view.menu.ActionMenuItemView;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,7 +21,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.activities.ChatActivity;
 import com.threadteam.thread.activities.PostsActivity;
 import com.threadteam.thread.activities.ServerSettingsActivity;
@@ -40,8 +32,6 @@ import com.threadteam.thread.libraries.Utils;
 import com.threadteam.thread.popups.ShareServerPopup;
 
 import java.util.HashMap;
-import java.util.Locale;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Represents the standard activity layer for threadapp's server activities.
