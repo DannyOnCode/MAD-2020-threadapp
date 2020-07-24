@@ -620,6 +620,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     }
 
+
+
+
     /**
      * Sends a system notification to all members in a server
      * Author: Thabith
