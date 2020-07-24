@@ -198,8 +198,7 @@ public class ViewMembersActivity extends ServerBaseActivity {
             for(int i=0; i<adapter.userList.size(); i++) {
                 if(adapter.userList.get(i).get_id().equals(newUser.get_id())) {
                     adapter.userList.set(i, newUser);
-                    if(i>0) i+= 1;
-                    adapter.notifyItemChanged(i);
+                    adapter.notifyDataSetChanged();
                     return;
                 }
             }
@@ -218,9 +217,8 @@ public class ViewMembersActivity extends ServerBaseActivity {
             }
 
             // If is smallest, then add to back
-            int s = adapter.userList.size();
-            adapter.userList.add(s, newUser);
-            adapter.notifyItemInserted(s);
+            adapter.userList.add(adapter.userList.size(), newUser);
+            adapter.notifyDataSetChanged();
         }
 
         @Override
