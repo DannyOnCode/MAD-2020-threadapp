@@ -6,4 +6,5 @@ com.threadteam.thread.interfaces
 com.threadteam.thread.libraries
 com.threadteam.thread.models
 com.threadteam.thread.notifications
+com.threadteam.thread.popups
 com.threadteam.thread.viewholders
