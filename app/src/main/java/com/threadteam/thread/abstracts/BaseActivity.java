@@ -753,7 +753,6 @@ public abstract class BaseActivity extends AppCompatActivity {
                 databaseRef.child("users")
                         .child(currentUser.getUid())
                         .child("_username")
-                        .child("_username")
                         .addListenerForSingleValueEvent(getUsername);
 
             }
