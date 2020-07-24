@@ -296,6 +296,8 @@ public class PostsActivity extends ServerBaseActivity {
     protected void SetupViewObjects() {
         adapter = new PostsItemAdapter(new ArrayList<Post>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
 
         PostsRecyclerView.setLayoutManager(layoutManager);
         PostsRecyclerView.setItemAnimator(new DefaultItemAnimator());

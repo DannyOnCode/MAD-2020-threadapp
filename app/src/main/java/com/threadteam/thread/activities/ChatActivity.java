@@ -383,9 +383,9 @@ public class ChatActivity extends ServerBaseActivity {
 
         adapter = new ChatMessageAdapter(new ArrayList<ChatMessage>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setStackFromEnd(true);
 
         ChatMessageRecyclerView.setLayoutManager(layoutManager);
-        ((LinearLayoutManager) ChatMessageRecyclerView.getLayoutManager()).setStackFromEnd(true);
         ChatMessageRecyclerView.setItemAnimator(new DefaultItemAnimator());
         ChatMessageRecyclerView.setAdapter(adapter);
 
