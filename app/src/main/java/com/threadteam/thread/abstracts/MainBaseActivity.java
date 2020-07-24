@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.view.menu.ActionMenuItemView;
 
 import com.threadteam.thread.R;
 import com.threadteam.thread.activities.LoginActivity;
@@ -166,11 +167,29 @@ public abstract class MainBaseActivity extends BaseActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
+        toggleAllMenuItems();
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return super.onCreateOptionsMenu(menu);
+    }
+
+    // ACTIVITY SPECIFIC METHODS
+
+    /**
+     * Startup configuration code for all menu items before further setup is applied.
+     */
+
+    private void toggleAllMenuItems() {
+        if(BottomToolbarAMV != null) {
+            ActionMenuItemView profile = (ActionMenuItemView) currentActivity.findViewById(R.id.viewProfileMenuItem);
+            ActionMenuItemView servers = (ActionMenuItemView) currentActivity.findViewById(R.id.viewServersMenuItem);
+            ActionMenuItemView notifications = (ActionMenuItemView) currentActivity.findViewById(R.id.notificationsMenuItem);
+            toggleMenuItem(profile, true);
+            toggleMenuItem(servers, true);
+            toggleMenuItem(notifications, true);
+        }
     }
 }

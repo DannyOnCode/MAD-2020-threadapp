@@ -19,7 +19,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.activities.ChatActivity;
@@ -89,7 +88,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
                     currentActivity.startActivity(goToPosts);
                     logHandler.printActivityIntentLog("Posts");
 
-                    toggleCurrentMenuItem(true);
+                    toggleCurrentMenuItem(false);
                 }
                 return true;
 
@@ -101,7 +100,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
                 currentActivity.startActivity(goToChat);
                 logHandler.printActivityIntentLog("Chats");
 
-                toggleCurrentMenuItem(true);
+                toggleCurrentMenuItem(false);
                 return true;
 
             case R.id.membersMenuItem:
@@ -113,7 +112,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
                     currentActivity.startActivity(goToViewMembers);
                     logHandler.printActivityIntentLog("View Members");
 
-                    toggleCurrentMenuItem(true);
+                    toggleCurrentMenuItem(false);
                 }
                 return true;
 
@@ -126,7 +125,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
                     currentActivity.startActivity(goToServerSettings);
                     logHandler.printActivityIntentLog("Server Settings");
 
-                    toggleCurrentMenuItem(true);
+                    toggleCurrentMenuItem(false);
                 }
                 return true;
 
@@ -507,6 +506,25 @@ public abstract class ServerBaseActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Startup configuration code for all menu items before further setup is applied.
+     */
+
+    private void setupAllMenuItems() {
+        if(BottomToolbarAMV != null) {
+            ActionMenuItemView posts = (ActionMenuItemView) currentActivity.findViewById(R.id.postsMenuItem);
+            ActionMenuItemView chat = (ActionMenuItemView) currentActivity.findViewById(R.id.chatMenuItem);
+            ActionMenuItemView members = (ActionMenuItemView) currentActivity.findViewById(R.id.membersMenuItem);
+            toggleMenuItem(posts, true);
+            toggleMenuItem(chat, true);
+            toggleMenuItem(members, true);
+            if(isOwner) {
+                ActionMenuItemView settings = (ActionMenuItemView) currentActivity.findViewById(R.id.settingsMenuItem);
+                toggleMenuItem(settings, true);
+            }
+        }
+    }
+
     // DEFAULT SUPER METHODS
 
     @Override
@@ -537,6 +555,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         hideSettingsIfNotOwner();
+        setupAllMenuItems();
         return super.onPrepareOptionsMenu(menu);
     }
 
