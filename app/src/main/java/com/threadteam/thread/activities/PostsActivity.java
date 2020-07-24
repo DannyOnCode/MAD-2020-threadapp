@@ -32,7 +32,7 @@ import java.util.ArrayList;
 /**
  * This activity class handles displaying the server's posts.
  *
- * @author Eugene Long
+ * @author Danny Chan Yu Tian
  * @author Notfications: Thabith
  * @version 2.0
  * @since 2.0
@@ -83,6 +83,8 @@ public class PostsActivity extends ServerBaseActivity {
                 return;
             }
 
+
+
             String imageLink = (String) dataSnapshot.child("_imageLink").getValue();
             String title = (String) dataSnapshot.child("_title").getValue();
             String message = (String) dataSnapshot.child("_message").getValue();
@@ -119,9 +121,22 @@ public class PostsActivity extends ServerBaseActivity {
 
             post.set_id(dataSnapshot.getKey());
 
-            logHandler.printDatabaseResultLog("", "Post", "postListener", post.toString());
 
-            adapter.postList.add(post);
+            // CHECK IF SERVER IS ALREADY DISPLAYED
+            boolean postIsDisplayed = false;
+
+            for(int i=0; i<adapter.postList.size(); i++) {
+                if(adapter.postList.get(i).get_id().equals(post.get_id())) {
+                    adapter.postList.set(i, post);
+                    postIsDisplayed = true;
+                    break;
+                }
+            }
+
+            logHandler.printDatabaseResultLog("", "Post", "postListener", post.toString());
+            if(!postIsDisplayed) {
+                adapter.postList.add(post);
+            }
             adapter.notifyItemInserted(adapter.postList.size());
 
             if(scrollToLatestPost) {
@@ -210,6 +225,7 @@ public class PostsActivity extends ServerBaseActivity {
 
     @Override
     protected void onRestart() {
+
         super.onRestart();
     }
 
