@@ -118,9 +118,9 @@ public class ViewProfileActivity extends MainBaseActivity {
     };
 
     /**
-     *  Retrieves the member's user data and stores it in the adapter.
+     *  Retrieves the current user's user data and stores it in the adapter.
      *
-     *  Database Path:      root/users/(memberID)
+     *  Database Path:      root/users/(currentUser.getUid)
      *  Usage:              ValueEventListener
      */
     ValueEventListener getUserData = new ValueEventListener() {

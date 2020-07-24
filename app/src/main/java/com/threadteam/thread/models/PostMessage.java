@@ -2,35 +2,61 @@ package com.threadteam.thread.models;
 
 import com.google.firebase.database.Exclude;
 
+/**
+ * Represents a single post.
+ *
+ * @author Danny Chan Yu Tian
+ * @version 2.0
+ * @since 2.0
+ */
 public class PostMessage {
 
+    /**
+     * Unique identifier.
+     * Excluded from Firebase automatic child values; this should be used as a key.
+     */
     @Exclude
     private String _id;
 
+    /** The user id of the sender. */
     private String _senderID;
+
+    /** The username of the sender. */
     private String _senderUsername;
+
+    /** The comment content of the post message. */
     private String _comment;
 
-    // TIMESTAMP FOR LOCAL USE. SHOULD NOT BE SYNCED WITH FIREBASE.
-    // FETCH FIREBASE'S timestamp CHILD VALUE FOR A MORE ACCURATE TIMESTAMP.
+    /**
+     * TimeStamp for Local Use. Should not be synced with firebase.
+     * Fetch Firebase's timestamp Child Value for a more accurate Timestamp
+     */
     @Exclude
     private Long timestampMillis;
+
+    /** The Title of the user who sent the comment */
     @Exclude
     private String _title;
+
+    /** The Level of the user who sent the comment */
     @Exclude
     private String _level;
 
-
-
+    /** The Display Colour of the user who sent the comment */
     @Exclude
     private Integer _displayColour;
 
+    // CONSTRUCTORS
+
+    // FIREBASE REQUIRED BLANK CONSTRUCTOR
     public PostMessage(){}
 
     public PostMessage(String _senderID, String _senderUsername, String _comment) {
         this._senderID = _senderID;
         this._senderUsername = _senderUsername;
         this._comment = _comment;
+
+        // LEAVE TIMESTAMP EMPTY FOR SOLE-SERVER SIDE GENERATION
     }
 
     public PostMessage(String _senderID, String _senderUsername, String _comment, Long timestampMillis) {
