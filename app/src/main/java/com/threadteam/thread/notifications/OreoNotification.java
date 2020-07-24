@@ -10,6 +10,14 @@ import android.content.ContextWrapper;
 import android.net.Uri;
 import android.os.Build;
 
+/**
+ * This notifications class handles the notifications of user with devices which are Android version 8/Oreo & above.
+ *
+ * @author Mohamed Thabith
+ * @version 2.0
+ * @since 2.0
+ */
+
 public class OreoNotification extends ContextWrapper {
 
     private static final String CHANNEL_ID = "com.threadteam.thread";

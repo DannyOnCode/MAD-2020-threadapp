@@ -14,42 +14,43 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
-import com.threadteam.thread.abstracts.BaseActivity;
 import com.threadteam.thread.abstracts.MainBaseActivity;
 import com.threadteam.thread.libraries.Notifications;
 
-// VIEW PROFILE ACTIVITY
-//
-// PROGRAMMER-IN-CHARGE:
-// MOHAMED THABITH, S10196396BB
-//
-// DESCRIPTION
-// Handles settings for notifications
-//
-// NAVIGATION
-// PARENT: SETTINGS
-// CHILDREN: NONE
-// OTHER: NONE
+/**
+ * This activity class handles the notification settings of user.
+ *
+ * @author Mohamed Thabith
+ * @version 2.0
+ * @since 2.0
+ */
 
 
 public class SetNotificationsActivity extends MainBaseActivity {
 
     // FIREBASE
-    //
-    // fAuth:                FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION.
-    // reff:                 FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION.
+    /** Firebase Authentication instance for the current session. */
+    /** Firebase Database Reference for the current session. */
     DatabaseReference reff;
     private FirebaseAuth fAuth;
 
 
     //VIEW OBJECTS
-    //
-    // mMsgSwitch:          SWITCHES ON NOTIFICATIONS FOR MESSAGES
-    // mSystemSwitch:       SWITCHES ON NOTIFICATIONS FOR SYSTEM
-    // mPostSwitch:         SWITCHES ON NOTIFICATIONS FOR POSTS
+    /** Switch
+     *
+     * mMsgSwitch       Switch for notifications for messages
+     * mSystemSwitch    Switch for notifications for system
+     * mPostSwitch      Switch for notification of posts*/
 
     Switch mMsgSwitch, mSystemSwitch, mPostSwitch;
 
+    //INITIALISE LISTENERS
+    /**
+     * Retrieves the current notifications of the current user.
+     *
+     *  Database Path:      root/(currentUser.getUid())/_notifications
+     *  Usage:              ValueEventListener
+     */
     ValueEventListener getNotificationSettings = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -116,8 +117,7 @@ public class SetNotificationsActivity extends MainBaseActivity {
         }
     };
 
-
-
+    //DEFAULT SUPER METHODS
     @Override
     protected int setLayoutIDForContentView() {
         return R.layout.activity_notifications;
@@ -161,57 +161,57 @@ public class SetNotificationsActivity extends MainBaseActivity {
 
     @Override
     protected void SetupViewObjects() {
+        //SETUP VIEW OBJECTS
+
+        //Populate Message Notifications Switch with Listener
         mMsgSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(mMsgSwitch.isChecked()){
                     Notifications.subscribeMsgNotification(logHandler,databaseRef);
                     reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_msg").setValue("on");
-                    logHandler.printLogWithMessage("User turned on message notifications");
-
-
-
+                    logHandler.printLogWithMessage("Switch for messages notifications is turned on");
                 }
                 else{
                     Notifications.unsubscribeMsgNotification(logHandler,databaseRef);
                     reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_msg").setValue("off");
-                    logHandler.printLogWithMessage("User turned off message notifications");
+                    logHandler.printLogWithMessage("Switch for messages notifications is turned off");
                 }
             }
         });
 
+        //Populate System Notifications Switch with Listener
         mSystemSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(mSystemSwitch.isChecked()){
                     Notifications.subscribeSystemNotification(logHandler,databaseRef);
                     reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_system").setValue("on");
-                    logHandler.printLogWithMessage("User turned on system notifications");
-
+                    logHandler.printLogWithMessage("Switch for system notifications is turned on");
                 }
                 else{
                     Notifications.unsubscribeSystemNotification(logHandler,databaseRef);
                     reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_system").setValue("off");
-                    logHandler.printLogWithMessage("User turned off system notifications");
+                    logHandler.printLogWithMessage("Switch for system notifications is turned off");
                 }
             }
         });
 
+        //Populate Post Notifications Switch with Listener
         mPostSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(mPostSwitch.isChecked()){
                     Notifications.subscribePostsNotification(logHandler,databaseRef);
                     reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_post").setValue("on");
-                    logHandler.printLogWithMessage("User turned on post notifications");
+                    logHandler.printLogWithMessage("Switch for posts notifications is turned on");
 
                 }
                 else{
                     Notifications.unsubscribePostsNotification(logHandler,databaseRef);
                     reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_post").setValue("off");
-                    logHandler.printLogWithMessage("User turned off post notifications");
+                    logHandler.printLogWithMessage("Switch for posts notifications is turned off");
                 }
-
             }
         });
     }

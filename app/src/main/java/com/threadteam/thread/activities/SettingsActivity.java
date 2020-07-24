@@ -10,24 +10,18 @@ import androidx.cardview.widget.CardView;
 import com.threadteam.thread.R;
 import com.threadteam.thread.abstracts.MainBaseActivity;
 
-// VIEW PROFILE ACTIVITY
-//
-// PROGRAMMER-IN-CHARGE:
-// MOHAMED THABITH, S10196396BB
-//
-// DESCRIPTION
-// Handles settings page
-//
-// NAVIGATION
-// PARENT: View Servers
-// CHILDREN: Set Notifications
-// OTHER: NONE
+/**
+ * This activity class handles the notification settings of user.
+ *
+ * @author Mohamed Thabith
+ * NOT IN USE
+ */
 
 public class SettingsActivity extends MainBaseActivity {
-
+    /** Displays notifications navigation card view*/
     CardView mNotificationsCardView;
 
-
+    //DEFAULT SUPER METHODS
     @Override
     protected int setLayoutIDForContentView() {
         return R.layout.activity_settings;
@@ -70,6 +64,9 @@ public class SettingsActivity extends MainBaseActivity {
 
     @Override
     protected void SetupViewObjects() {
+        //SETUP VIEW OBJECTS
+
+        //Populate Notifications Card View with Listener
         mNotificationsCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

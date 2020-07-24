@@ -32,24 +32,15 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.libraries.Notifications;
-import com.threadteam.thread.models.User;
-import com.threadteam.thread.notifications.NotificationModel;
 
 
-// LOGIN ACTIVITY
-//
-// PROGRAMMER-IN-CHARGE:
-// MOHAMED THABITH, S10196396B
-//
-// DESCRIPTION
-// Handles logging in of user
-// Handles resetting password of user
-//
-// NAVIGATION
-// PARENT: LOGIN ACTIVITY
-// CHILDREN: NONE
-// OTHER: VIEW SERVER
-
+/**
+ * This activity class handles the logging in and resetting password of user.
+ *
+ * @author Mohamed Thabith
+ * @version 2.0
+ * @since 1.0
+ */
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -61,35 +52,42 @@ public class LoginActivity extends AppCompatActivity {
 
 
     // FIREBASE
-    //
-    // fAuth:                FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION.
-    // reff:                 FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION.
+    /** Firebase Authentication instance for the current session. */
+    /** Firebase Database Reference for the current session. */
     private FirebaseAuth fAuth;
     private DatabaseReference reff, databaseRef;
-    private User user;
 
     // VIEW OBJECTS
-    //
-    // _EmailLog:               CONTAINS EMAIL OF USER TO BE RETRIEVED FROM DATABASE
-    // _Password    :               CONTAINS PASSWORD OF USER TO BE RETRIEVED FROM DATABASE
-    // _EmailReset:             CONTAINS EMAIL OF USER TO BE RESET
-    // _LoginBtn:               TRIGGERS LOGGING IN TO APP
-    // _ResetBtn                TRIGGERS RESETTING PASSWORD
-    // _RegisterBtn:            TRIGGERS RESET CARD VIEW
-    // _ForgotPwBtn:            TRIGGERS RESET PASSWORD
-    // _CancelBtn:              TRIGGERS RETURN TO LOGIN CARD VIEW
-    // progressBar              DISPLAYS LOG IN PROGRESS ONCE _LoginBtn HAS BEEN CLICKED
-    // _LoginCard               DISPLAY LOGIN FIELDS AND BUTTONS
-    // _ResetCard               DISPLAY RESET PASSWORD FIELDS AND BUTTONS
-    // _LOGINVIEW               NESTED SCROLL VIEW OF PAGE
-
-
-
+    /** EditText
+     *
+     * _EmailLog        Contains email of user to be retrieved from database.
+     * _Password        Contains password of user to be retrieved from database.
+     * _EmailReset      Contains of email of user to be reset. */
     private EditText _EmailLog, _Password, _EmailReset;
+
+    /** Button
+     *
+     * _LoginBtn        Triggers logging into app.
+     * _ResetBtn        Triggers resetting of password. */
     private Button _LoginBtn, _ResetBtn;
+
+    /** TextView
+     *
+     * _RegisterBtn     Triggers register card view.
+     * _ForgotBtn       Triggers reset password card view.
+     * _CancelBtn       Triggers login card view. */
     private TextView _RegisterBtn, _ForgotPwBtn, _CancelBtn;
+
+    /** Displays log in progress when _LoginBtn is clicked*/
     private ProgressBar progressBar;
+
+    /** CardView
+     *
+     * _LoginCard       Displays login card view, login fields and buttons.
+     * _ResetCard       Displays reset card view, reset fields and buttons. */
     private CardView _LoginCard, _ResetCard;
+
+    /** Nested scroll view of page. */
     private NestedScrollView  _LOGINVIEW;
 
 
@@ -166,13 +164,23 @@ public class LoginActivity extends AppCompatActivity {
                 fAuth.signInWithEmailAndPassword(emailLog, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                       // if successful show toast and move to ViewServerActivity
+                       // if successful add token, show toast, set notifications and move to ViewServerActivity
                         if (task.isSuccessful()) {
+
+                            //Get UserID
                             String UserID = fAuth.getCurrentUser().getUid();
+                            //Set token under user in database
                             reff.child(UserID).child("_token").setValue(_token);
+
                             Toast.makeText(LoginActivity.this, "Login Successful", Toast.LENGTH_SHORT).show();
                             logHandler.printLogWithMessage("Logged in Successfully");
 
+                            /**
+                             * Retrieves the current notification data of the current user.
+                             *
+                             *  Database Path:      root/users/(UserID)/notifications
+                             *  Usage:              ValueEventListener
+                             */
                             ValueEventListener getNotificationSettings = new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -252,6 +260,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 //Navigating to Register Activity
                 startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
+                logHandler.printLogWithMessage("User tapped on register button!");
                 logHandler.printActivityIntentLog("Register Activity");
 
             }
@@ -264,13 +273,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 //_LoginCard set to invisible, _ResetCard visible
                 _LoginCard.setVisibility(View.INVISIBLE);
-                logHandler.printLogWithMessage("Reset Password Card Opened");
+                logHandler.printLogWithMessage("User tapped on forgot password button!");
             }
         });
 
         _ResetBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //TO RESET PASSWORD
 
                 String emailReset = _EmailReset.getText().toString().trim();
@@ -343,6 +353,10 @@ public class LoginActivity extends AppCompatActivity {
 
 
     }
+
+    /**
+     * Closes keyboard
+     * */
 
     //Close Keyboard
     private void closeKeyboard() {

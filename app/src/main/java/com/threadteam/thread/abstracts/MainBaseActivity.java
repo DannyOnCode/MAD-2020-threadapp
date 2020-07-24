@@ -79,6 +79,7 @@ public abstract class MainBaseActivity extends BaseActivity {
 
             case LOG_OUT_MENU_ITEM_ID:
                 logHandler.printLogWithMessage("User tapped on Log Out Menu Item!");
+
                 Notifications.unsubscribeAllNotifications(logHandler,databaseRef);
 
 
