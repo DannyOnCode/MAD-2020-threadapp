@@ -23,6 +23,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.threadteam.thread.R;
 import com.threadteam.thread.activities.ChatActivity;
+import com.threadteam.thread.activities.ViewServersActivity;
 
 
 public class ThreadFirebaseMessaging extends FirebaseMessagingService {
@@ -49,7 +50,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
     }
 
     private void sendOreoNotification(String title, String messageBody){
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(this, ViewServersActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -65,7 +66,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
 
     private void sendNotification(String title, String messageBody) {
 
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(this, ViewServersActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT);
 
