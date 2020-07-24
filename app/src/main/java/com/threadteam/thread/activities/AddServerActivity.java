@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.R;
 import com.threadteam.thread.abstracts.MainBaseActivity;
+import com.threadteam.thread.libraries.Notifications;
 import com.threadteam.thread.libraries.Utils;
 import com.threadteam.thread.models.Server;
 
@@ -237,52 +238,107 @@ public class AddServerActivity extends MainBaseActivity {
                 Utils.SendUserActionSystemMessage(logHandler, databaseRef, userId, " has joined the server!", joinServerID);
                 logHandler.printLogWithMessage("Server successfully joined; returning user back to ViewServers Activity!");
 
+
+                /**
+                 * Retrieves the current notification data of the current user.
+                 *
+                 *  Database Path:      root/users/(UserID)/notifications
+                 *  Usage:              ValueEventListener
+                 */
+                ValueEventListener getNotificationSettings = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.getValue() == null) {
+                            logHandler.printDatabaseResultLog(".getValue()", "Notifications Values", "getNotificationSettings", "null");
+                            databaseRef.child("users").child(userId).child("_notifications").child("_msg").setValue("on");
+                            databaseRef.child("users").child(userId).child("_notifications").child("_system").setValue("on");
+                            databaseRef.child("users").child(userId).child("_notifications").child("_post").setValue("on");
+                            return;
+                        }
+
+                        String messageNotification = (String) dataSnapshot.child("_msg").getValue();
+
+                        String systemNotification = (String) dataSnapshot.child("_system").getValue();
+
+                        String  postNotification = (String) dataSnapshot.child("_post").getValue();
+
+                        if(messageNotification == null) {
+                            logHandler.printDatabaseResultLog(".child(\"_msg\").getValue()", "messageNotification", "getNotificationSettings", "null");
+                            databaseRef.child("users").child(userId).child("_notifications").child("_msg").setValue("on");
+
+                            return;
+                        }
+                        else if(systemNotification == null) {
+                            logHandler.printDatabaseResultLog(".child(\"_system\").getValue()", "systemNotification", "getNotificationSettings", "null");
+                            databaseRef.child("users").child(userId).child("_notifications").child("_system").setValue("on");
+                            return;
+                        }
+                        else if(postNotification == null) {
+                            logHandler.printDatabaseResultLog(".child(\"_post\").getValue()", "postNotification", "getNotificationSettings", "null");
+                            databaseRef.child("users").child(userId).child("_notifications").child("_post").setValue("on");
+
+                            return;
+                        }
+
+                        if(messageNotification.equals("on")){
+                            //Server Chat Notifications for user
+                            FirebaseMessaging.getInstance().subscribeToTopic(server).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        logHandler.printLogWithMessage("SUBSCRIBED TO /topics/" + server +" SUCCESSFULLY");
+
+                                    }
+                                    else{
+                                        logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
+                                    }
+                                }
+                            });                        }
+                        if(systemNotification.equals("on")){
+                            //Server System Notifications for user
+                            FirebaseMessaging.getInstance().subscribeToTopic("system" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        logHandler.printLogWithMessage("SUBSCRIBED TO /topics/system" +server +" SUCCESSFULLY");
+
+                                    }
+                                    else{
+                                        logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
+                                    }
+                                }
+                            });                        }
+                        if(postNotification.equals("on")){
+                            //Server Posts Notifications for user
+                            FirebaseMessaging.getInstance().subscribeToTopic("posts" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+                                        logHandler.printLogWithMessage("SUBSCRIBED TO /topics/posts" +server +" SUCCESSFULLY");
+
+                                    }
+                                    else{
+                                        logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
+                                    }
+                                }
+                            });
+
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                };
+                databaseRef.child("users")
+                        .child(userId)
+                        .child("_notifications")
+                        .addValueEventListener(getNotificationSettings);
+
                 //User join Notification
                 sendSystemNotification(joinServerID,userId," has joined the server!");
                 logHandler.printLogWithMessage("Users in Server notified of new member!");
 
-                //Server Chat Notifications for user
-                FirebaseMessaging.getInstance().subscribeToTopic(server).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            logHandler.printLogWithMessage("SUBSCRIBED TO /topics/" + server +" SUCCESSFULLY");
-
-                        }
-                        else{
-                            logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
-                        }
-                    }
-                });
-
-
-                //Server System Notifications for user
-                FirebaseMessaging.getInstance().subscribeToTopic("system" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            logHandler.printLogWithMessage("SUBSCRIBED TO /topics/system" +server +" SUCCESSFULLY");
-
-                        }
-                        else{
-                            logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
-                        }
-                    }
-                });
-
-                //Server Posts Notifications for user
-                FirebaseMessaging.getInstance().subscribeToTopic("posts" + server).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            logHandler.printLogWithMessage("SUBSCRIBED TO /topics/posts" +server +" SUCCESSFULLY");
-
-                        }
-                        else{
-                            logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
-                        }
-                    }
-                });
 
                 returnToViewServers();
 
