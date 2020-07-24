@@ -70,6 +70,9 @@ public class ChatActivity extends ServerBaseActivity {
     /** Triggers the send message logic. */
     private ImageButton SendMsgButton;
 
+    /** Triggers scroll to bottom logic */
+    private ImageButton ScrollDownButton;
+
     // INITIALISE LISTENERS
 
     /**
@@ -363,6 +366,7 @@ public class ChatActivity extends ServerBaseActivity {
         ChatMessageRecyclerView = findViewById(R.id.chatMessageRecyclerView);
         MessageEditText = findViewById(R.id.messageEditText);
         SendMsgButton = findViewById(R.id.sendMsgButton);
+        ScrollDownButton = findViewById(R.id.scrollDownButton);
     }
 
     @Override
@@ -378,6 +382,13 @@ public class ChatActivity extends ServerBaseActivity {
             public void onClick(View v) {
                 String message = MessageEditText.getText().toString();
                 sendMessage(message);
+            }
+        });
+
+        ScrollDownButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ChatMessageRecyclerView.smoothScrollToPosition(Math.max(0, adapter.chatMessageList.size() - 1));
             }
         });
 
@@ -418,10 +429,12 @@ public class ChatActivity extends ServerBaseActivity {
 
                 if(dy < 0 && scrollToLatestMessage) {
                     logHandler.printLogWithMessage("Scrolled up, toggled scrollToLatestMessage = false!");
+                    ScrollDownButton.setVisibility(ImageButton.VISIBLE);
                     scrollToLatestMessage = false;
 
                 } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == adapter.chatMessageList.size()-1) {
                     logHandler.printLogWithMessage("Scrolled to bottom of chat, setting scrollToLatestMessage = true!");
+                    ScrollDownButton.setVisibility(ImageButton.INVISIBLE);
                     scrollToLatestMessage = true;
                 }
 
