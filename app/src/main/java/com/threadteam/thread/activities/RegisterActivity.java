@@ -26,26 +26,17 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.models.User;
 
-
-// REGISTER ACTIVITY
-//
-// PROGRAMMER-IN-CHARGE:
-// MOHAMED THABITH, S10196396B
-//
-// DESCRIPTION
-// Handles REGISTERING OF USER
-//
-//
-// NAVIGATION
-// PARENT: NONE
-// CHILDREN: LOGIN ACTIVITY
-// OTHER: VIEW SERVER
-
+/**
+ * This activity class handles the registering of users.
+ *
+ * @author Mohamed Thabith
+ * @version 2.0
+ * @since 1.0
+ */
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -54,40 +45,50 @@ public class RegisterActivity extends AppCompatActivity {
 
     // FIREBASE
     //
-    // fAuth:                FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION.
-    // reff:                 FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION.
-
+    /** Firebase Authentication instance for the current session. */
+    /** Firebase Database Reference for the current session. */
     private FirebaseAuth fAuth;
     private DatabaseReference reff;
     private User user;
 
     // VIEW OBJECTS
-    //
-    // _Username                CONTAINS USERNAME OF USER TO BE UPLOADED TO DATABASE
-    // _Email:                  CONTAINS EMAIL OF USER TO BE UPLOADED TO DATABASE
-    // _Password:               CONTAINS PASSWORD OF USER TO BE UPLOADED TO DATABASE
-    // _CfmPassword             CONTAINS CONFIRM PASSWORD OF USER TO BE CHECKED WITH _Password
-    // _RegisterBtn:            TRIGGERS REGISTERING INTO DATABASE AND LOGGING IN TO APP
-    // _LoginBtn:               TRIGGERS RETURN TO LOGIN CARD VIEW
-    // progressBar              DISPLAYS LOG IN PROGRESS ONCE _LoginBtn HAS BEEN CLICKED
-    // _REGISTERVIEW            NESTED SCROLL VIEW OF PAGE
-
-
-
+    /** EditText
+     *
+     * _Username        Contains username of user to be uploaded to database.
+     * _Email           Contains email of user to be uploaded to database.
+     * _Password        Contains of password of user to uploaded to database.
+     * _CfmPassword     Contains confirm password of user to be validated with _Password. */
     private EditText _UserName, _Email, _Password, _CfmPassword;
+
+    /** Triggers registering into database and logging into app. */
     private Button  _RegisterBtn;
+
+    /** Triggers login card view. */
     private TextView _LoginBtn;
+
+    /** Displays log in progress when _RegisterBtn is clicked*/
     private ProgressBar progressBar;
+
+    /** Nested scroll view of page. */
     private NestedScrollView _REGISTERVIEW;
 
 
     //_aboutUsMessage           ABOUT MESSAGE IN ViewProfileActivity
     //_statusMessage            STATUS MESSAGE IN ViewProfileActivity
 
+    /** About message of user */
     private String _aboutUsMessage;
+
+    /** Status message of user*/
     private String _statusMessage;
+
+    /** Total number of users in database*/
     private int TotalUsers;
+
+    /** String of _Email*/
     private String cfmemail;
+
+    /** String of _Password*/
     private String cfmpassword;
 
     // ACTIVITY STATE MANAGEMENT METHODS
@@ -191,6 +192,13 @@ public class RegisterActivity extends AppCompatActivity {
 
                 TotalUsers = 0;
 
+                /**
+                 * Retrieves the number of uses in database.
+                 *
+                 *  Database Path:      root/users
+                 *  Usage:              Single ValueEventListener
+                 */
+
                 ValueEventListener canSignUp = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -230,6 +238,7 @@ public class RegisterActivity extends AppCompatActivity {
                 //Navigating to Login Activity
 
                 startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+                logHandler.printLogWithMessage("User tapped on login button!");
                 logHandler.printActivityIntentLog("Login Activity");
 
             }
@@ -237,7 +246,9 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-    //Close Keyboard
+    /**
+     * Closes keyboard
+     * */
 
     private void closeKeyboard() {
         View view = this.getCurrentFocus();
@@ -250,7 +261,11 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * Registers user into database
+     * @param username
+     * @param _token
+     */
     private void RegisterUser(final String username, final String _token){
         fAuth.createUserWithEmailAndPassword(cfmemail,cfmpassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override

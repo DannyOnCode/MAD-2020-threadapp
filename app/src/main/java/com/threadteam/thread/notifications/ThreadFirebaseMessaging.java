@@ -1,32 +1,39 @@
 package com.threadteam.thread.notifications;
 
-import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.threadteam.thread.R;
-import com.threadteam.thread.activities.ChatActivity;
+import com.threadteam.thread.activities.ViewServersActivity;
+
+import java.util.List;
+
+/**
+ * This notifications class handles the receiving of content from the Firebase Cloud messaging API and displaying to the user.
+ *
+ * @author Mohamed Thabith
+ * @version 2.0
+ * @since 2.0
+ */
 
 
 public class ThreadFirebaseMessaging extends FirebaseMessagingService {
     private static final String TAG = "FirebaseMsgService";
+
+    /** Retrieves the content from the Firebase Cloud messaging API*/
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         //Check if message contains a data payload
@@ -40,16 +47,26 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
 
             Log.d(TAG,"Message Notification Title: " + title);
             Log.d(TAG,"Message Notification Body: " + message);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                sendOreoNotification(title,message);
-            } else {
-                sendNotification(title,message);
+
+            //Only send notifications if app is not in foreground
+            if(!isAppForeground( this)){
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    sendOreoNotification(title,message);
+                } else {
+                    sendNotification(title,message);
+                }
             }
+
         }
     }
 
+    /**
+     * Sets Contents into Notification for device running on Android 8/Oreo and above
+     * @param title
+     * @param messageBody
+     * */
     private void sendOreoNotification(String title, String messageBody){
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(this, ViewServersActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
@@ -63,9 +80,13 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
 
     }
 
+    /** Sets Contents into Notification for device running on Android 7/Nougat and below
+     * @param title
+     * @param messageBody
+     * */
     private void sendNotification(String title, String messageBody) {
 
-        Intent intent = new Intent(this, ChatActivity.class);
+        Intent intent = new Intent(this, ViewServersActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT);
 
@@ -80,5 +101,20 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
         NotificationManager noti = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
         noti.notify(0, builder.build());
+    }
+
+    /** Checks if App is in foreground of device
+     * @param context
+     * */
+    public static boolean isAppForeground(Context context) {
+
+        ActivityManager mActivityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> l = mActivityManager.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo info : l) {
+            if (info.uid == context.getApplicationInfo().uid && info.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                return true;
+            }
+        }
+        return false;
     }
 }

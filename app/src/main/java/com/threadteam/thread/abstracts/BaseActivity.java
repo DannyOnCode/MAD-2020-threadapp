@@ -560,9 +560,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         final String body = username + message;
 
-                        logHandler.printDatabaseResultLog(".getValue()", "Current Server Name", "getServerName", serverName);
+                        logHandler.printDatabaseResultLog(".getValue()", "Current Server's Name", "getServerName", serverName);
+                        logHandler.printDatabaseResultLog(".getValue()", "Current User's Name", "getUsername", username);
 
-                        logHandler.printLogWithMessage("Values sent to Api Service: " + to + ", " + serverName + ", " + body);
+                        logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body);
 
                         Sender sender = new Sender(to, new NotificationModel(serverName, body));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
@@ -617,7 +618,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
 
     protected void sendSystemNotification(final String serverId, final String userId, final String message){
-        logHandler.printLogWithMessage("sendNotification invoked " + serverId  + ", " + userId + ", " + message);
+        logHandler.printLogWithMessage("sendSystemNotification invoked " + serverId  + ", " + userId + ", " + message);
 
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
@@ -633,9 +634,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         final String body = username + message;
 
-                        logHandler.printDatabaseResultLog(".getValue()", "Current Server Name", "getServerName", serverName);
+                        logHandler.printDatabaseResultLog(".getValue()", "Current Server's Name", "getServerName", serverName);
+                        logHandler.printDatabaseResultLog(".getValue()", "Current User's Name", "getUsername", username);
 
-                        logHandler.printLogWithMessage("Values sent to Api Service: " + to + ", " + serverName + ", " + body);
+                        logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body);
 
                         Sender sender = new Sender(to, new NotificationModel(serverName, body));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
@@ -692,7 +694,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      */
 
     protected void sendPostNotification(final String serverId, final String userId, final String message){
-        logHandler.printLogWithMessage("sendNotification invoked " + serverId  + ", " + userId + ", " + message);
+        logHandler.printLogWithMessage("sendPostsNotification invoked " + serverId  + ", " + userId + ", " + message);
 
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
@@ -708,9 +710,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         final String body = username + message;
 
-                        logHandler.printDatabaseResultLog(".getValue()", "Current Server Name", "getServerName", serverName);
+                        logHandler.printDatabaseResultLog(".getValue()", "Current Server's Name", "getServerName", serverName);
+                        logHandler.printDatabaseResultLog(".getValue()", "Current User's Name", "getUsername", username);
 
-                        logHandler.printLogWithMessage("Values sent to Api Service: " + to + ", " + serverName + ", " + body);
+                        logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body);
 
                         Sender sender = new Sender(to, new NotificationModel(serverName, body));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);

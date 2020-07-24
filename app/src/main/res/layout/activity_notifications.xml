@@ -48,7 +48,7 @@
                 android:id="@+id/incomingMsg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Incoming messages"
+                android:text="New Messages"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
                 android:id="@+id/incomingMsgNoti"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Notifications for incoming messages"
+                android:text="Notifications for new messages"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/incomingMsg" />
 
@@ -66,7 +66,6 @@
                 android:id="@+id/incomingMsgSwitch"
                 android:layout_width="0dp"
                 android:layout_height="42dp"
-                android:theme ="@style/switchStyle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -96,7 +95,7 @@
                 android:id="@+id/incomingSystem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="System notifications"
+                android:text="System Notifications"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -106,7 +105,7 @@
                 android:id="@+id/notiForSystem"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Notifications for system notifications"
+                android:text="Notifications for system"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/incomingSystem" />
 
@@ -114,7 +113,6 @@
                 android:id="@+id/systemSwitch"
                 android:layout_width="0dp"
                 android:layout_height="42dp"
-                android:theme ="@style/switchStyle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -185,7 +183,6 @@
                 android:id="@+id/postsSwitch"
                 android:layout_width="0dp"
                 android:layout_height="42dp"
-                android:theme ="@style/switchStyle"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

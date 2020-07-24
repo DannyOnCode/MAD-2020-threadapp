@@ -10,6 +10,15 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.threadteam.thread.LogHandler;
 
+
+/**
+ * This notifications class handles the tokens of users' devices.
+ *
+ * @author Mohamed Thabith
+ * @version 2.0
+ * @since 2.0
+ */
+
 public class ThreadFirebaseIdService extends FirebaseInstanceIdService {
 
     private LogHandler logHandler = new LogHandler("Token Activity");
@@ -21,7 +30,7 @@ public class ThreadFirebaseIdService extends FirebaseInstanceIdService {
 
         String refreshToken = FirebaseInstanceId.getInstance().getToken();
         if (firebaseUser != null){
-            Log.d("myfirebaseid","Refreshed token: " + refreshToken);
+            Log.d("Firebase Token","Refreshed token: " + refreshToken);
             updateToken(refreshToken);
         }
 
