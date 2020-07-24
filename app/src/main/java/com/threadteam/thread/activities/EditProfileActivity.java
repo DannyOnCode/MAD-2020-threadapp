@@ -168,6 +168,14 @@ public class EditProfileActivity extends MainBaseActivity {
     }
 
     @Override
+    protected void DoAdditionalSetupForToolbars() {
+        if(currentActivity.getSupportActionBar() != null) {
+            currentActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+        super.DoAdditionalSetupForToolbars();
+    }
+
+    @Override
     protected void BindViewObjects() {
         mButtonChooseImage = (ImageView) findViewById(R.id.buttonSelectImage);
         mDisplayImage = (CircleImageView) findViewById(R.id.userProfilePictureEdit);

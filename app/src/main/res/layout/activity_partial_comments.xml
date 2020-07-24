@@ -44,10 +44,12 @@
                 android:id="@+id/timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="120dp"
                 android:layout_marginEnd="16dp"
                 android:text="20/20/2002"
                 android:textStyle="italic"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/levelTextView"
                 app:layout_constraintTop_toTopOf="@+id/levelTextView" />
 
             <TextView
