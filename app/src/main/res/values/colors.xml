@@ -4,6 +4,6 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="colorAccent">#0400ba</color>
     <color name="colorAccentDark">#000088</color>
-    <color name="fabLight">#55cfd8dc</color>
-    <color name="fabLightDark">#559ea7aa</color>
+    <color name="fabLight">#AAcfd8dc</color>
+    <color name="fabLightDark">#AA9ea7aa</color>
 </resources>

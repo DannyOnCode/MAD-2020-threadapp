@@ -74,7 +74,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
 
         OreoNotification oreoNotification = new OreoNotification(this);
         Notification.Builder builder = oreoNotification.getOreoNotification(title, messageBody, pendingIntent,
-                defaultSound, R.mipmap.thread);
+                defaultSound, R.mipmap.thread_t);
 
         oreoNotification.getManager().notify(0, builder.build());
 
@@ -92,7 +92,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
 
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.thread)
+                .setSmallIcon(R.mipmap.thread_t)
                 .setContentTitle(title)
                 .setContentText(messageBody)
                 .setAutoCancel(true)

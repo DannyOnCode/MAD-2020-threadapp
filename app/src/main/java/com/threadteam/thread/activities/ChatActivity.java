@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,6 +30,7 @@ import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.models.ChatMessage;
+import com.threadteam.thread.notifications.NotificationModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +57,8 @@ public class ChatActivity extends ServerBaseActivity {
     /** Stores the current user's username. Used when sending messages. */
     private String username;
 
+    private int noOfUnreadMsg;
+
     // VIEW OBJECTS
 
     /**
@@ -72,6 +76,8 @@ public class ChatActivity extends ServerBaseActivity {
 
     /** Triggers scroll to bottom logic */
     private ImageButton ScrollDownButton;
+
+    private TextView NoOfUnreadMsg;
 
     // INITIALISE LISTENERS
 
@@ -178,6 +184,13 @@ public class ChatActivity extends ServerBaseActivity {
             String sender = (String) dataSnapshot.child("_sender").getValue();
             String message = (String) dataSnapshot.child("_message").getValue();
             Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
+
+            noOfUnreadMsg += 1;
+            logHandler.printLogWithMessage("Unread messages: " + noOfUnreadMsg);
+            String unread = String.valueOf(noOfUnreadMsg);
+            NoOfUnreadMsg.setText(unread);
+            NoOfUnreadMsg.setVisibility(TextView.VISIBLE);
+
 
             final ChatMessage chatMessage;
 
@@ -367,6 +380,7 @@ public class ChatActivity extends ServerBaseActivity {
         MessageEditText = findViewById(R.id.messageEditText);
         SendMsgButton = findViewById(R.id.sendMsgButton);
         ScrollDownButton = findViewById(R.id.scrollDownButton);
+        NoOfUnreadMsg = findViewById(R.id.unreadMsgTextView);
     }
 
     @Override
@@ -435,6 +449,10 @@ public class ChatActivity extends ServerBaseActivity {
                 } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == adapter.chatMessageList.size()-1) {
                     logHandler.printLogWithMessage("Scrolled to bottom of chat, setting scrollToLatestMessage = true!");
                     ScrollDownButton.setVisibility(ImageButton.INVISIBLE);
+                    NoOfUnreadMsg.setVisibility(TextView.INVISIBLE);
+                    noOfUnreadMsg = 0;
+                    String unread = String.valueOf(noOfUnreadMsg);
+                    NoOfUnreadMsg.setText(unread);
                     scrollToLatestMessage = true;
                 }
 
@@ -511,6 +529,7 @@ public class ChatActivity extends ServerBaseActivity {
             chatMessageHashMap.put("timestamp", System.currentTimeMillis());
             databaseRef.child("messages").child(serverId).push().setValue(chatMessageHashMap);
 
+            NoOfUnreadMsg.setVisibility(TextView.INVISIBLE);
             scrollToLatestMessage = true;
             logHandler.printLogWithMessage("Message sent! Setting scrollToLatestMessage = true!");
 

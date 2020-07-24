@@ -102,7 +102,7 @@
         android:minWidth="24dp"
         android:paddingLeft="2dp"
         android:paddingRight="2dp"
-        android:text="99"
+        android:text="0"
         android:textColor="#FFFFFF"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/scrollDownButton"
