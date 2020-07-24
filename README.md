@@ -14,7 +14,8 @@ with our built-in leveling system and show off to all your friends just how awes
 Why are you still reading this? Jump right in to experience it for yourself. After all, this is a social app
 for you to talk to us!
 
-Some features that we know is needed are implemented, Registering, Loggin, Profile, Profile Editing, Chat function,
+What can you look forward to?!
+Registering, Loggin, Profile, Profile Editing, Chat function,
 Post Function, Server Settings, Server Creation, Notification, Server Titles, Server Levels!
 
 With all that, I hope you will enjoy our application and help you bring the people you wish to know ever so closer to you!
@@ -31,7 +32,13 @@ Through this application we have used Firebase Realtime Database
           "userId" : {
               "statusMessage" : "status message here",
               "profileImageURL" : "profile image URL here",
+              "_notifications" : {
+                          "_msg" : "on/off status",
+                          "_post" : "on/off status",
+                          "_system" : "on/off status"   
+                        },
               "aboutMeMessage" : "description here",
+              "_token" : "tokenId",
               "subscribed_servers" : ["server ids here"]
             }
         },
@@ -47,7 +54,7 @@ Through this application we have used Firebase Realtime Database
         },
     "members" : {
           "serverId" : {
-                 "memberId" : "user id here"
+                 "memberId" : "user exp"
               }
         },
     "messages" : {
@@ -59,8 +66,37 @@ Through this application we have used Firebase Realtime Database
                         "timestamp" : "time messaged was sent here"
                      }
               }
-        }
-        
+        },
+    "postmessages" : {
+           "serverId" : {
+                  "postId" : {
+                        "commentId" : {
+                                "_comment" : "comment message here",
+                                "_senderUID" : "sender uid here",
+                                "_senderusername" : "sender username here",
+                                "timestamp" : "time comment was sent here"
+                            }
+                     }
+              }
+        },
+    "posts" : {
+           "serverId" : {
+                  "postId" : {
+                        "_imageLink" : "image Url here",
+                        "_message" : "post description here",
+                        "_sender" : "sender username here",
+                        "_senderUID" : "sender uid here",
+                        "_title" : "title of post here",
+                        "timestamp" : "time messaged was sent here"
+                     }
+              }
+        },
+    "titles" : {
+          "serverId" : {
+                    "0" : "title Here",
+                    "1" : "title Here for level 1"
+                }
+        },
 }
 ```
 
@@ -70,11 +106,12 @@ Through this application we have used Firebase Realtime Database
 ## How to Use
 1) Sign In with your Email address and password
 2) You are now free to explore the application
-3) View Profile & View Server pages can be navigated through the bottom navigation bar
+3) View Profile, View Server, Notification setting pages can be navigated through the bottom navigation bar
 
 4) View Server Page
   - Tap on the floating action button to Join / Create a server!
   - Tap on the server card when you want to start your conversation!
+  - Inside server you can Create Post, Chat and do you server settings
   - Tap on "Share" to generate a code and give it to people when they want to join the server!
 
 5) View Profile Page
@@ -93,6 +130,8 @@ Thabith:
 Danny:
 - View/Edit Profile Activities
 - Profile pics
+- View Post Details
+- Create Post
 
 Eugene:
 - View/Add (Join/Create) Servers, Chat Activities

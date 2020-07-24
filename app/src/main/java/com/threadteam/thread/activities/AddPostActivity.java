@@ -151,6 +151,12 @@ public class AddPostActivity extends ServerBaseActivity {
     }
 
     @Override
+    protected void DoAdditionalSetupForToolbars() {
+        TopNavToolbar.setTitle("Posts");
+        super.DoAdditionalSetupForToolbars();
+    }
+
+    @Override
     protected void BindViewObjects() {
         mChooseImage = (ImageView) findViewById(R.id.postImageView);
         mDisplayImage = (ImageView) findViewById(R.id.postImageView);
