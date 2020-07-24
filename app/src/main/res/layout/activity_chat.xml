@@ -51,7 +51,7 @@
             android:paddingRight="12dp"
             android:paddingBottom="8dp"
             android:textColor="#FFFFFF"
-            android:textColorHint="#33FFFFFF"
+            android:textColorHint="#66FFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/sendMsgButton"
             app:layout_constraintStart_toStartOf="parent"

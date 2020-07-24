@@ -187,17 +187,26 @@ public abstract class BaseActivity extends AppCompatActivity {
     /**
      * The default onStop event for a basic activity.
      * Listeners are detached and destroyed here, if any.
-     * The current menu item is also toggled back to normal.
-     * @see BaseActivity#toggleCurrentMenuItem(Boolean)
      */
 
     @Override
     protected void onStop() {
         logHandler.printDefaultLog(LogHandler.STATE_ON_STOP);
         DestroyListeners();
-        toggleCurrentMenuItem(true);
 
         super.onStop();
+    }
+
+    /**
+     * The default onPause event for a basic activity.
+     * The current menu item is toggled back to normal here.
+     * @see BaseActivity#toggleCurrentMenuItem(Boolean)
+     */
+
+    @Override
+    protected void onPause() {
+        toggleCurrentMenuItem(true);
+        super.onPause();
     }
 
     /**
