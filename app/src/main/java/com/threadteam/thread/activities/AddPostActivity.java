@@ -197,7 +197,7 @@ public class AddPostActivity extends ServerBaseActivity {
         mChangeImageButton.setVisibility(View.GONE);
 
         //Set Initial Image to be thread Logo
-        mDisplayImage.setImageDrawable(getResources().getDrawable(R.drawable.thread_t_foreground));
+        mDisplayImage.setImageDrawable(getResources().getDrawable(R.drawable.emptyimageplaceholder));
 
         //Populate Buttons with Listeners
         //Populate Choose Image Button
@@ -222,7 +222,7 @@ public class AddPostActivity extends ServerBaseActivity {
         mClearImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mDisplayImage.setImageDrawable(getResources().getDrawable(R.drawable.thread_t_foreground));
+                mDisplayImage.setImageDrawable(getResources().getDrawable(R.drawable.emptyimageplaceholder));
                 mChooseImageButton.setVisibility(View.VISIBLE);
                 mChangeImageButton.setVisibility(View.GONE);
             }
