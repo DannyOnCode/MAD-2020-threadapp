@@ -57,7 +57,7 @@
                         android:fontFamily="sans-serif-medium"
                         android:paddingLeft="3dp"
                         android:text="Join Server"
-                        android:textColor="@android:color/holo_green_dark"
+                        android:textColor="@color/colorAccent"
                         android:textSize="18sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -88,7 +88,7 @@
                         android:insetBottom="0dp"
                         android:text="Go"
                         android:textColor="#FFFFFF"
-                        app:backgroundTint="@android:color/holo_green_dark"
+                        app:backgroundTint="@color/colorAccent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -134,7 +134,7 @@
                         android:fontFamily="sans-serif-medium"
                         android:paddingLeft="3dp"
                         android:text="Create Server"
-                        android:textColor="@android:color/holo_orange_dark"
+                        android:textColor="@color/colorAccent"
                         android:textSize="18sp"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -201,6 +201,7 @@
 
                     <Button
                         android:id="@+id/makeServerButton"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
@@ -210,12 +211,13 @@
                         android:insetTop="0dp"
                         android:insetBottom="0dp"
                         android:text="Make Server"
-                        android:textColor="#FFFFFF"
-                        app:backgroundTint="@android:color/holo_orange_dark"
+                        android:textColor="@color/colorAccent"
+                        app:backgroundTint="#FFFFFF"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/makeServerDescEditText" />
+                        app:layout_constraintTop_toBottomOf="@+id/makeServerDescEditText"
+                        app:rippleColor="#4D000088" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>

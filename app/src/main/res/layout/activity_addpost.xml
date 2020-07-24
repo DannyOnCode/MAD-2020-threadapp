@@ -51,7 +51,7 @@
                         android:insetBottom="0dp"
                         android:text="Confirm"
                         android:textColor="#FFFFFF"
-                        app:backgroundTint="@color/colorPrimary"
+                        app:backgroundTint="@color/colorAccent"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/editMessage"
                         app:layout_constraintStart_toStartOf="@+id/editMessage"

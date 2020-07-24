@@ -96,7 +96,7 @@
                 android:gravity="center_vertical"
                 android:text="625/842 xp"
                 android:textAlignment="center"
-                android:textColor="@android:color/tertiary_text_light"
+                android:textColor="@android:color/primary_text_dark"
                 android:textSize="12sp"
                 app:layout_constraintBottom_toBottomOf="@+id/memberProgressBar"
                 app:layout_constraintEnd_toEndOf="@+id/memberProgressBar"
