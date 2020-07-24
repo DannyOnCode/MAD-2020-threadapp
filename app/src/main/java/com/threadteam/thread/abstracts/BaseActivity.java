@@ -20,8 +20,6 @@ import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,17 +27,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.threadteam.thread.LogHandler;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.threadteam.thread.R;
 import com.threadteam.thread.activities.LoginActivity;
-import com.threadteam.thread.adapters.ViewServerAdapter;
 import com.threadteam.thread.interfaces.APIService;
-import com.threadteam.thread.models.Server;
 import com.threadteam.thread.notifications.Client;
 import com.threadteam.thread.notifications.NotificationModel;
 import com.threadteam.thread.notifications.Sender;
@@ -143,6 +137,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         logHandler.printDefaultLog(LogHandler.FIREBASE_INITIALISED);
 
         logHandler.printDefaultLog(LogHandler.FIREBASE_LISTENERS_INITIALISED);
+
+        AttachOnCreateListeners();
     }
 
     /**
@@ -153,7 +149,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         logHandler.printDefaultLog(LogHandler.STATE_ON_START);
-        AttachListeners();
+        AttachOnStartListeners();
 
         super.onStart();
     }
@@ -192,7 +188,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         logHandler.printDefaultLog(LogHandler.STATE_ON_STOP);
-        DestroyListeners();
+        DestroyOnStartListeners();
 
         super.onStop();
     }
@@ -207,6 +203,16 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onPause() {
         toggleCurrentMenuItem(true);
         super.onPause();
+    }
+
+    /**
+     * The default finish event for a basic activity.
+     * Listeners attached in onCreate are detached and destroyed here, if any.
+     */
+    @Override
+    public void finish() {
+        DestroyOnCreateListeners();
+        super.finish();
     }
 
     /**
@@ -405,17 +411,31 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * Abstract function for subclasses to implement.
-     * Should attach any Firebase event listeners required for the activity on startup here.
+     * Should attach any Firebase event listeners required for the activity on startUp here.
      */
 
-    protected abstract void AttachListeners();
+    protected abstract void AttachOnStartListeners();
 
     /**
      * Abstract function for subclasses to implement.
-     * Should destroy every Firebase event listener created in the activity.
+     * Should destroy every Firebase event listener created on startUp.
      */
 
-    protected abstract void DestroyListeners();
+    protected abstract void DestroyOnStartListeners();
+
+    /**
+     * Abstract function for subclasses to implement.
+     * Should attach any Firebase event listeners required for the activity on create here.
+     */
+
+    protected abstract void AttachOnCreateListeners();
+
+    /**
+     * Abstract function for subclasses to implement.
+     * Should destroy every Firebase event listener created on create.
+     */
+
+    protected abstract void DestroyOnCreateListeners();
 
     /** Indicates that there is no corresponding menu item for the current activity. */
     protected static int NO_MENU_ITEM_FOR_ACTIVITY = -9999;
@@ -464,6 +484,9 @@ public abstract class BaseActivity extends AppCompatActivity {
             }
         }
     }
+
+
+
 
     // PROTECTED CONVENIENCE METHODS
 
@@ -714,6 +737,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 databaseRef.child("users")
                         .child(currentUser.getUid())
+                        .child("_username")
                         .child("_username")
                         .addListenerForSingleValueEvent(getUsername);
 

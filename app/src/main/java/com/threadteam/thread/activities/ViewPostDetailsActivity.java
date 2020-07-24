@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.abstracts.ServerBaseActivity;
+import com.threadteam.thread.adapters.ViewMemberAdapter;
 import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ViewPostDetailsAdapter;
@@ -34,42 +35,60 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * This activity class handles the viewing of a post and commenting on the post
+ *
+ * @author Danny Chan Yu Tian
+ * @version 2.0
+ * @since 2.0
+ */
 public class ViewPostDetailsActivity extends ServerBaseActivity {
 
     // DATA STORE
-    //
-    // adapter:                 ADAPTER FOR CHAT MESSAGE RECYCLER VIEW.
-    //                          HANDLES STORAGE OF DISPLAYED CHAT MESSAGE DATA AS WELL.
-    // username:                CONTAINS CURRENT USER'S USERNAME. USED TO SEND MESSAGES.
-
+    /** Adapter object for viewPostDetailsRecyclerView. */
     private ViewPostDetailsAdapter adapter;
+
+    /** Contains the current user username. Used to send commments. */
     private String username;
+
+    /** Contains the comment sender userExp. */
     private int userExp;
-    private int userLevel;
+
+    /** Contains the post ID of the current viewed post. */
     private String postID;
+
+    /** Contain the list of titles for the server. */
     private List<String> titleData;
+
+    /** Initial scroll boolean. */
     private Boolean scrollToLatestMessage = false;
+
+    /** Contains the list of user and their Exp*/
     public HashMap<String, Integer> userExpList = new HashMap<>();
 
-    // VIEW OBJECTS
-    //
-    // viewPostDetailsRecyclerView: DISPLAYS ALL COMMENT MESSAGES AND POST IN THE POST. USES adapter AS ITS ADAPTER.
-    // CommentEditText:         CONTAINS TEXT DATA TO BE SENT UPON USER TAPPING SendCommentButton.
-    // SendCommentButton:           TRIGGERS SENDING OF TEXT DATA TO THE SERVER
 
+    // VIEW OBJECTS
+    /**
+     * Displays post details and comments of the current post.
+     * Uses ViewPostDetailsAdapter as its adapter.
+     * @see ViewPostDetailsAdapter
+     */
     private RecyclerView viewPostDetailsRecyclerView;
+
+    /** Contains text data to be sent upon user tapping SendCommentButton. */
     private EditText CommentEditText;
+
+    /** Triggers sending of comment data to the postmessage. */
     private ImageButton SendCommentButton;
 
+
     // INITIALISE LISTENERS
-
-    // getUsername:     RETRIEVES CURRENT USER'S USERNAME
-    //                  CORRECT INVOCATION CODE: databaseRef.child("users")
-    //                                                      .child(currentUser.getUid())
-    //                                                      .child("_username")
-    //                                                      .addListenerForSingleValueEvent(getUsername)
-    //                  SHOULD NOT BE USED INDEPENDENTLY.
-
+    /**
+     * Retrieves the username of the current user.
+     *
+     *  Database Path:      root/users/(currentUser.getUid())/_username
+     *  Usage:              Single ValueEventListener
+     */
     private ValueEventListener getUsername = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -88,6 +107,12 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
         }
     };
 
+    /**
+     *  Retrieves all user in server and their exp into HashMap to be sent to Adapter.
+     *
+     *  Database Path:      root/members/(serverId)
+     *  Usage:              ValueEventListener
+     */
     ValueEventListener mapUsersToExp = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -123,6 +148,12 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
         }
     };
 
+    /**
+     *  Retrieve the selected Post details and assign them to a post object.
+     *
+     *  Database Path:      root/posts/(serverId)/(postID)
+     *  Usage:              ValueEventListener
+     */
     private ValueEventListener getPostDetails = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -183,6 +214,12 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
         }
     };
 
+    /**
+     *  Retrieves all member titles for the current server and loads it into the adapter.
+     *
+     *  Database Path:      root/titles/(serverId)
+     *  Usage:              ValueEventListener
+     */
     private ValueEventListener retrieveMemberTitles = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -220,18 +257,24 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
         }
     };
 
+    /**
+     *  Handles the loading of comment messages into the adapter.
+     *
+     *  Database Path:      root/postmessages/(serverId)/(postID)
+     *  Usage:              ChildEventListener
+     */
     private ChildEventListener commentMessageListener = new ChildEventListener() {
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
             logHandler.printLogWithMessage("Chat message added/loaded!");
 
             if(dataSnapshot.getKey() == null) {
-                logHandler.printDatabaseResultLog(".getKey()", "Message ID", "commentMessageListener", "null");
+                logHandler.printDatabaseResultLog(".getKey()", "Comment ID", "commentMessageListener", "null");
                 return;
             }
 
             if(dataSnapshot.getValue() == null) {
-                logHandler.printDatabaseResultLog(".getValue()", "Message Values", "commentMessageListener", "null");
+                logHandler.printDatabaseResultLog(".getValue()", "Comment Values", "commentMessageListener", "null");
                 return;
             }
 
@@ -250,7 +293,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
                 logHandler.printDatabaseResultLog(".child(\"_sender\").getValue()", "Sender Name", "commentMessageListener", "null");
                 return;
             } else if (commentMessage == null) {
-                logHandler.printDatabaseResultLog(".child(\"_message\").getValue()", "Message", "commentMessageListener", "null");
+                logHandler.printDatabaseResultLog(".child(\"_message\").getValue()", "Comment", "commentMessageListener", "null");
                 return;
             } else if (timestampMillis == null) {
                 logHandler.printDatabaseResultLog(".child(\"timestamp\").getValue()", "Timestamp", "commentMessageListener", "null");
@@ -263,13 +306,17 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
             int level = Progression.ConvertExpToLevel(userExp);
             int stage = Progression.ConvertLevelToStage(level);
             Integer colorInt = Progression.GetDefaultColorIntForStage(stage);
-            String title;
-            if(titleData.size() > 0 && !titleData.get(stage).equals("")) {
-                title = titleData.get(stage);
-            } else {
+            String title = "";
+            if(titleData != null){
+                if(titleData.size() > 0 && !titleData.get(stage).equals("")) {
+                    title = titleData.get(stage);
+                } else {
+                    title = Progression.GetDefaultTitleForStage(stage);
+                }
+            }
+            else{
                 title = Progression.GetDefaultTitleForStage(stage);
             }
-
             postMessage.set_level(String.valueOf(level));
             postMessage.set_title(title);
             postMessage.set_displayColour(colorInt);
@@ -278,12 +325,12 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
 
             logHandler.printDatabaseResultLog("", "Comment Message", "commentMessageListener", postMessage.toString());
 
-            adapter.postMessageList.add(postMessage);
-            adapter.notifyItemInserted(adapter.postMessageList.size()+2);
+            adapter.postMessageList.add(0,postMessage);
+            adapter.notifyItemInserted(2);
 
             if(scrollToLatestMessage) {
                 logHandler.printLogWithMessage("scrollToLatestMessage = true; scrolling to latest message now!");
-                viewPostDetailsRecyclerView.smoothScrollToPosition(adapter.getItemCount() -1);
+                viewPostDetailsRecyclerView.smoothScrollToPosition(2);
             }
         }
 
@@ -302,12 +349,40 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
         }
     };
 
+    //DEFAULT SUPER METHODS
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+
+    // ABSTRACT OVERRIDE METHODS
     @Override
     protected ConstraintLayout setBaseLayer() {
         return (ConstraintLayout) findViewById(R.id.baseViewPostConstraintLayout);
     }
 
+    //Getting of Post ID
     @Override
     protected void HandleAdditionalIntentExtras(){
         final Intent dataReceiver = getIntent();
@@ -320,10 +395,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+
 
     @Override
     protected int setLayoutIDForContentView() {
@@ -364,6 +436,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
 
     @Override
     protected void SetupViewObjects() {
+        //Populate Send Comment button
         SendCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -371,6 +444,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
             }
         });
 
+        //Setting up Adapter
         adapter = new ViewPostDetailsAdapter(new Post(),new ArrayList<PostMessage>());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
 
@@ -410,7 +484,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
                     scrollToLatestMessage = false;
 
                 } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == (adapter.getItemCount() - 1)) {
-                    logHandler.printLogWithMessage("Scrolled to bottom of chat, setting scrollToLatestMessage = true!");
+                    logHandler.printLogWithMessage("Scrolled to bottom of comments, setting scrollToLatestMessage = true!");
                     scrollToLatestMessage = true;
                 }
 
@@ -419,8 +493,9 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
         viewPostDetailsRecyclerView.addOnScrollListener(scrollListener);
     }
 
+
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_username")
@@ -446,7 +521,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
     }
 
     @Override
-    protected void DestroyListeners() {
+    protected void DestroyOnStartListeners() {
         if(getPostDetails != null) {
             databaseRef.removeEventListener(getPostDetails);
         }
@@ -466,9 +541,27 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
         return NO_MENU_ITEM_FOR_ACTIVITY;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == android.R.id.home) {
+            logHandler.printLogWithMessage("User tapped on Back Button!");
+
+            Intent goToPost = new Intent(currentActivity, PostsActivity.class);
+            PutExtrasForServerIntent(goToPost);
+            currentActivity.startActivity(goToPost);
+            logHandler.printActivityIntentLog("Posts");
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+
+    // ACTIVITY SPECIFIC METHODS
     private void sendComment(){
         if(username == null) {
-            logHandler.printLogWithMessage("Username is null (which it shouldn't be)! Aborting sendMessage()!");
+            logHandler.printLogWithMessage("Username is null (which it shouldn't be)! Aborting sendComment()!");
             return;
         }
 
@@ -492,7 +585,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
 
         // do a final trim
         formattedComment = new StringBuilder(formattedComment.toString().trim());
-        logHandler.printLogWithMessage("User submitted message: " + comment + " and was it was formatted as: " + formattedComment.toString());
+        logHandler.printLogWithMessage("User submitted comment: " + comment + " and was it was formatted as: " + formattedComment.toString());
 
         CommentEditText.setText(null);
 
@@ -507,24 +600,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
             scrollToLatestMessage = true;
             AddExpForServerMember(currentUser.getUid(), serverId, 1, 60);
         } else {
-            logHandler.printLogWithMessage("No message was pushed because there was no text after formatting!");
+            logHandler.printLogWithMessage("No comment was pushed because there was no text after formatting!");
         }
-
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        if(item.getItemId() == android.R.id.home) {
-            logHandler.printLogWithMessage("User tapped on Back Button!");
-
-            Intent goToPost = new Intent(currentActivity, PostsActivity.class);
-            PutExtrasForServerIntent(goToPost);
-            currentActivity.startActivity(goToPost);
-            logHandler.printActivityIntentLog("Posts");
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

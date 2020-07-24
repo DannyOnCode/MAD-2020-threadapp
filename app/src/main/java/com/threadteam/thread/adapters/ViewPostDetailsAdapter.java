@@ -1,7 +1,5 @@
 package com.threadteam.thread.adapters;
 
-import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,49 +7,45 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
-import com.threadteam.thread.models.ChatMessage;
 import com.threadteam.thread.models.Post;
 import com.threadteam.thread.models.PostMessage;
-import com.threadteam.thread.models.User;
+import com.threadteam.thread.viewholders.IncomingChatMessageViewHolder;
+import com.threadteam.thread.viewholders.OutgoingChatMessageViewHolder;
 import com.threadteam.thread.viewholders.PostsItemViewHolder;
+import com.threadteam.thread.viewholders.SystemChatMessageViewHolder;
 import com.threadteam.thread.viewholders.ViewCommentDividerViewHolder;
 import com.threadteam.thread.viewholders.ViewCommentMessageViewHolder;
-import com.threadteam.thread.viewholders.ViewDividerViewHolder;
 import com.threadteam.thread.viewholders.ViewProfileCardViewHolder;
-import com.threadteam.thread.viewholders.ViewServerStatusCardViewHolder;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-// CHAT MESSAGE ADAPTER CLASS
-//
-// PROGRAMMER-IN-CHARGE:
-// EUGENE LONG, S10193060J
-//
-// DESCRIPTION
-// ADAPTER USED BY profileView RECYCLERVIEW in Profile Activity
-// USES ViewProfileCardView, ViewDividerViewHolder, ViewServerStatusCardViewHolder
 
+/**
+ * Handles binding of post details and comments to the appropriate view holders
+ *
+ * @author Danny Chan Yu Tian
+ * @version 2.0
+ * @since 2.0
+ *
+ * @see PostsItemViewHolder
+ * @see ViewCommentDividerViewHolder
+ * @see ViewCommentMessageViewHolder
+ */
 public class ViewPostDetailsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
 
     // DATA STORE
-    //
+    /** Contains post and its details. */
     public Post post;
+
+    /** Contains all Post Comments objects to be displayed. */
     public List<PostMessage> postMessageList;
-
-
 
     public ViewPostDetailsAdapter(Post post, List<PostMessage> commentMessages) {
 
@@ -113,7 +107,6 @@ public class ViewPostDetailsAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 if(imageLink != null) {
                     Picasso.get()
                             .load(imageLink)
-                            .error(R.drawable.profilepictureempty)
                             .into(postHolder.PostImageView);
                 }
 
@@ -157,7 +150,7 @@ public class ViewPostDetailsAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        //2 for profile card and divider ViewHolder
+        // (+ 2) for post card and divider ViewHolder
         if(post == null){
             return 0;
         }

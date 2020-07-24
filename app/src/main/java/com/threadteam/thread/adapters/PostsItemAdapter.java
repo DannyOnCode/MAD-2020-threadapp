@@ -73,14 +73,10 @@ public class PostsItemAdapter extends RecyclerView.Adapter<PostsItemViewHolder> 
         }
 
         Picasso.get().setLoggingEnabled(true);
-        if(imageLink != null){
-            Picasso.get()
-                    .load(imageLink)
-                    .into(holder.PostImageView);
-        }
-        else{
-            holder.PostImageView.setImageResource(R.drawable.profilepictureempty);
-        }
+        Picasso.get()
+                .load(imageLink)
+                .into(holder.PostImageView);
+
 
         holder.PostTitleTextView.setText(title);
         holder.PostDescTextView.setText(message);

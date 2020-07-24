@@ -27,70 +27,63 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.abstracts.MainBaseActivity;
 import com.threadteam.thread.models.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-// VIEW PROFILE ACTIVITY
-//
-// PROGRAMMER-IN-CHARGE:
-// DANNY CHAN, S10196363F
-//
-// DESCRIPTION
-// Handles editing of profile details
-//
-// NAVIGATION
-// PARENT: VIEW PROFILE
-// CHILDREN: NONE
-// OTHER: NONE
+/**
+ * This activity class handles the edit of profile.
+ *
+ * @author Danny Chan Yu Tian
+ * @version 2.0
+ * @since 1.0
+ */
 
 public class EditProfileActivity extends MainBaseActivity {
 
 
     // DATA STORE
-    //
-    // mImageUri:               STORE IMAGE URI FROM FILE IMAGE FOR UPLOADING TO FIREBASE.
-    // PICK_IMAGE_REQUEST       CONSTANT REQUEST TO IDENTIFY IMAGE REQUEST.
+    /** Stores immage URI from file image for uploading to firebase. */
     private Uri mImageUri;
+    /** Constant Request to Identify Image Request. */
     private static final int PICK_IMAGE_REQUEST = 1;
 
     // FIREBASE
-    //
-    // mStorageRef:             FIREBASE STORAGE REFERENCE FOR THE CURRENT SESSION.
-    // currentData:             VALUE EVENT LISTENER FOR RETRIEVING CURRENT DATA OF USER.
+    /** Firebase Storage reference for the current session. */
     private StorageReference mStorageRef;
 
     // VIEW OBJECTS
-    //
-    // mButtonChooseImage:      TRIGGERS PICKING IMAGE FROM DEVICE FILE.
-    // mCancelButton:           TRIGGERS RETURN TO PROFILE PAGE.
-    // mConfirmButton:          TRIGGERS UPLOAD TO FIREBASE WITH ALL NECESSARY INPUT DATA.
-    // mDisplayImage:           DISPLAYS PROFILE PICTURE.
-    // mUserNameEdit:           CONTAINS USERNAME DATA OF USER TO BE UPLOADED TO DATABASE.
-    // mStatusTitle:            CONTAINS Status/Title DATA OF USER TO BE UPLOADED TO DATABASE.
-    // mDescription:            CONTAINS ABOUT ME DESCRIPTION DATA OF USER TO BE UPLOADED TO DATABASE.
-    // mProgressBar:            DISPLAYS THE UPLOAD PROGRESS ONCE mConfirmButton HAS BEEN CLICKED.
+    /** Triggers picking image from device file. */
     ImageView mButtonChooseImage;
+    /** Triggers return to profile page. */
     Button mCancelButton;
+    /** Triggers uploading to firebase with all necessary input data*/
     Button mConfirmButton;
+    /** Displays profile picture. */
     CircleImageView mDisplayImage;
+    /** Contains username data of user to be uploaded to database. */
     EditText mUserNameEdit;
+    /** Contains Status/Title data of user to be uploaded to database.*/
     EditText mStatusTitle;
+    /** Contains About Me Description data of user to be uploaded to database.*/
     EditText mDescription;
+    /** Displays the upload progress once mConfirmButton has been pressed. */
     ProgressBar mProgressBar;
 
     // INITIALISE LISTENERS
-
-    // currentData:     RETRIEVES CURRENT USER'S DATA
-    //                  CORRECT INVOCATION CODE: databaseRef.child("users")
-    //                                                      .child(currentUser.getUid())
-    //                                                      .addListenerForSingleValueEvent(currentData)
-    //                  SHOULD NOT BE USED INDEPENDENTLY.
+    /**
+     * Retrieves the current profile data of the current user.
+     *
+     *  Database Path:      root/users/(currentUser.getUid())
+     *  Usage:              Single ValueEventListener
+     */
     final ValueEventListener currentData = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -113,7 +106,6 @@ public class EditProfileActivity extends MainBaseActivity {
             mUserNameEdit.setText(initialUserName);
             mStatusTitle.setText(initialStatusMessage);
             mDescription.setText(initialAboutMeMessage);
-
         }
 
         @Override
@@ -123,9 +115,26 @@ public class EditProfileActivity extends MainBaseActivity {
         }
     };
 
+    //DEFAULT SUPER METHODS
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    protected void onCreate(@Nullable Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
+
+    @Override
+    protected void onStart() { super.onStart(); }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
     }
 
     @Override
@@ -173,7 +182,11 @@ public class EditProfileActivity extends MainBaseActivity {
     @Override
     protected void SetupViewObjects() {
         // SETUP VIEW OBJECTS
-        //Populate Buttons with Listeners
+
+        // INITIALISE FIREBASE STORAGE
+        mStorageRef = FirebaseStorage.getInstance().getReference("users");
+
+        //Populate Choose Image Buttons with Listener
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -181,6 +194,7 @@ public class EditProfileActivity extends MainBaseActivity {
             }
         });
 
+        //Populate Confirm Button with Listener
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -204,6 +218,7 @@ public class EditProfileActivity extends MainBaseActivity {
             }
         });
 
+        //Populate Cancel Button with Listener
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -211,22 +226,28 @@ public class EditProfileActivity extends MainBaseActivity {
                 Intent goToViewProfile = new Intent(EditProfileActivity.this, ViewProfileActivity.class);
                 logHandler.printActivityIntentLog("View Profile Activity");
                 startActivity(goToViewProfile);
+
             }
         });
     }
 
     @Override
-    protected void AttachListeners() {
-        // Input all current User data
+    protected void AttachOnStartListeners() {
+
+    }
+
+    @Override
+    protected void DestroyOnStartListeners() {
+
+    }
+
+    @Override
+    protected void AttachOnCreateListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .addListenerForSingleValueEvent(currentData);
     }
 
-    @Override
-    protected void DestroyListeners() {
-
-    }
 
     @Override
     protected int setCurrentMenuItemID() {
@@ -234,8 +255,10 @@ public class EditProfileActivity extends MainBaseActivity {
     }
 
 
-    // CLASS METHODS
-    //Open Device File Explorer to search for image only
+    // ACTIVITY SPECIFIC METHODS
+    /**
+     *  Opens Device File Explorer to search for image ONLY
+     */
     private void openFileChooser(){
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -244,7 +267,12 @@ public class EditProfileActivity extends MainBaseActivity {
     }
 
 
-    //Process selected image
+    /**
+     * Takes in image chosen through openFileChooser and processes selected image
+     * @param requestCode
+     * @param resultCode
+     * @param data Image Data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -263,14 +291,21 @@ public class EditProfileActivity extends MainBaseActivity {
 
         }
     }
-    //Get File Extensions e.g(.png , .jpg)
+
+    /**
+     * Gets the file extension of the image selected
+     * @param uri Takes in the Uri of image to find the extension
+     * @return a String with the file extension e.g(.png, .jpg)
+     */
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    //Upload UserData to Firebase Storage and Update RealTime Database
+    /**
+     * Uploads the post data to firebase database
+     */
     private void uploadUserData(){
         if(mImageUri != null){
             final StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
@@ -374,7 +409,6 @@ public class EditProfileActivity extends MainBaseActivity {
         }
     }
 
-    // ACTIVITY SPECIFIC METHODS
 
     private void returnToViewProfile() {
         Intent goToViewMembers = new Intent(currentActivity, ViewProfileActivity.class);

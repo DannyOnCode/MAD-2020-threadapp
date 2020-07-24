@@ -300,6 +300,8 @@ public class PostsActivity extends ServerBaseActivity {
         layoutManager.setStackFromEnd(true);
 
         PostsRecyclerView.setLayoutManager(layoutManager);
+        layoutManager.setReverseLayout(true);
+        layoutManager.setStackFromEnd(true);
         PostsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         PostsRecyclerView.setAdapter(adapter);
 
@@ -335,14 +337,14 @@ public class PostsActivity extends ServerBaseActivity {
     }
 
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("posts")
                 .child(serverId)
                 .addChildEventListener(postListener);
     }
 
     @Override
-    protected void DestroyListeners() {
+    protected void DestroyOnStartListeners() {
         if(postListener != null) {
             databaseRef.removeEventListener(postListener);
         }

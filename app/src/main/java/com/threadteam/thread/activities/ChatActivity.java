@@ -437,7 +437,7 @@ public class ChatActivity extends ServerBaseActivity {
     }
 
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_username")
@@ -453,7 +453,7 @@ public class ChatActivity extends ServerBaseActivity {
     }
 
     @Override
-    protected void DestroyListeners() {
+    protected void DestroyOnStartListeners() {
         if(chatListener != null) {
             databaseRef.child("messages")
                        .child(serverId)
