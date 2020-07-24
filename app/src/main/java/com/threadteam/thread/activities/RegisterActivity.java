@@ -263,8 +263,15 @@ public class RegisterActivity extends AppCompatActivity {
                     user.set_aboutUsMessage(_aboutUsMessage);
                     user.set_statusMessage(_statusMessage);
                     user.set_token(_token);
+
+                    //ADD USER KEY
                     String UserID  = fAuth.getCurrentUser().getUid();
                     reff.child(UserID).setValue(user);
+
+                    //TURN ON NOTIFICATIONS
+                    reff.child(UserID).child("_notifications").child("_msg").setValue("on");
+                    reff.child(UserID).child("_notifications").child("_system").setValue("on");
+                    reff.child(UserID).child("_notifications").child("_post").setValue("on");
 
                     Toast.makeText(RegisterActivity.this, "Registration Successful", Toast.LENGTH_SHORT).show();
                     logHandler.printLogWithMessage("Registered Successfully");
