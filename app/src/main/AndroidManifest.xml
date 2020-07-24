@@ -6,9 +6,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/thread"
+        android:icon="@mipmap/thread_t"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/thread_round"
+        android:roundIcon="@mipmap/thread_t_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.MemberProfileActivity" />
