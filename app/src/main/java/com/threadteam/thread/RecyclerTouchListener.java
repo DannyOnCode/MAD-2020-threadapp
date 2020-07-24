@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.threadteam.thread.interfaces.RecyclerViewClickListener;
 
-// RECYCLER TOUCH LISTENER CLASS
-//
-// PROGRAMMER-IN-CHARGE:
-// EUGENE LONG, S10193060J
-//
-// DESCRIPTION
-// Handles onItemTouch events and acts similarly to
-// OnClickListener. Used for RecyclerViews.
+/**
+ * Handles onItemTouch events and acts similarly to
+ * OnClickListener. Used for RecyclerViews.
+ *
+ * @author Eugene Long
+ * @version 1.0
+ * @since 1.0
+ */
 
 public class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 

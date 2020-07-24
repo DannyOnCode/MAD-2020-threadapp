@@ -1,20 +1,20 @@
 package com.threadteam.thread;
 
-// LOG HANDLER CONVENIENCE CLASS
-//
-// PROGRAMMER-IN-CHARGE:
-// EUGENE LONG, S10193060J
-//
-// DESCRIPTION
-// Handles logging for the app
-// Logging can be toggled on/off here.
-// Contains default message functions/constants to standardise logs.
-
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DatabaseError;
+
+/**
+ * Handles logging for the app.
+ * Logging can be toggled on/off here.
+ * Contains default message functions/constants to standardise logs.
+ *
+ * @author Eugene Long
+ * @version 1.0
+ * @since 1.0
+ */
 
 public class LogHandler {
 
@@ -112,16 +112,13 @@ public class LogHandler {
         printLogWithMessage("Database Error! Error description follows: " + databaseError.getDetails());
     }
 
-    // NAME:                printDatabaseResultLog
-    // DESCRIPTION:         DEFAULT LOG FUNCTION FOR FIREBASE REALTIME DATABASE RESULTS
-    // INPUTS:
-    // proceedingCode:      CODE FOR DATA BEING CHECKED PROCEEDING "dataSnapshot".
-    //                      FOR EXAMPLE THE ".getKey()" PORTION OF "dataSnapshot.getKey() == null"
-    // valueName:           HUMAN READABLE NAME FOR WHAT THE VALUE BEING CHECKED IS. FOR EXAMPLE,
-    //                      "SERVER ID" OR "USERNAME"
-    // listenerName:        NAME OF THE LISTENER WHERE THE CHECK OCCURS. THIS IS TO HELP DEBUGGING.
-    // resultValue:         THE RESULT RETURNED BY FIREBASE AS A STRING.
-    // RETURN VALUE:        NULL
+    /**
+     * The default logging method for Firebase Realtime Database results.
+     * @param proceedingCode Code for data being checked proceeding "dataSnapshot", i.e ".getKey()"
+     * @param valueName Human readable name for what the value being checked is. i.e "Server Id"
+     * @param listenerName Name of the listener where the check occurs. To aid debugging
+     * @param resultValue The result returned by Firebase as a string.
+     */
 
     public void printDatabaseResultLog(@NonNull String proceedingCode, @NonNull String valueName, @NonNull String listenerName, @NonNull String resultValue) {
         printLogWithMessage("Database returned " + resultValue + " for dataSnapshot" + proceedingCode + " (" + valueName + ") in " + listenerName + "!");
