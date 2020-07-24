@@ -217,7 +217,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     /**
      * The default onPrepareOptionsMenu event for a basic activity.
-     * The current menu item's opacity is reduced as feedback that the user is on that current activity, if possible.
+     * The current menu item's opacity is highlighted as feedback that the user is on that current activity, if possible.
      * @see BaseActivity#toggleCurrentMenuItem(Boolean)
      */
 
@@ -485,34 +485,46 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
     }
 
-
-
-
     // PROTECTED CONVENIENCE METHODS
 
     /**
      * Toggles the current menu item's opacity.
-     * If enabled is true, opacity is set to high. Otherwise, it is set to low opacity (disabled)
+     * Uses toggleMenuItem.
+     * If enabled is true, opacity is set to low. Otherwise, it is set to high opacity.
+     * @param enabled Boolean specifying whether the opacity is high or low.
+     * @see BaseActivity#toggleMenuItem(ActionMenuItemView, Boolean) 
+     */
+
+    protected void toggleCurrentMenuItem(Boolean enabled) {
+        toggleMenuItem(CurrentMenuItem, enabled);
+    }
+
+    /**
+     * Toggles a menu item's opacity.
+     * If enabled is true, opacity is set to low. Otherwise, it is set to high opacity.
+     * @param menuItem The menu item to toggle opacity for
+     * @param enabled Boolean specifying whether the opacity is high or low
      */
 
     @SuppressLint("RestrictedApi")
-    protected void toggleCurrentMenuItem(Boolean enabled) {
-        if(CurrentMenuItem == null) {
+    protected void toggleMenuItem(ActionMenuItemView menuItem, Boolean enabled) {
+        if(menuItem == null) {
             logHandler.printLogWithMessage("Can't find current menu item for " + title + "! Cancelling icon update!");
             return;
         }
 
-        Drawable drawable = CurrentMenuItem.getItemData().getIcon();
+        Drawable drawable = menuItem.getItemData().getIcon();
 
         if(drawable == null) {
             logHandler.printLogWithMessage("Drawable for current menu item not found! Cancelling icon update!");
         } else {
             if(enabled) {
-                drawable.setColorFilter(null);
+
+                drawable.setColorFilter(Color.argb(50, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
             } else {
-                drawable.setColorFilter(Color.argb(40, 255, 255, 255), PorterDuff.Mode.MULTIPLY);
+                drawable.setColorFilter(null);
             }
-            CurrentMenuItem.setIcon(drawable);
+            menuItem.setIcon(drawable);
 
             logHandler.printLogWithMessage("Successfully toggled current menu item for " + title + " to " + enabled.toString());
         }
