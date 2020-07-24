@@ -400,14 +400,14 @@ public class MemberProfileActivity extends ServerBaseActivity {
     }
 
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("users")
                    .child(memberId)
                    .addValueEventListener(getMemberProfile);
     }
 
     @Override
-    protected void DestroyListeners() {
+    protected void DestroyOnStartListeners() {
         if(getMemberProfile != null) {
             databaseRef.child("users").child(memberId).removeEventListener(getMemberProfile);
         }

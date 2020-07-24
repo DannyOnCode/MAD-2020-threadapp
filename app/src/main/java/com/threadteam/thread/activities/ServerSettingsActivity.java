@@ -269,7 +269,7 @@ public class ServerSettingsActivity extends ServerBaseActivity {
     }
 
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("servers")
                    .child(serverId)
                    .addListenerForSingleValueEvent(retrieveServerDetails);
@@ -280,7 +280,7 @@ public class ServerSettingsActivity extends ServerBaseActivity {
     }
 
     @Override
-    protected void DestroyListeners() { }
+    protected void DestroyOnStartListeners() { }
 
     @Override
     protected int setCurrentMenuItemID() {

@@ -120,6 +120,12 @@ public abstract class MainBaseActivity extends BaseActivity {
     @Override
     protected void DoAdditionalSetupForFirebase() { }
 
+    @Override
+    protected void AttachOnCreateListeners() { }
+
+    @Override
+    protected void DestroyOnCreateListeners() { }
+
     /**
      * {@inheritDoc}
      * This implementation sets the bottom toolbar menu to the bottom_app_bar_menu menu resource by default.

@@ -38,74 +38,45 @@ import com.threadteam.thread.models.Post;
 
 import java.util.HashMap;
 
-// ADD POST ACTIVITY
-//
-// PROGRAMMER-IN-CHARGE:
-// DANNY CHAN, S10196363F
-//
-// DESCRIPTION
-// Allows users to create post one at a time
-//
-// NAVIGATION
-// PARENT: VIEW POST
-// CHILDREN: N/A
+/**
+ * This activity class handles the addition and creation of post.
+ *
+ * @author Danny Chan Yu Tian
+ * @version 2.0
+ * @since 2.0
+ */
 
 public class AddPostActivity extends ServerBaseActivity {
 
 
     // DATA STORE
-    //
-    // mImageUri:               STORE IMAGE URI FROM FILE IMAGE FOR UPLOADING TO FIREBASE.
-    // PICK_IMAGE_REQUEST       CONSTANT REQUEST TO IDENTIFY IMAGE REQUEST.
-
+    /** Stores immage URI from file image for uploading to firebase. */
     private Uri mImageUri;
+    /** Constant Request to Identify Image Request. */
     private static final int PICK_IMAGE_REQUEST = 1;
+    /** Store the username of the current user. */
     private String userName;
 
     // FIREBASE
-    //
-    // currentUser:             CURRENT USER FOR THE CURRENT SESSION.
-    // firebaseAuth:            FIREBASE AUTH INSTANCE FOR THE CURRENT SESSION.
-    // mDatabaseRef:            FIREBASE DATABASE REFERENCE FOR THE CURRENT SESSION.
-    // mStorageRef:             FIREBASE STORAGE REFERENCE FOR THE CURRENT SESSION.
-    // currentData:             VALUE EVENT LISTENER FOR RETRIEVING CURRENT DATA OF USER.
-
+    /** Firebase Storage reference for the current session. */
     private StorageReference mStorageRef;
 
 
     // VIEW OBJECTS
-    //
-    // mButtonChooseImage:      TRIGGERS PICKING IMAGE FROM DEVICE FILE.
-    // mCancelButton:           TRIGGERS RETURN TO PROFILE PAGE.
-    // mConfirmButton:          TRIGGERS UPLOAD TO FIREBASE WITH ALL NECESSARY INPUT DATA.
-    // mDisplayImage:           DISPLAYS PROFILE PICTURE.
-    // mUserNameEdit:           CONTAINS USERNAME DATA OF USER TO BE UPLOADED TO DATABASE.
-    // mStatusTitle:            CONTAINS Status/Title DATA OF USER TO BE UPLOADED TO DATABASE.
-    // mDescription:            CONTAINS ABOUT ME DESCRIPTION DATA OF USER TO BE UPLOADED TO DATABASE.
-    // mProgressBar:            DISPLAYS THE UPLOAD PROGRESS ONCE mConfirmButton HAS BEEN CLICKED.
-
+    /** Triggers picking image from device file. */
     private ImageView mChooseImage;
+    /** Triggers upload to firebase with all necessary input. */
     private Button mConfirmButton;
+    /** Displays post image of post. */
     private ImageView mDisplayImage;
+    /** Contains the title of the post to be uploaded to database. */
     private EditText mTitleEdit;
+    /** Contains the Message of the post to be uploaded to database. */
     private EditText mMessageEdit;
+    /** Displays the upload progress once mConfirmButton has been pressed. */
     private ProgressBar mProgressBar;
 
-    // INITIALISE LISTENERS
-    ValueEventListener userDataListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot dataSnapshot) {
-            userName = (String) dataSnapshot.child("_username").getValue();
-
-            logHandler.printDatabaseResultLog(".getValue()", "Current Username", "userDataListener", userName);
-        }
-
-        @Override
-        public void onCancelled(DatabaseError databaseError) {
-            logHandler.printDatabaseErrorLog(databaseError);
-        }
-    };
-
+    //DEFAULT SUPER METHODS
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,21 +112,7 @@ public class AddPostActivity extends ServerBaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
-        if(item.getItemId() == android.R.id.home) {
-            logHandler.printLogWithMessage("User tapped on Back Button!");
-
-            Intent goToPost = new Intent(currentActivity, PostsActivity.class);
-            PutExtrasForServerIntent(goToPost);
-            currentActivity.startActivity(goToPost);
-            logHandler.printActivityIntentLog("Posts");
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     // ABSTRACT OVERRIDE METHODS
     @Override
@@ -204,12 +161,28 @@ public class AddPostActivity extends ServerBaseActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        if(item.getItemId() == android.R.id.home) {
+            logHandler.printLogWithMessage("User tapped on Back Button!");
+
+            Intent goToPost = new Intent(currentActivity, PostsActivity.class);
+            PutExtrasForServerIntent(goToPost);
+            currentActivity.startActivity(goToPost);
+            logHandler.printActivityIntentLog("Posts");
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void SetupViewObjects() {
-        // INITIALISE FIREBASE
+        // Set Reference for Firebase Storage
         mStorageRef = FirebaseStorage.getInstance().getReference("posts");
 
-        // SETUP VIEW OBJECTS
         //Populate Buttons with Listeners
+        //Populate Choose Button
         mChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -217,7 +190,7 @@ public class AddPostActivity extends ServerBaseActivity {
             }
         });
 
-
+        //Populate Confirm Button
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -236,21 +209,43 @@ public class AddPostActivity extends ServerBaseActivity {
                     logHandler.printLogWithMessage("Input Title was: " + mTitleEdit.getText());
                 }
                 else{
-                    uploadUserData();
+                    uploadPostData();
                 }
             }
         });
     }
 
+
+    // INITIALISE LISTENERS
+    /**
+     * Retrieves the username of the current user.
+     *
+     *  Database Path:      root/users/(currentUser.getUid())/_username
+     *  Usage:              Single ValueEventListener
+     */
+    ValueEventListener userDataListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot dataSnapshot) {
+            userName = (String) dataSnapshot.child("_username").getValue();
+
+            logHandler.printDatabaseResultLog(".getValue()", "Current Username", "userDataListener", userName);
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+            logHandler.printDatabaseErrorLog(databaseError);
+        }
+    };
+
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
-                .addValueEventListener(userDataListener);
+                .addListenerForSingleValueEvent(userDataListener);
     }
 
     @Override
-    protected void DestroyListeners() {
+    protected void DestroyOnStartListeners() {
         if(userDataListener != null) {
             databaseRef.removeEventListener(userDataListener);
         }
@@ -263,7 +258,9 @@ public class AddPostActivity extends ServerBaseActivity {
 
     // ACTIVITY SPECIFIC METHODS
 
-    //Open Device File Explorer to search for image only
+    /**
+     *  Opens Device File Explorer to search for image ONLY
+     */
     private void openFileChooser(){
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -271,7 +268,12 @@ public class AddPostActivity extends ServerBaseActivity {
         startActivityForResult(intent,PICK_IMAGE_REQUEST);
     }
 
-    //Process selected image
+    /**
+     * Takes in image chosen through openFileChooser and processes selected image
+     * @param requestCode
+     * @param resultCode
+     * @param data Image Data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -290,15 +292,23 @@ public class AddPostActivity extends ServerBaseActivity {
 
         }
     }
-    //Get File Extensions e.g(.png , .jpg)
+
+    /**
+     * Gets the file extension of the image selected
+     * @param uri Takes in the Uri of image to find the extension
+     * @return a String with the file extension e.g(.png, .jpg)
+     */
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    //Upload UserData to Firebase Storage and Update RealTime Database
-    private void uploadUserData(){
+
+    /**
+     * Uploads the post data to firebase database
+     */
+    private void uploadPostData(){
         //Set Progressbar to visible
         mProgressBar.setVisibility(View.VISIBLE);
         if(mImageUri != null){
@@ -324,8 +334,9 @@ public class AddPostActivity extends ServerBaseActivity {
                     if (task.isSuccessful())
                     {
                         Uri downloadUri = task.getResult();
-
                         String senderID = currentUser.getUid();
+
+                        //Creation and assigning of data into object
                         Post post = new Post();
                         post.set_imageLink(downloadUri.toString());
                         post.set_title(mTitleEdit.getText().toString().trim());
@@ -334,9 +345,10 @@ public class AddPostActivity extends ServerBaseActivity {
                         post.set_senderUsername(userName);
                         post.setTimestampMillis(System.currentTimeMillis());
 
-                        logHandler.printLogWithMessage("User submitted username: " + mTitleEdit.getText().toString().trim());
-                        logHandler.printLogWithMessage("User submitted status/title: " + mMessageEdit.getText().toString().trim());
+                        logHandler.printLogWithMessage("User submitted Title: " + mTitleEdit.getText().toString().trim());
+                        logHandler.printLogWithMessage("User submitted Message: " + mMessageEdit.getText().toString().trim());
 
+                        //Uploading to firebase through HashMap
                         HashMap<String, Object> postDescriptions = new HashMap<>();
                         postDescriptions.put("_title", post.get_title());
                         postDescriptions.put("_senderUID", post.get_senderID());
@@ -348,9 +360,11 @@ public class AddPostActivity extends ServerBaseActivity {
                         databaseRef.child("posts").child(serverId).push().setValue(postDescriptions,new DatabaseReference.CompletionListener() {
                             @Override
                             public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                startActivity(new Intent(AddPostActivity.this, ViewServersActivity.class));
+                                Intent goToPost = new Intent(AddPostActivity.this, PostsActivity.class);
+                                PutExtrasForServerIntent(goToPost);
+                                currentActivity.startActivity(goToPost);
                                 logHandler.printLogWithMessage("Upload Post successful");
-                                logHandler.printActivityIntentLog("View Server Activity");
+                                logHandler.printActivityIntentLog("Post Activity");
                                 Toast.makeText(AddPostActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
                                 mProgressBar.setVisibility(View.INVISIBLE);
                             }
@@ -362,7 +376,7 @@ public class AddPostActivity extends ServerBaseActivity {
 
                     } else
                     {
-                        logHandler.printLogWithMessage("Upload failed at uploadUserData: " + task.getException().getMessage());
+                        logHandler.printLogWithMessage("Upload failed at uploadPostData: " + task.getException().getMessage());
                         Toast.makeText(AddPostActivity.this, "upload failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -370,6 +384,8 @@ public class AddPostActivity extends ServerBaseActivity {
             //When no image has been given
         }else{
             String senderID = currentUser.getUid();
+
+            //Creation and assigning of data into object
             Post post = new Post();
             post.set_title(mTitleEdit.getText().toString().trim());
             post.set_message(mMessageEdit.getText().toString().trim());
@@ -377,9 +393,10 @@ public class AddPostActivity extends ServerBaseActivity {
             post.set_senderUsername(userName);
             post.setTimestampMillis(System.currentTimeMillis());
 
-            logHandler.printLogWithMessage("User submitted username: " + mTitleEdit.getText().toString().trim());
-            logHandler.printLogWithMessage("User submitted status/title: " + mMessageEdit.getText().toString().trim());
+            logHandler.printLogWithMessage("User submitted Title: " + mTitleEdit.getText().toString().trim());
+            logHandler.printLogWithMessage("User submitted Message: " + mMessageEdit.getText().toString().trim());
 
+            //Uploading to firebase through HashMap
             HashMap<String, Object> postDescriptions = new HashMap<>();
             postDescriptions.put("_title", post.get_title());
             postDescriptions.put("_senderUID", post.get_senderID());
@@ -390,9 +407,11 @@ public class AddPostActivity extends ServerBaseActivity {
             databaseRef.child("posts").child(serverId).push().setValue(postDescriptions,new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    startActivity(new Intent(AddPostActivity.this, ViewServersActivity.class));
-                    logHandler.printLogWithMessage("Upload Userdata successful");
-                    logHandler.printActivityIntentLog("View Server Activity");
+                    Intent goToPost = new Intent(AddPostActivity.this, PostsActivity.class);
+                    PutExtrasForServerIntent(goToPost);
+                    currentActivity.startActivity(goToPost);
+                    logHandler.printLogWithMessage("Upload Post Data successful");
+                    logHandler.printActivityIntentLog("Post Activity");
                     Toast.makeText(AddPostActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
                     mProgressBar.setVisibility(View.INVISIBLE);
                 }

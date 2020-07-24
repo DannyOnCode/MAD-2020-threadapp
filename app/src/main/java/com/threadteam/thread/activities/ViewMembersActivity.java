@@ -429,7 +429,7 @@ public class ViewMembersActivity extends ServerBaseActivity {
     }
 
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("members")
                    .child(serverId)
                    .addChildEventListener(memberListener);
@@ -440,7 +440,7 @@ public class ViewMembersActivity extends ServerBaseActivity {
     }
 
     @Override
-    protected void DestroyListeners() {
+    protected void DestroyOnStartListeners() {
         if(memberListener != null) {
             databaseRef.child("members").child(serverId).removeEventListener(memberListener);
         }

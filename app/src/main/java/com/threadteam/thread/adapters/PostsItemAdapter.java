@@ -78,9 +78,6 @@ public class PostsItemAdapter extends RecyclerView.Adapter<PostsItemViewHolder> 
                     .load(imageLink)
                     .into(holder.PostImageView);
         }
-        else{
-            holder.PostImageView.setImageResource(R.drawable.profilepictureempty);
-        }
 
         holder.PostTitleTextView.setText(title);
         holder.PostDescTextView.setText(message);

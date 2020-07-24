@@ -323,14 +323,14 @@ public class ViewProfileActivity extends MainBaseActivity {
     }
 
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .addValueEventListener(getUserData);
     }
 
     @Override
-    protected void DestroyListeners() {
+    protected void DestroyOnStartListeners() {
         if(getUserData != null) {
             databaseRef.removeEventListener(getUserData);
         }

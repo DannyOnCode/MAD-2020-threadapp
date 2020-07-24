@@ -195,7 +195,7 @@ public class SetNotificationsActivity extends MainBaseActivity {
     }
 
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_notifications")
@@ -203,7 +203,7 @@ public class SetNotificationsActivity extends MainBaseActivity {
     }
 
     @Override
-    protected void DestroyListeners() {
+    protected void DestroyOnStartListeners() {
         if(getNotificationSettings != null) {
             databaseRef.removeEventListener(getNotificationSettings);
         }

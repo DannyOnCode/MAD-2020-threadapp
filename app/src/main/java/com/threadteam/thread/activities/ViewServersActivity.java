@@ -323,7 +323,7 @@ public class ViewServersActivity extends MainBaseActivity {
     }
 
     @Override
-    protected void AttachListeners() {
+    protected void AttachOnStartListeners() {
         databaseRef.child("users")
                 .child(currentUser.getUid())
                 .child("_subscribedServers")
@@ -331,7 +331,7 @@ public class ViewServersActivity extends MainBaseActivity {
     }
 
     @Override
-    protected void DestroyListeners() {
+    protected void DestroyOnStartListeners() {
         if (subscriptionListener != null) {
             databaseRef.child("users")
                        .child(currentUser.getUid())

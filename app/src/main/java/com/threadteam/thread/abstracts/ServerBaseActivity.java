@@ -210,6 +210,12 @@ public abstract class ServerBaseActivity extends BaseActivity {
     @Override
     protected void DoAdditionalSetupForFirebase() { }
 
+    @Override
+    protected void AttachOnCreateListeners() { }
+
+    @Override
+    protected void DestroyOnCreateListeners() { }
+
     /**
      * {@inheritDoc}
      * This implementation sets the bottom toolbar menu to the server_menu menu resource by default.
