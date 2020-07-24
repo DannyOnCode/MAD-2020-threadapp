@@ -221,7 +221,6 @@ public class AddPostActivity extends ServerBaseActivity {
             @Override
             public void onClick(View v) {
                 mNoImageText.setVisibility(View.GONE);
-                mDisplayImage.setVisibility(View.VISIBLE);
                 openFileChooser();
             }
         });
@@ -328,6 +327,7 @@ public class AddPostActivity extends ServerBaseActivity {
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getData() != null){
             mImageUri = data.getData();
+            mDisplayImage.setVisibility(View.VISIBLE);
             Picasso.get()
                     .load(mImageUri)
                     .fit()
