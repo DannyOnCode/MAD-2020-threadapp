@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.Continuation;
@@ -73,6 +74,8 @@ public class AddPostActivity extends ServerBaseActivity {
     private Button mConfirmButton;
     /** Displays post image of post. */
     private ImageView mDisplayImage;
+    /** Displays no image text view. */
+    private TextView mNoImageText;
     /** Contains the title of the post to be uploaded to database. */
     private EditText mTitleEdit;
     /** Contains the Message of the post to be uploaded to database. */
@@ -167,6 +170,7 @@ public class AddPostActivity extends ServerBaseActivity {
         mClearImageButton = (Button) findViewById(R.id.clearImageButton);
         mDisplayImage = (ImageView) findViewById(R.id.postImageView);
         mConfirmButton = (Button) findViewById(R.id.confirmPostButton);
+        mNoImageText = (TextView) findViewById(R.id.noImageTextView);
         mTitleEdit = (EditText) findViewById(R.id.editPostName);
         mMessageEdit = (EditText) findViewById(R.id.editMessage);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBarAddPost);
@@ -205,6 +209,8 @@ public class AddPostActivity extends ServerBaseActivity {
             @Override
             public void onClick(View v) {
                 openFileChooser();
+                mNoImageText.setVisibility(View.GONE);
+                mDisplayImage.setVisibility(View.VISIBLE);
                 mChangeImageButton.setVisibility(View.VISIBLE);
                 mChooseImageButton.setVisibility(View.GONE);
             }
@@ -214,6 +220,8 @@ public class AddPostActivity extends ServerBaseActivity {
         mChangeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mNoImageText.setVisibility(View.GONE);
+                mDisplayImage.setVisibility(View.VISIBLE);
                 openFileChooser();
             }
         });
@@ -223,6 +231,8 @@ public class AddPostActivity extends ServerBaseActivity {
             @Override
             public void onClick(View v) {
                 mDisplayImage.setImageDrawable(getResources().getDrawable(R.drawable.imageemptyplaceholder));
+                mDisplayImage.setVisibility(View.GONE);
+                mNoImageText.setVisibility(View.VISIBLE);
                 mChooseImageButton.setVisibility(View.VISIBLE);
                 mChangeImageButton.setVisibility(View.GONE);
             }
