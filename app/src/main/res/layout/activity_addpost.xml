@@ -9,7 +9,9 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -31,103 +33,188 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/addPostNavbarInclude">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/postItemConstraintLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent">
 
-                    <Button
-                        android:id="@+id/confirmPostButton"
-                        style="@style/Widget.MaterialComponents.Button"
-                        android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/textView5"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:layout_marginBottom="16dp"
-                        android:insetTop="0dp"
-                        android:insetBottom="0dp"
-                        android:text="Confirm"
-                        android:textColor="#FFFFFF"
-                        app:backgroundTint="@color/colorAccent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/editMessage"
-                        app:layout_constraintStart_toStartOf="@+id/editMessage"
-                        app:layout_constraintTop_toBottomOf="@+id/editMessage" />
+                        android:fontFamily="sans-serif-medium"
+                        android:paddingLeft="3dp"
+                        android:text="Create New Post"
+                        android:textColor="@color/colorAccent"
+                        android:textSize="18sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
-                    <EditText
-                        android:id="@+id/editMessage"
-                        android:layout_width="0dp"
+                    <TextView
+                        android:id="@+id/textView8"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@android:color/background_light"
-                        android:ems="10"
-                        android:gravity="top|left"
-                        android:hint="Your message here!"
-                        android:inputType="none|textMultiLine"
-                        android:lines="8"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        android:paddingLeft="3dp"
+                        android:text="TITLE"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textColor="@android:color/tertiary_text_light"
+                        android:textSize="10sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/containerForImage" />
+                        app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/containerForImage"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
+                    <TextView
+                        android:id="@+id/textView12"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@android:color/darker_gray"
-                        app:layout_constraintEnd_toEndOf="parent"
+                        android:paddingLeft="3dp"
+                        android:text="MESSAGE"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textColor="@android:color/tertiary_text_light"
+                        android:textSize="10sp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/editPostName">
+                        app:layout_constraintTop_toBottomOf="@+id/changeImageButton" />
 
-                        <TextView
-                            android:id="@+id/textView3"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginEnd="8dp"
-                            android:background="@android:color/darker_gray"
-                            android:text="IMAGE"
-                            android:textAlignment="center"
-                            android:textStyle="normal|bold"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toTopOf="parent" />
-
-                        <ImageView
-                            android:id="@+id/postImageView"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="1dp"
-                            android:layout_marginEnd="1dp"
-                            android:adjustViewBounds="true"
-                            android:scaleType="fitXY"
-                            android:src="@drawable/addpostimage"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@+id/textView3" />
-                    </androidx.constraintlayout.widget.ConstraintLayout>
+                    <TextView
+                        android:id="@+id/textView11"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:paddingLeft="3dp"
+                        android:text="IMAGE"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                        android:textColor="@android:color/tertiary_text_light"
+                        android:textSize="10sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/editPostName" />
 
                     <EditText
                         android:id="@+id/editPostName"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
                         android:ems="10"
-                        android:hint="Your Title here!"
-                        android:inputType="textPersonName"
-                        android:textAlignment="center"
+                        android:hint="A Cool Title"
+                        android:inputType="text"
+                        android:singleLine="true"
                         android:textStyle="italic"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+                    <EditText
+                        android:id="@+id/editMessage"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:hint="say something here..."
+                        android:inputType="textMultiLine|text"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView12" />
+
+                    <ImageView
+                        android:id="@+id/postImageView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="4dp"
+                        android:layout_marginEnd="16dp"
+                        android:adjustViewBounds="true"
+                        android:background="#FFFFFF"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/addpostimage"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/textView11"
+                        app:srcCompat="@drawable/thread_t_foreground" />
+
+                    <Button
+                        android:id="@+id/addImageButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="16dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Add Image"
+                        app:backgroundTint="@color/colorAccent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/postImageView" />
+
+                    <Button
+                        android:id="@+id/confirmPostButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Confirm"
+                        app:backgroundTint="@color/colorAccent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/editMessage"
+                        app:layout_constraintVertical_bias="0.0" />
+
+                    <Button
+                        android:id="@+id/changeImageButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Change"
+                        android:visibility="visible"
+                        app:backgroundTint="@color/colorAccent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/addImageButton"
+                        app:layout_constraintWidth_percent="0.44" />
+
+                    <Button
+                        android:id="@+id/clearImageButton"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        android:text="Clear"
+                        android:textColor="@android:color/holo_red_dark"
+                        app:backgroundTint="#FFFFFF"
+                        app:layout_constraintBottom_toBottomOf="@+id/changeImageButton"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="1.0"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="@+id/changeImageButton"
+                        app:layout_constraintWidth_percent="0.45" />
 
                     <ProgressBar
                         android:id="@+id/progressBarAddPost"
@@ -140,8 +227,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
