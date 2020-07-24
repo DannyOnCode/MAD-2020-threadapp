@@ -55,6 +55,9 @@ public class SetNotificationsActivity extends MainBaseActivity {
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             if(dataSnapshot.getValue() == null) {
                 logHandler.printDatabaseResultLog(".getValue()", "Notifications Values", "getNotificationSettings", "null");
+                reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_msg").setValue("on");
+                reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_system").setValue("on");
+                reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_post").setValue("on");
                 return;
             }
 
@@ -63,6 +66,25 @@ public class SetNotificationsActivity extends MainBaseActivity {
             String systemNotification = (String) dataSnapshot.child("_system").getValue();
 
             String  postNotification = (String) dataSnapshot.child("_post").getValue();
+
+             if(messageNotification == null) {
+                logHandler.printDatabaseResultLog(".child(\"_msg\").getValue()", "messageNotification", "getNotificationSettings", "null");
+                reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_msg").setValue("on");
+
+                return;
+            }
+             else if(systemNotification == null) {
+                 logHandler.printDatabaseResultLog(".child(\"_system\").getValue()", "systemNotification", "getNotificationSettings", "null");
+                 reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_system").setValue("on");
+                 return;
+             }
+             else if(postNotification == null) {
+                 logHandler.printDatabaseResultLog(".child(\"_post\").getValue()", "postNotification", "getNotificationSettings", "null");
+                 reff.child(fAuth.getCurrentUser().getUid()).child("_notifications").child("_post").setValue("on");
+
+                 return;
+             }
+
 
             if(messageNotification.equals("on")){
                 mMsgSwitch.setChecked(true);
