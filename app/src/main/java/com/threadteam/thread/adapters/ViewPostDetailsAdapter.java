@@ -71,7 +71,7 @@ public class ViewPostDetailsAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch(viewType){
             case 0:
-                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_partial_posts,parent,false);
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_partial_postdetail,parent,false);
                 return new PostsItemViewHolder(view);
             case 1:
                 View view1 = LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_partial_comment_divider,parent,false);

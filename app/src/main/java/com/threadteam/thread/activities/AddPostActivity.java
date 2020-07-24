@@ -64,7 +64,11 @@ public class AddPostActivity extends ServerBaseActivity {
 
     // VIEW OBJECTS
     /** Triggers picking image from device file. */
-    private ImageView mChooseImage;
+    private Button mChooseImageButton;
+    /** Triggers picking image from device file. */
+    private Button mChangeImageButton;
+    /** Triggers clearing image from device file. */
+    private Button mClearImageButton;
     /** Triggers upload to firebase with all necessary input. */
     private Button mConfirmButton;
     /** Displays post image of post. */
@@ -158,7 +162,9 @@ public class AddPostActivity extends ServerBaseActivity {
 
     @Override
     protected void BindViewObjects() {
-        mChooseImage = (ImageView) findViewById(R.id.postImageView);
+        mChooseImageButton = (Button) findViewById(R.id.addImageButton);
+        mChangeImageButton = (Button) findViewById(R.id.changeImageButton);
+        mClearImageButton = (Button) findViewById(R.id.clearImageButton);
         mDisplayImage = (ImageView) findViewById(R.id.postImageView);
         mConfirmButton = (Button) findViewById(R.id.confirmPostButton);
         mTitleEdit = (EditText) findViewById(R.id.editPostName);
@@ -187,15 +193,40 @@ public class AddPostActivity extends ServerBaseActivity {
         // Set Reference for Firebase Storage
         mStorageRef = FirebaseStorage.getInstance().getReference("posts");
 
+        //Set Initial button to gone
+        mChangeImageButton.setVisibility(View.GONE);
+
+        //Set Initial Image to be thread Logo
+        mDisplayImage.setImageDrawable(getResources().getDrawable(R.drawable.thread_t_foreground));
+
         //Populate Buttons with Listeners
-        //Populate Choose Button
-        mChooseImage.setOnClickListener(new View.OnClickListener() {
+        //Populate Choose Image Button
+        mChooseImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openFileChooser();
+                mChangeImageButton.setVisibility(View.VISIBLE);
+                mChooseImageButton.setVisibility(View.GONE);
+            }
+        });
+
+        //Populate Change Image Button
+        mChangeImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openFileChooser();
             }
         });
 
+        //Populate Clear Image Button
+        mClearImageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mDisplayImage.setImageDrawable(getResources().getDrawable(R.drawable.thread_t_foreground));
+                mChooseImageButton.setVisibility(View.VISIBLE);
+                mChangeImageButton.setVisibility(View.GONE);
+            }
+        });
         //Populate Confirm Button
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -346,7 +377,35 @@ public class AddPostActivity extends ServerBaseActivity {
                         Post post = new Post();
                         post.set_imageLink(downloadUri.toString());
                         post.set_title(mTitleEdit.getText().toString().trim());
-                        post.set_message(mMessageEdit.getText().toString().trim());
+                        String postMessage = mMessageEdit.getText().toString();
+
+                        // Stop newline spamming by doing some formatting
+                        String[] messageLines = postMessage.split("\n");
+                        StringBuilder formattedDescription = new StringBuilder();
+                        int previousNewlines = 0;
+                        for(String line: messageLines) {
+                            String trimmedLine = line.trim();
+                            if(previousNewlines > 2 && trimmedLine.length() == 0) {
+                                continue;
+                            } else if(trimmedLine.length() == 0) {
+                                previousNewlines += 1;
+                            } else {
+                                previousNewlines = 0;
+                            }
+                            formattedDescription.append(trimmedLine).append("\n");
+                        }
+
+                        // do a final trim
+                        formattedDescription = new StringBuilder(formattedDescription.toString().trim());
+                        logHandler.printLogWithMessage("User submitted comment: " + postMessage + " and was it was formatted as: " + formattedDescription.toString());
+
+                        if(formattedDescription.length() > 0) {
+                            post.set_message(formattedDescription.toString());
+                        } else {
+                            post.set_message("No Description");
+                            logHandler.printLogWithMessage("No description was added because there was no text after formatting!");
+                        }
+
                         post.set_senderID(senderID);
                         post.set_senderUsername(userName);
                         post.setTimestampMillis(System.currentTimeMillis());
