@@ -4,9 +4,21 @@ codeveloped by Eugene Long (S10193060J), Danny Chan (S10196363F) and Mohammad Th
 
 Welcome to our Application [THREAD]
 
-THREAD is a social application made to connect you to the world!
-With server functions you will be able to speak to not just one but many! All At Once.
-Customize your avatar and earn your level as you chat (to be implemented)
+*An assignment for partial fulfillment of the coursework of Mobile Applications Development of AY2019/20*
+
+Feeling sociable? Want to tell the world how you feel? Connect yourself with the rest of the world?
+Thread. is most likely what you are searching for! Our goal is to make you feel connected to the world and
+also to make you. Feel proud of being in a community you are in! While doing all those, rank yourself up as you chat
+with our built-in leveling system and show off to all your friends just how awesome you are!
+
+Why are you still reading this? Jump right in to experience it for yourself. After all, this is a social app
+for you to talk to us!
+
+Some features that we know is needed are implemented, Registering, Loggin, Profile, Profile Editing, Chat function,
+Post Function, Server Settings, Server Creation, Notification, Server Titles, Server Levels!
+
+With all that, I hope you will enjoy our application and help you bring the people you wish to know ever so closer to you!
+
 
 -----------------------------------------------------------------------------------------------------
 Through this application we have used Firebase Realtime Database

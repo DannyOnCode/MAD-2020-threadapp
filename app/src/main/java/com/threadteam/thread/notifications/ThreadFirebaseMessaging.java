@@ -61,10 +61,10 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
     }
 
     /**
-     * Sets Contents into Notification for device running on Android 8/Oreo and above
+     * This function sends the notification to user's device if it is running Android 8/Oreo and above
      * @param title
      * @param messageBody
-     * */
+     */
     private void sendOreoNotification(String title, String messageBody){
         Intent intent = new Intent(this, ViewServersActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -80,7 +80,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
 
     }
 
-    /** Sets Contents into Notification for device running on Android 7/Nougat and below
+    /** This function sends the notification to user's device if it is running  Android 7/Nougat and below
      * @param title
      * @param messageBody
      * */
@@ -103,7 +103,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
         noti.notify(0, builder.build());
     }
 
-    /** Checks if App is in foreground of device
+    /** This function checks if the App is in foreground of user's device
      * @param context
      * */
     public static boolean isAppForeground(Context context) {

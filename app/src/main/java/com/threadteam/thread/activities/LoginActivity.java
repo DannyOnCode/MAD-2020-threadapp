@@ -53,8 +53,9 @@ public class LoginActivity extends AppCompatActivity {
 
     // FIREBASE
     /** Firebase Authentication instance for the current session. */
-    /** Firebase Database Reference for the current session. */
     private FirebaseAuth fAuth;
+
+    /** Firebase Database Reference for the current session. */
     private DatabaseReference reff, databaseRef;
 
     // VIEW OBJECTS

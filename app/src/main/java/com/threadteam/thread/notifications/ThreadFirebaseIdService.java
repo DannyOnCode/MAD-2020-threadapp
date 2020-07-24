@@ -23,6 +23,9 @@ public class ThreadFirebaseIdService extends FirebaseInstanceIdService {
 
     private LogHandler logHandler = new LogHandler("Token Activity");
 
+    /**
+     * This function gets the generated token of User's device
+     */
     @Override
     public void onTokenRefresh() {
         super.onTokenRefresh();
@@ -36,6 +39,10 @@ public class ThreadFirebaseIdService extends FirebaseInstanceIdService {
 
     }
 
+    /**
+     * This function updates the token in the database for the user
+     * @param refreshToken
+     */
     private void updateToken(String refreshToken) {
         String UserID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("users");
