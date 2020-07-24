@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ProfileAdapter;
 import com.threadteam.thread.abstracts.MainBaseActivity;
+import com.threadteam.thread.adapters.ViewPostDetailsAdapter;
 import com.threadteam.thread.models.Server;
 import com.threadteam.thread.models.User;
 
@@ -28,29 +29,35 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * This activity class handles the viewing of a post and commenting on the post
+ *
+ * @author Danny Chan Yu Tian
+ * @version 2.0
+ * @since 1.0
+ */
+
 public class ViewProfileActivity extends MainBaseActivity {
 
     // DATA STORE
-    //
-    // adapter:                 ADAPTER FOR PROFILE RECYCLER VIEW.
-    // memberId:                CONTAINS THE ID OF THE MEMBER TO DISPLAY THE PROFILE OF
-
+    /** Adapter object for ProfileRecyclerView. */
     private ProfileAdapter adapter;
 
     // VIEW OBJECTS
-    //
-    // ProfileRecyclerView:     DISPLAYS PROFILE DETAILS FOR SERVER MEMBER. USES adapter AS ITS ADAPTER.
-
+    /**
+     * Displays profile details and servers of the user.
+     * Uses ProfileAdapter as its adapter.
+     * @see ProfileAdapter
+     */
     private RecyclerView ProfileRecyclerView;
 
     // INITIALISE LISTENERS
-
-    // getServerDetails:    GETS AND ADDS A SINGLE SERVER TO adapter. SHOULD BE CALLED AS A SingleValueEvent FROM subscriptionListener.
-    //                      CORRECT INVOCATION CODE: databaseRef.child("servers")
-    //                                                          .child(serverId)
-    //                                                          .addValueEventListener(getServerDetails)
-    //                      SHOULD NOT BE USED INDEPENDENTLY.
-
+    /**
+     *  Retrieves the real-time details of a server for a server id and stores it in the adapter.
+     *
+     *  Database Path:      root/servers/(serverId)
+     *  Usage:              ValueEventListener
+     */
     final ValueEventListener getServerDetails = new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -110,17 +117,17 @@ public class ViewProfileActivity extends MainBaseActivity {
         }
     };
 
-    // getMemberProfile:    USED TO RETRIEVE USER DATA
-    //                      CORRECT INVOCATION CODE: databaseRef.child("users")
-    //                                                          .child(currentUserID)
-    //                                                          .addValueEventListener(getMemberProfile)
-    //                      SHOULD NOT BE USED INDEPENDENTLY.
-
+    /**
+     *  Retrieves the member's user data and stores it in the adapter.
+     *
+     *  Database Path:      root/users/(memberID)
+     *  Usage:              ValueEventListener
+     */
     ValueEventListener getUserData = new ValueEventListener() {
         @Override
         public void onDataChange(DataSnapshot dataSnapshot) {
             if(dataSnapshot.getValue() == null) {
-                logHandler.printDatabaseResultLog(".getValue()", "User Values", "getMemberProfile", "null");
+                logHandler.printDatabaseResultLog(".getValue()", "User Values", "getUserData", "null");
                 return;
             }
 
@@ -133,31 +140,31 @@ public class ViewProfileActivity extends MainBaseActivity {
 
 
             if(id == null) {
-                logHandler.printDatabaseResultLog(".getKey()", "User ID", "getMemberProfile", "null");
+                logHandler.printDatabaseResultLog(".getKey()", "User ID", "getUserData", "null");
                 return;
             }
             else if(username == null) {
-                logHandler.printDatabaseResultLog(".child(\"_username\").getValue()", "Username", "getMemberProfile", "null");
+                logHandler.printDatabaseResultLog(".child(\"_username\").getValue()", "Username", "getUserData", "null");
                 return;
             }
             else if(aboutUsMsg == null) {
-                logHandler.printDatabaseResultLog(".child(\"_aboutUsMessage\").getValue()", "About Us Message", "getMemberProfile", "null");
+                logHandler.printDatabaseResultLog(".child(\"_aboutUsMessage\").getValue()", "About Us Message", "getUserData", "null");
                 return;
             }
             else if(statusMsg == null) {
-                logHandler.printDatabaseResultLog(".child(\"_statusMessage\").getValue()", "Status Message", "getMemberProfile", "null");
+                logHandler.printDatabaseResultLog(".child(\"_statusMessage\").getValue()", "Status Message", "getUserData", "null");
                 return;
             }
             else if(profileImageURL == null) {
-                logHandler.printDatabaseResultLog(".child(\"_profileImageURL\").getValue()", "Profile Image URL", "getMemberProfile", "null");
+                logHandler.printDatabaseResultLog(".child(\"_profileImageURL\").getValue()", "Profile Image URL", "getUserData", "null");
             }
 
             logHandler.printDatabaseResultLog(".getKey()", "User ID", "addUserOnce", id);
-            logHandler.printDatabaseResultLog(".child(\"_username\").getValue()", "Username", "getMemberProfile", username);
-            logHandler.printDatabaseResultLog(".child(\"_aboutUsMessage\").getValue()", "About Us Message", "getMemberProfile", aboutUsMsg);
-            logHandler.printDatabaseResultLog(".child(\"_statusMessage\").getValue()", "Status Message", "getMemberProfile", statusMsg);
+            logHandler.printDatabaseResultLog(".child(\"_username\").getValue()", "Username", "getUserData", username);
+            logHandler.printDatabaseResultLog(".child(\"_aboutUsMessage\").getValue()", "About Us Message", "getUserData", aboutUsMsg);
+            logHandler.printDatabaseResultLog(".child(\"_statusMessage\").getValue()", "Status Message", "getUserData", statusMsg);
             if (profileImageURL != null) {
-                logHandler.printDatabaseResultLog(".child(\"_profileImageURL\").getValue()", "Profile Image URL", "getMemberProfile", profileImageURL);
+                logHandler.printDatabaseResultLog(".child(\"_profileImageURL\").getValue()", "Profile Image URL", "getUserData", profileImageURL);
             }
 
             List<String> servers = new ArrayList<>();

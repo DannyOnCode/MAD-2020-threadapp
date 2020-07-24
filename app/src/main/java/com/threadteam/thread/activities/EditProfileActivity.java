@@ -106,7 +106,6 @@ public class EditProfileActivity extends MainBaseActivity {
             mUserNameEdit.setText(initialUserName);
             mStatusTitle.setText(initialStatusMessage);
             mDescription.setText(initialAboutMeMessage);
-
         }
 
         @Override
@@ -116,17 +115,12 @@ public class EditProfileActivity extends MainBaseActivity {
         }
     };
 
+    //DEFAULT SUPER METHODS
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // Input all current User data
-
-    }
+    protected void onCreate(@Nullable Bundle savedInstanceState) { super.onCreate(savedInstanceState); }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-    }
+    protected void onStart() { super.onStart(); }
 
     @Override
     protected void onResume() {
@@ -189,8 +183,10 @@ public class EditProfileActivity extends MainBaseActivity {
     protected void SetupViewObjects() {
         // SETUP VIEW OBJECTS
 
+        // INITIALISE FIREBASE STORAGE
         mStorageRef = FirebaseStorage.getInstance().getReference("users");
-        //Populate Buttons with Listeners
+
+        //Populate Choose Image Buttons with Listener
         mButtonChooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,6 +194,7 @@ public class EditProfileActivity extends MainBaseActivity {
             }
         });
 
+        //Populate Confirm Button with Listener
         mConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -221,6 +218,7 @@ public class EditProfileActivity extends MainBaseActivity {
             }
         });
 
+        //Populate Cancel Button with Listener
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -257,8 +255,10 @@ public class EditProfileActivity extends MainBaseActivity {
     }
 
 
-    // CLASS METHODS
-    //Open Device File Explorer to search for image only
+    // ACTIVITY SPECIFIC METHODS
+    /**
+     *  Opens Device File Explorer to search for image ONLY
+     */
     private void openFileChooser(){
         Intent intent = new Intent();
         intent.setType("image/*");
@@ -267,7 +267,12 @@ public class EditProfileActivity extends MainBaseActivity {
     }
 
 
-    //Process selected image
+    /**
+     * Takes in image chosen through openFileChooser and processes selected image
+     * @param requestCode
+     * @param resultCode
+     * @param data Image Data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -286,14 +291,21 @@ public class EditProfileActivity extends MainBaseActivity {
 
         }
     }
-    //Get File Extensions e.g(.png , .jpg)
+
+    /**
+     * Gets the file extension of the image selected
+     * @param uri Takes in the Uri of image to find the extension
+     * @return a String with the file extension e.g(.png, .jpg)
+     */
     private String getFileExtension(Uri uri){
         ContentResolver cR = getContentResolver();
         MimeTypeMap mime = MimeTypeMap.getSingleton();
         return mime.getExtensionFromMimeType(cR.getType(uri));
     }
 
-    //Upload UserData to Firebase Storage and Update RealTime Database
+    /**
+     * Uploads the post data to firebase database
+     */
     private void uploadUserData(){
         if(mImageUri != null){
             final StorageReference fileReference = mStorageRef.child(System.currentTimeMillis()
@@ -397,7 +409,6 @@ public class EditProfileActivity extends MainBaseActivity {
         }
     }
 
-    // ACTIVITY SPECIFIC METHODS
 
     private void returnToViewProfile() {
         Intent goToViewMembers = new Intent(currentActivity, ViewProfileActivity.class);

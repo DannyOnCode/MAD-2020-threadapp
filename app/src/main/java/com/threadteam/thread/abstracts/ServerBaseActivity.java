@@ -303,6 +303,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
                 databaseRef.child("members").child(_serverId).setValue(null);
                 databaseRef.child("titles").child(_serverId).setValue(null);
                 databaseRef.child("posts").child(_serverId).setValue(null);
+                databaseRef.child("postmessages").child(_serverId).setValue(null);
 
                 // DELETE SERVER LAST BECAUSE OWNER ID IS REQUIRED FOR RULES
                 databaseRef.child("servers").child(_serverId).setValue(null);

@@ -306,13 +306,17 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
             int level = Progression.ConvertExpToLevel(userExp);
             int stage = Progression.ConvertLevelToStage(level);
             Integer colorInt = Progression.GetDefaultColorIntForStage(stage);
-            String title;
-            if(titleData.size() > 0 && !titleData.get(stage).equals("")) {
-                title = titleData.get(stage);
-            } else {
+            String title = "";
+            if(titleData != null){
+                if(titleData.size() > 0 && !titleData.get(stage).equals("")) {
+                    title = titleData.get(stage);
+                } else {
+                    title = Progression.GetDefaultTitleForStage(stage);
+                }
+            }
+            else{
                 title = Progression.GetDefaultTitleForStage(stage);
             }
-
             postMessage.set_level(String.valueOf(level));
             postMessage.set_title(title);
             postMessage.set_displayColour(colorInt);
@@ -321,12 +325,12 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
 
             logHandler.printDatabaseResultLog("", "Comment Message", "commentMessageListener", postMessage.toString());
 
-            adapter.postMessageList.add(postMessage);
-            adapter.notifyItemInserted(adapter.postMessageList.size()+2);
+            adapter.postMessageList.add(0,postMessage);
+            adapter.notifyItemInserted(2);
 
             if(scrollToLatestMessage) {
                 logHandler.printLogWithMessage("scrollToLatestMessage = true; scrolling to latest message now!");
-                viewPostDetailsRecyclerView.smoothScrollToPosition(adapter.getItemCount() -1);
+                viewPostDetailsRecyclerView.smoothScrollToPosition(2);
             }
         }
 
@@ -555,7 +559,6 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
 
 
     // ACTIVITY SPECIFIC METHODS
-
     private void sendComment(){
         if(username == null) {
             logHandler.printLogWithMessage("Username is null (which it shouldn't be)! Aborting sendComment()!");
