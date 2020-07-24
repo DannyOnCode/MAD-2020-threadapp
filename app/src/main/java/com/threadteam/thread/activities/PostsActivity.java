@@ -300,8 +300,6 @@ public class PostsActivity extends ServerBaseActivity {
         layoutManager.setStackFromEnd(true);
 
         PostsRecyclerView.setLayoutManager(layoutManager);
-        layoutManager.setReverseLayout(true);
-        layoutManager.setStackFromEnd(true);
         PostsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         PostsRecyclerView.setAdapter(adapter);
 
