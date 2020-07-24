@@ -6,36 +6,46 @@ import com.threadteam.thread.libraries.Progression;
 import java.util.ArrayList;
 import java.util.List;
 
-// SERVER CLASS
-//
-// PROGRAMMER-IN-CHARGE:
-// EUGENE LONG, DANNY CHAN, THABITH, S10193060J, S10196363F, S10196396B
-//
-// DESCRIPTION
-// REPRESENTS A USER. CONTAINS METADATA SUCH AS
-// ITS OWN UNIQUE ID, USER NAME, USER PROFILE IMAGE,
-// USER ABOUT ME MESSAGE, USER STATUS/TITLE MESSAGE AND
-// SUBSCRIBED SERVER.
+/**
+ * Represents a user.
+ *
+ * @author Eugene Long
+ * @author Thabith
+ * @author Danny Chan
+ * @version 2.0
+ * @since 1.0
+ */
+
 public class User {
     //DATA STORE
 
-    // UNIQUE IDENTIFIER, EXCLUDE FROM FIREBASE CHILD VALUES.
-    // SHOULD BE USED AS A KEY
-    @Exclude
-    private String _id;
+    /**
+     * Unique identifier.
+     * Excluded from Firebase automatic child values; this should be used as a key.
+     */
 
+    @Exclude private String _id;
+
+    /** The name of the user. */
     private String _username;
+
+    /** The image URL of the profile picture of the user. */
     private String _profileImageURL;
+
+    /** The about message of the user. */
     private String _aboutUsMessage;
+
+    /** The status message of the user. */
     private String _statusMessage;
 
+    /** The device token of the user. */
     private String _token;
 
-    @Exclude
-    private List<String> _subscribedServers = new ArrayList<String>();
+    /** A list of server ids which the user is subscribed to. */
+    @Exclude private List<String> _subscribedServers = new ArrayList<String>();
 
-    @Exclude
-    private List<Integer> _expList = new ArrayList<>();
+    /** A list of experience points, each corresponding to a server the user is subscribed to. */
+    @Exclude private List<Integer> _expList = new ArrayList<>();
 
     // CONSTRUCTORS
 
@@ -62,24 +72,57 @@ public class User {
         this._expList = _expList;
     }
 
+    /**
+     * Retrieves the experience points corresponding to a server id.
+     * @param serverID The id of the server to get the current user's experience points for.
+     * @return The experience points of the user in the server specified.
+     */
+
     public Integer GetUserExpForServer(String serverID) {
         int serverIndex = _subscribedServers.indexOf(serverID);
         return this._expList.get(serverIndex);
     }
 
+    /**
+     * Convenience wrapper for the ConvertExpToLevel function in Progression.
+     * @param serverID The id of the server to get the user's level for
+     * @return The level of the user in the specified server.
+     * @see Progression#ConvertExpToLevel(int) 
+     */
+
     public Integer GetUserLevelForServer(String serverID) {
         return Progression.ConvertExpToLevel(GetUserExpForServer(serverID));
     }
 
+    /**
+     * Convenience wrapper for the GetExpToNextLevel function in Progression.
+     * @param serverID The id of the server to get the experience required to progress to the next level for.
+     * @return The experience required to progress to the next level for the specified server.
+     * @see Progression#GetExpToNextLevel(int)
+     */
+
     public Integer GetExpToNextLevelForServer(String serverID) {
         return Progression.GetExpToNextLevel(GetUserLevelForServer(serverID));
     }
+
+    /**
+     * Convenience wrapper for the GetExpProgress function in Progression.
+     * @param serverID The id of the server.
+     * @return The current percentage progress of the user to the next level for the specified server.
+     * @see Progression#GetExpProgress(int, int)
+     */
 
     public Integer GetProgressToNextLevelForServer(String serverID) {
         int exp = GetUserExpForServer(serverID);
         int level = GetUserLevelForServer(serverID);
         return Progression.GetExpProgress(exp, level);
     }
+
+    /**
+     * Gets the absolute level progress for the current user in a specified server.
+     * @param serverID The id of the server.
+     * @return The absolute level progress for the current user in the specified server.
+     */
 
     public Integer GetAbsoluteLevelProgressForServer(String serverID) {
         return (int) ((double) GetUserExpForServer(serverID) / (double) GetExpToNextLevelForServer(serverID) * 100);

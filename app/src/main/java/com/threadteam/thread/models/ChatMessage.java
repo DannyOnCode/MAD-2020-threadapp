@@ -3,34 +3,41 @@ package com.threadteam.thread.models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
-// CHAT MESSAGE CLASS
-//
-// PROGRAMMER-IN-CHARGE:
-// EUGENE LONG, S10193060J
-//
-// DESCRIPTION
-// REPRESENTS A SINGLE CHAT MESSAGE, CONTAINING
-// ITS OWN UNIQUE ID, SENDER ID, SENDER NAME AND
-// MESSAGE TEXT.
+/**
+ * Represents a single chat message.
+ *
+ * @author Eugene Long
+ * @version 1.0
+ * @since 1.0
+ */
 
 @IgnoreExtraProperties
 public class ChatMessage {
 
     // DATA STORE
 
-    // UNIQUE IDENTIFIER, EXCLUDE FROM FIREBASE CHILD VALUES.
-    // SHOULD BE USED AS A KEY
-    @Exclude
-    private String _id;
+    /**
+     * Unique identifier.
+     * Excluded from Firebase automatic child values; this should be used as a key.
+     */
 
+    @Exclude private String _id;
+
+    /** The user id of the sender. */
     private String _senderID;
+
+    /** The username of the sender. */
     private String _senderUsername;
+
+    /** The message content of the chat message. */
     private String _message;
 
-    // TIMESTAMP FOR LOCAL USE. SHOULD NOT BE SYNCED WITH FIREBASE.
-    // FETCH FIREBASE'S timestamp CHILD VALUE FOR A MORE ACCURATE TIMESTAMP.
-    @Exclude
-    private Long timestampMillis;
+    /**
+     * Timestamp for local use. Should not be synced with Firebase.
+     * Firebase will provide an auto-generated timestamp that should be fetched for server-side time accuracy.
+     */
+
+    @Exclude private Long timestampMillis;
 
     // CONSTRUCTORS
 

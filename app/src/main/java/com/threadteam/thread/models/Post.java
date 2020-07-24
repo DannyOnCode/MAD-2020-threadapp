@@ -3,26 +3,47 @@ package com.threadteam.thread.models;
 import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 
+/**
+ * Represents a single post.
+ *
+ * @author Eugene Long
+ * @version 2.0
+ * @since 2.0
+ */
+
 @IgnoreExtraProperties
 public class Post {
 
     // DATA STORE
 
-    // UNIQUE IDENTIFIER, EXCLUDE FROM FIREBASE CHILD VALUES.
-    // SHOULD BE USED AS A KEY
-    @Exclude
-    private String _id;
+    /**
+     * Unique identifier.
+     * Excluded from Firebase automatic child values; this should be used as a key.
+     */
 
+    @Exclude private String _id;
+
+    /** The image URL for the post. */
     private String _imageLink;
+
+    /** The title of the post. */
     private String _title;
+
+    /** The message content of the post. */
     private String _message;
+
+    /** The user id of the sender. */
     private String _senderUID;
+
+    /** The username of the sender. */
     private String _senderUsername;
 
-    // TIMESTAMP FOR LOCAL USE. SHOULD NOT BE SYNCED WITH FIREBASE.
-    // FETCH FIREBASE'S timestamp CHILD VALUE FOR A MORE ACCURATE TIMESTAMP.
-    @Exclude
-    private Long timestampMillis;
+    /**
+     * The timestamp of the post when it was sent. Should be synced with Firebase.
+     * There is no auto-generated timestamp cloud function for post timestamps!
+     */
+
+    @Exclude private Long timestampMillis;
 
     // CONSTRUCTORS
 
