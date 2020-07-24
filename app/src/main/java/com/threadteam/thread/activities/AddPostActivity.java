@@ -210,7 +210,6 @@ public class AddPostActivity extends ServerBaseActivity {
             public void onClick(View v) {
                 openFileChooser();
                 mNoImageText.setVisibility(View.GONE);
-                mDisplayImage.setVisibility(View.VISIBLE);
                 mChangeImageButton.setVisibility(View.VISIBLE);
                 mChooseImageButton.setVisibility(View.GONE);
             }
