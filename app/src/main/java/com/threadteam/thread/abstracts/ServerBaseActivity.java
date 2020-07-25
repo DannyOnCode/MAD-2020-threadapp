@@ -16,11 +16,16 @@ import androidx.appcompat.view.menu.ActionMenuItemView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
 import com.threadteam.thread.activities.ChatActivity;
 import com.threadteam.thread.activities.PostsActivity;
 import com.threadteam.thread.activities.ServerSettingsActivity;
@@ -303,6 +308,27 @@ public abstract class ServerBaseActivity extends BaseActivity {
                 databaseRef.child("titles").child(_serverId).setValue(null);
                 databaseRef.child("posts").child(_serverId).setValue(null);
                 databaseRef.child("postmessages").child(_serverId).setValue(null);
+
+                // DELETE ALL POST PHOTOS IN STORAGE
+                StorageReference storeRef = FirebaseStorage.getInstance().getReference();
+                storeRef.child("posts").child(_serverId).listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                    @Override
+                    public void onSuccess(ListResult listResult) {
+                        for(StorageReference fileRef: listResult.getItems()) {
+                            fileRef.delete().addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    logHandler.printLogWithMessage("Couldn't delete item!" + e.toString());
+                                }
+                            });
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        logHandler.printLogWithMessage("Couldn't retrieve storage items for deletion!");
+                    }
+                });
 
                 // DELETE SERVER LAST BECAUSE OWNER ID IS REQUIRED FOR RULES
                 databaseRef.child("servers").child(_serverId).setValue(null);
