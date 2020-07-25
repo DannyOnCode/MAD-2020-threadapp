@@ -6,20 +6,27 @@ Welcome to our Application [THREAD]
 
 *An assignment for partial fulfillment of the coursework of Mobile Applications Development of AY2019/20*
 
-Feeling sociable? Want to tell the world how you feel? Connect yourself with the rest of the world?
-Thread. is most likely what you are searching for! Our goal is to make you feel connected to the world and
-also to make you. Feel proud of being in a community you are in! While doing all those, rank yourself up as you chat
-with our built-in leveling system and show off to all your friends just how awesome you are!
+Stay in touch with your friends and family with Thread, an all new free social app on Android!
 
-Why are you still reading this? Jump right in to experience it for yourself. After all, this is a social app
-for you to talk to us!
+Thread uses your phone’s internet connection and lets you text and share posts quickly and easily!
 
-What can you look forward to?!
-Registering, Loggin, Profile, Profile Editing, Chat function,
-Post Function, Server Settings, Server Creation, Notification, Server Titles, Server Levels!
+Switch to Thread and break free from your SMS charges!
 
-With all that, I hope you will enjoy our application and help you bring the people you wish to know ever so closer to you!
+LEVEL UP!
+Aim to have the highest XP amongst your friends with our unique levelling system for each server.
 
+CUSTOMISE EVERYTHING!
+Set your own Name, Status and share more about yourself on the “About Me” section! 
+Set up your own server with a Server name, Server description and Member Titles of your choice!
+
+MULTIPLE ANDROID DEVICES?
+Access your servers, messages and posts from all your android devices at once!  Even your settings are synced across devices!
+
+LOW ON STORAGE?
+Not to worry, all images and texts are stored on our server.
+
+INSTANT NOTIFICATIONS!
+Never miss out on new texts and posts with our instant notifications. You can customise what notifications you will like to recieve.
 
 -----------------------------------------------------------------------------------------------------
 Through this application we have used Firebase Realtime Database
