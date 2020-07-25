@@ -561,7 +561,16 @@ public abstract class BaseActivity extends AppCompatActivity {
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String serverName = (String) dataSnapshot.getValue();
+
+                final String serverName = (String) dataSnapshot.child("_name").getValue();
+                String ownerID = (String) dataSnapshot.child("_name").getValue();
+                boolean isOwner = false;
+
+                if(userId.equals(ownerID)){
+                    isOwner = true;
+                }
+
+                final String isOwnerID = String.valueOf(isOwner);
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
@@ -577,7 +586,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body);
 
-                        Sender sender = new Sender(to, new NotificationModel(serverName, body));
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body, serverId, isOwnerID,"chats"));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
 
                         threadResponseCall.enqueue(new Callback<ThreadResponse>() {
@@ -615,8 +624,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         databaseRef.child("servers")
                 .child(serverId)
-                .child("_name")
-                .addListenerForSingleValueEvent(getServerName);
+                .addValueEventListener(getServerName);
 
     }
 
@@ -638,7 +646,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String serverName = (String) dataSnapshot.getValue();
+                final String serverName = (String) dataSnapshot.child("_name").getValue();
+                String ownerID = (String) dataSnapshot.child("_name").getValue();
+                boolean isOwner = false;
+
+                if(userId.equals(ownerID)){
+                    isOwner = true;
+                }
+
+                final String isOwnerID = String.valueOf(isOwner);
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
@@ -654,7 +670,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body);
 
-                        Sender sender = new Sender(to, new NotificationModel(serverName, body));
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body, serverId, isOwnerID,"chats"));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
 
                         threadResponseCall.enqueue(new Callback<ThreadResponse>() {
@@ -692,8 +708,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         databaseRef.child("servers")
                 .child(serverId)
-                .child("_name")
-                .addListenerForSingleValueEvent(getServerName);
+                .addValueEventListener(getServerName);
+
 
 
 
@@ -714,7 +730,15 @@ public abstract class BaseActivity extends AppCompatActivity {
         ValueEventListener getServerName = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final String serverName = (String) dataSnapshot.getValue();
+                final String serverName = (String) dataSnapshot.child("_name").getValue();
+                String ownerID = (String) dataSnapshot.child("_name").getValue();
+                boolean isOwner = false;
+
+                if(userId.equals(ownerID)){
+                    isOwner = true;
+                }
+
+                final String isOwnerID = String.valueOf(isOwner);
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
@@ -730,7 +754,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body);
 
-                        Sender sender = new Sender(to, new NotificationModel(serverName, body));
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body, serverId, isOwnerID,"posts"));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
 
                         threadResponseCall.enqueue(new Callback<ThreadResponse>() {
@@ -768,8 +792,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         databaseRef.child("servers")
                 .child(serverId)
-                .child("_name")
-                .addListenerForSingleValueEvent(getServerName);
+                .addValueEventListener(getServerName);
+
     }
 
 }

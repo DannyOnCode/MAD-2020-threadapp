@@ -11,15 +11,21 @@ package com.threadteam.thread.notifications;
 public class NotificationModel {
     private String title;
     private String body;
+    private String serverID;
+    private String isOwner;
+    private String activity;
 
     /**
      * NotificationModel class constructor
      * @param title
      * @param body
      */
-    public NotificationModel(String title, String body) {
+    public NotificationModel(String title, String body, String serverID, String isOwner, String activity) {
         this.title = title;
         this.body = body;
+        this.serverID = serverID;
+        this.isOwner = isOwner;
+        this.activity = activity;
     }
 
     public String getBody() {
@@ -36,5 +42,29 @@ public class NotificationModel {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getServerID() {
+        return serverID;
+    }
+
+    public void setServerID(String serverID) {
+        this.serverID = serverID;
+    }
+
+    public String getIsOwner() {
+        return isOwner;
+    }
+
+    public void setIsOwner(String isOwner) {
+        this.isOwner = isOwner;
+    }
+
+    public String getActivity() {
+        return activity;
+    }
+
+    public void setActivity(String activity) {
+        this.activity = activity;
     }
 }

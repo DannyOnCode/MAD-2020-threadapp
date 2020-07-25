@@ -16,12 +16,9 @@
         <activity android:name=".activities.ServerSettingsActivity" />
         <activity android:name=".activities.ViewMembersActivity" />
         <activity android:name=".activities.AddPostActivity" />
-        <activity android:name=".activities.PostsActivity" >
-            <intent-filter>
-                <action android:name="PostsActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".activities.PostsActivity"
+            android:parentActivityName=".activities.ViewServersActivity"/>
+
         <activity
             android:name=".activities.RegisterActivity"
             android:windowSoftInputMode="adjustResize" />
@@ -35,12 +32,8 @@
             android:name=".activities.AddServerActivity"
             android:parentActivityName=".activities.ViewServersActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".activities.ChatActivity" >
-            <intent-filter>
-                <action android:name="ChatActivity" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".activities.ChatActivity"
+            android:parentActivityName=".activities.ViewServersActivity"/>
         <activity
             android:name=".activities.LoginActivity"
             android:windowSoftInputMode="adjustResize">
