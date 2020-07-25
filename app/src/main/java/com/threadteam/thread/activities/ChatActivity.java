@@ -30,7 +30,6 @@ import com.threadteam.thread.libraries.Progression;
 import com.threadteam.thread.R;
 import com.threadteam.thread.adapters.ChatMessageAdapter;
 import com.threadteam.thread.models.ChatMessage;
-import com.threadteam.thread.notifications.NotificationModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +57,7 @@ public class ChatActivity extends ServerBaseActivity {
     private String username;
 
     /** Stores the number of unread messages */
-    private int noOfUnreadMsg;
+    private int unreadMessageCounter;
 
     // VIEW OBJECTS
 
@@ -79,7 +78,7 @@ public class ChatActivity extends ServerBaseActivity {
     private ImageButton ScrollDownButton;
 
     /** Indicates number of unread messages */
-    private TextView NoOfUnreadMsg;
+    private TextView UnreadMessagesTextView;
 
     // INITIALISE LISTENERS
 
@@ -187,13 +186,6 @@ public class ChatActivity extends ServerBaseActivity {
             String message = (String) dataSnapshot.child("_message").getValue();
             Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
 
-            //Indicator for number of new unread messages
-            noOfUnreadMsg += 1;
-            String unread = String.valueOf(noOfUnreadMsg);
-            NoOfUnreadMsg.setText(unread);
-            NoOfUnreadMsg.setVisibility(TextView.VISIBLE);
-
-
             final ChatMessage chatMessage;
 
             if (senderUID == null) {
@@ -222,6 +214,8 @@ public class ChatActivity extends ServerBaseActivity {
             if(scrollToLatestMessage) {
                 logHandler.printLogWithMessage("scrollToLatestMessage = true; scrolling to latest message now!");
                 ChatMessageRecyclerView.smoothScrollToPosition(Math.max(0, adapter.chatMessageList.size() - 1));
+            } else {
+                setUnreadMessages(unreadMessageCounter+1);
             }
         }
 
@@ -383,7 +377,7 @@ public class ChatActivity extends ServerBaseActivity {
         MessageEditText = findViewById(R.id.messageEditText);
         SendMsgButton = findViewById(R.id.sendMsgButton);
         ScrollDownButton = findViewById(R.id.scrollDownButton);
-        NoOfUnreadMsg = findViewById(R.id.unreadMsgTextView);
+        UnreadMessagesTextView = findViewById(R.id.unreadMsgTextView);
     }
 
     @Override
@@ -453,11 +447,8 @@ public class ChatActivity extends ServerBaseActivity {
                 } else if(llm != null && llm.findLastCompletelyVisibleItemPosition() == adapter.chatMessageList.size()-1) {
                     logHandler.printLogWithMessage("Scrolled to bottom of chat, setting scrollToLatestMessage = true!");
 
+                    setUnreadMessages(0);
                     ScrollDownButton.setVisibility(ImageButton.INVISIBLE);
-                    NoOfUnreadMsg.setVisibility(TextView.INVISIBLE);
-                    noOfUnreadMsg = 0;
-                    String unread = String.valueOf(noOfUnreadMsg);
-                    NoOfUnreadMsg.setText(unread);
                     scrollToLatestMessage = true;
                 }
 
@@ -534,7 +525,7 @@ public class ChatActivity extends ServerBaseActivity {
             chatMessageHashMap.put("timestamp", System.currentTimeMillis());
             databaseRef.child("messages").child(serverId).push().setValue(chatMessageHashMap);
 
-            NoOfUnreadMsg.setVisibility(TextView.INVISIBLE);
+            setUnreadMessages(0);
             scrollToLatestMessage = true;
             logHandler.printLogWithMessage("Message sent! Setting scrollToLatestMessage = true!");
 
@@ -584,5 +575,27 @@ public class ChatActivity extends ServerBaseActivity {
 
     private Boolean checkMessageIsValid(String message) {
         return message.length() > 0;
+    }
+
+    /**
+     * Setter method for unreadMessageCounter.
+     * Automatically updates UnreadMessagesTextView.
+     * @see ChatActivity#unreadMessageCounter
+     * @see ChatActivity#UnreadMessagesTextView
+     */
+
+    private void setUnreadMessages(int val) {
+        unreadMessageCounter = val;
+
+        // Update UnreadMessagesTextView to match unreadMessageCounter
+        String unread = String.valueOf(unreadMessageCounter);
+        UnreadMessagesTextView.setText(unread);
+
+        // Hide or display the unread messages text view accordingly
+        if(val > 0) {
+            UnreadMessagesTextView.setVisibility(TextView.VISIBLE);
+        } else {
+            UnreadMessagesTextView.setVisibility(TextView.INVISIBLE);
+        }
     }
 }
