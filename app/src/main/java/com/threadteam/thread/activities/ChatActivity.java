@@ -310,6 +310,7 @@ public class ChatActivity extends ServerBaseActivity {
 
     @Override
     protected void onStop() {
+        adapter.chatMessageList.clear();
         super.onStop();
     }
 
