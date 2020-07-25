@@ -549,6 +549,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
 
     @Override
     protected void onStop() {
+        resetShareCode();
         super.onStop();
     }
 
