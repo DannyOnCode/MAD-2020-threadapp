@@ -10,7 +10,7 @@ android {
         applicationId "com.threadteam.thread"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 2
+        versionCode 3
         versionName "2.0"
         //Allowing for use of vectors
         vectorDrawables.useSupportLibrary = true
