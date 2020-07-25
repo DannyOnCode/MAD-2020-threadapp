@@ -41,7 +41,7 @@ public class OreoNotification extends ContextWrapper {
 
         NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
                 CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationManager.IMPORTANCE_HIGH);
         channel.enableLights(false);
         channel.enableVibration(true);
         channel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
@@ -75,11 +75,16 @@ public class OreoNotification extends ContextWrapper {
     public  Notification.Builder getOreoNotification(String title, String body,
                                                      PendingIntent pendingIntent, Uri soundUri, int icon){
         return new Notification.Builder(getApplicationContext(), CHANNEL_ID)
-                .setContentIntent(pendingIntent)
+                .setPriority(Notification.PRIORITY_HIGH)
+                .setSmallIcon(icon)
                 .setContentTitle(title)
                 .setContentText(body)
-                .setSmallIcon(icon)
+                .setStyle(new Notification.BigTextStyle()
+                        .bigText(body)
+                        .setBigContentTitle(title))
                 .setSound(soundUri)
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setShowWhen(true)
+                .setContentIntent(pendingIntent);
     }
 }

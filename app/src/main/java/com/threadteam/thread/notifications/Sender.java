@@ -13,7 +13,7 @@ public class Sender {
    @SerializedName("to")
     private String to;
 
-   @SerializedName("notification")
+   @SerializedName("data")
     private NotificationModel notification;
 
     /**

@@ -211,6 +211,7 @@ public class PostsActivity extends ServerBaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        serverId = getIntent().getStringExtra("SERVER_ID");
     }
 
     @Override

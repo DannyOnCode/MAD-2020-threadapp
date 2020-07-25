@@ -4,11 +4,13 @@ import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,8 @@ import androidx.core.app.NotificationCompat;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.threadteam.thread.R;
+import com.threadteam.thread.activities.ChatActivity;
+import com.threadteam.thread.activities.PostsActivity;
 import com.threadteam.thread.activities.ViewServersActivity;
 
 import java.util.List;
@@ -32,75 +36,122 @@ import java.util.List;
 
 public class ThreadFirebaseMessaging extends FirebaseMessagingService {
     private static final String TAG = "FirebaseMsgService";
-
     /** Retrieves the content from the Firebase Cloud messaging API*/
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         //Check if message contains a data payload
         if (remoteMessage.getData().size() > 0){
             Log.d(TAG,"Message data payload: " + remoteMessage.getData());
-        }
-
-        if (remoteMessage.getNotification() != null){
-            String title = remoteMessage.getNotification().getTitle();
-            String message = remoteMessage.getNotification().getBody();
-
-            Log.d(TAG,"Message Notification Title: " + title);
-            Log.d(TAG,"Message Notification Body: " + message);
 
             //Only send notifications if app is not in foreground
-            if(!isAppForeground( this)){
+            if(!isAppForeground(this)) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sendOreoNotification(title,message);
+                    sendOreoNotification(remoteMessage);
                 } else {
-                    sendNotification(title,message);
+                    sendNotification(remoteMessage);
                 }
             }
-
         }
     }
 
     /**
      * This function sends the notification to user's device if it is running Android 8/Oreo and above
-     * @param title
-     * @param messageBody
+     * @param remoteMessage
      */
-    private void sendOreoNotification(String title, String messageBody){
-        Intent intent = new Intent(this, ViewServersActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+    private void sendOreoNotification(RemoteMessage remoteMessage){
+
+        String title = remoteMessage.getData().get("title");
+        String messageBody = remoteMessage.getData().get("body");
+        String serverId = remoteMessage.getData().get("serverID");
+        String isOwner = remoteMessage.getData().get("isOwner");
+        String activity = remoteMessage.getData().get("activity");
+        boolean isowner = false;
+
+        if(isOwner.equals("true")){
+            isowner = true;
+        }
+
+        Intent goToActivity;
+        PendingIntent pendingIntent = null;
+        TaskStackBuilder stackBuilder;
+
+        if(activity.equals("posts")) {
+            goToActivity = new Intent(this, PostsActivity.class);
+            stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntentWithParentStack(goToActivity);
+            goToActivity.putExtra("SERVER_ID", serverId);
+            goToActivity.putExtra("IS_OWNER", isowner);
+            pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        else if(activity.equals("chats")){
+            goToActivity = new Intent(this, ChatActivity.class);
+            stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntentWithParentStack(goToActivity);
+            goToActivity.putExtra("SERVER_ID", serverId);
+            goToActivity.putExtra("IS_OWNER", isowner);
+            pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+
 
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         OreoNotification oreoNotification = new OreoNotification(this);
         Notification.Builder builder = oreoNotification.getOreoNotification(title, messageBody, pendingIntent,
-                defaultSound, R.mipmap.thread_t);
+                defaultSound, R.drawable.thread_png);
 
         oreoNotification.getManager().notify(0, builder.build());
 
     }
 
     /** This function sends the notification to user's device if it is running  Android 7/Nougat and below
-     * @param title
-     * @param messageBody
+     * @param remoteMessage
      * */
-    private void sendNotification(String title, String messageBody) {
+    private void sendNotification(RemoteMessage remoteMessage) {
 
-        Intent intent = new Intent(this, ViewServersActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT);
+        String title = remoteMessage.getData().get("title");
+        String messageBody = remoteMessage.getData().get("body");
+        String serverId = remoteMessage.getData().get("serverID");
+        String isOwner = remoteMessage.getData().get("isOwner");
+        String activity = remoteMessage.getData().get("activity");
+        boolean isowner = false;
+
+        if(isOwner.equals("true")){
+            isowner = true;
+        }
+
+        Intent goToActivity;
+        PendingIntent pendingIntent = null;
+        TaskStackBuilder stackBuilder;
+
+        if(activity.equals("posts")) {
+            goToActivity = new Intent(this, PostsActivity.class);
+            stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntentWithParentStack(goToActivity);
+            goToActivity.putExtra("SERVER_ID", serverId);
+            goToActivity.putExtra("IS_OWNER", isowner);
+            pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
+        else if(activity.equals("chats")){
+            goToActivity = new Intent(this, ChatActivity.class);
+            stackBuilder = TaskStackBuilder.create(this);
+            stackBuilder.addNextIntentWithParentStack(goToActivity);
+            goToActivity.putExtra("SERVER_ID", serverId);
+            goToActivity.putExtra("IS_OWNER", isowner);
+            pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.mipmap.thread_t)
+                .setSmallIcon(R.drawable.thread_png)
                 .setContentTitle(title)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
                 .setSound(defaultSound)
-                .setContentIntent(pendingIntent);
-        NotificationManager noti = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+                .setContentIntent(pendingIntent)
+                .setPriority(Notification.PRIORITY_HIGH);
+        NotificationManager notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
 
-        noti.notify(0, builder.build());
+        notificationManager.notify(0, builder.build());
     }
 
     /** This function checks if the App is in foreground of user's device
