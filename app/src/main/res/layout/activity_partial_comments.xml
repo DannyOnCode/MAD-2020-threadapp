@@ -31,24 +31,28 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="16dp"
                 android:fontFamily="@font/roboto"
                 android:text="This is such a cool post that I cannot contain my happiness for the poster and his family. Much Good Content Much greatness"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/timestamp" />
+                app:layout_constraintTop_toBottomOf="@+id/commentName" />
 
             <TextView
                 android:id="@+id/timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
                 android:text="20/20/2002"
                 android:textStyle="italic"
-                app:layout_constraintStart_toStartOf="@+id/commentName"
-                app:layout_constraintTop_toBottomOf="@+id/commentName" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/commentMessage" />
 
             <TextView
                 android:id="@+id/levelTextView"
