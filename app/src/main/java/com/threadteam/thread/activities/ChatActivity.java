@@ -188,11 +188,12 @@ public class ChatActivity extends ServerBaseActivity {
             Long timestampMillis = (Long) dataSnapshot.child("timestamp").getValue();
 
             //Indicator for number of new unread messages
-            noOfUnreadMsg += 1;
-            String unread = String.valueOf(noOfUnreadMsg);
-            NoOfUnreadMsg.setText(unread);
-            NoOfUnreadMsg.setVisibility(TextView.VISIBLE);
-
+            if(!senderUID.equals(currentUser.getUid())) {
+                noOfUnreadMsg += 1;
+                String unread = String.valueOf(noOfUnreadMsg);
+                NoOfUnreadMsg.setText(unread);
+                NoOfUnreadMsg.setVisibility(TextView.VISIBLE);
+            }
 
             final ChatMessage chatMessage;
 
