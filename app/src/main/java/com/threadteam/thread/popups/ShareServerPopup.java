@@ -134,8 +134,6 @@ public class ShareServerPopup {
         @Override
         public void onFinish() {
             logHandler.printLogWithMessage("Timer has ended!");
-
-            resetViewObjects();
             resetCode();
         }
     };
@@ -178,6 +176,7 @@ public class ShareServerPopup {
 
     /**
      * Resets the server share code to null.
+     * This always resets the view.
      */
 
     public void resetCode() {
@@ -187,6 +186,8 @@ public class ShareServerPopup {
             ref.child("shares").child(String.valueOf(shareCode)).setValue(null);
             shareCode = null;
         }
+
+        resetViewObjects();
     }
 
     /**
