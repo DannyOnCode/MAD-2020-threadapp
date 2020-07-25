@@ -100,7 +100,7 @@
                         android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
                         android:gravity="top|left"
-                        android:hint="Tell us some things about yourself..."
+                        android:hint="I like cats!"
                         android:inputType="textMultiLine"
                         android:maxLines="10"
                         android:minLines="5"
