@@ -33,7 +33,7 @@
             android:parentActivityName=".activities.ViewServersActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".activities.ChatActivity"
-            android:parentActivityName=".activities.ViewServersActivity"/>
+            android:parentActivityName=".activities.PostsActivity"/>
         <activity
             android:name=".activities.LoginActivity"
             android:windowSoftInputMode="adjustResize">

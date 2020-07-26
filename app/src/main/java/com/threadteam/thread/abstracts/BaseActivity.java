@@ -563,30 +563,27 @@ public abstract class BaseActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 final String serverName = (String) dataSnapshot.child("_name").getValue();
-                String ownerID = (String) dataSnapshot.child("_name").getValue();
-                boolean isOwner = false;
-
-                if(userId.equals(ownerID)){
-                    isOwner = true;
-                }
-
-                final String isOwnerID = String.valueOf(isOwner);
+                final String ownerID = (String) dataSnapshot.child("_ownerID").getValue();
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String username = (String) dataSnapshot.getValue();
+                        String username = (String) dataSnapshot.child("_username").getValue();
+                        String profile = (String) dataSnapshot.child("_profileImageURL").getValue();
 
                         final String to = "/topics/" + serverId;
 
                         final String body = username + message;
 
                         logHandler.printDatabaseResultLog(".getValue()", "Current Server's Name", "getServerName", serverName);
+                        logHandler.printDatabaseResultLog(".getValue()","Current Server's OwnerID","getServerName", ownerID);
                         logHandler.printDatabaseResultLog(".getValue()", "Current User's Name", "getUsername", username);
+                        logHandler.printDatabaseResultLog(".getValue()", "Current User's ProfileUrl", "getUsername", profile);
 
-                        logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body);
+                        logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body
+                                                                    + ", ProfileURL: " + profile + ", ServerID: " + serverId + ", OwnerID:" + ownerID + ", Activity: " + "chats");
 
-                        Sender sender = new Sender(to, new NotificationModel(serverName, body, serverId, isOwnerID,"chats"));
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body, profile, serverId, ownerID,"chats"));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
 
                         threadResponseCall.enqueue(new Callback<ThreadResponse>() {
@@ -611,8 +608,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 databaseRef.child("users")
                         .child(currentUser.getUid())
-                        .child("_username")
-                        .addListenerForSingleValueEvent(getUsername);
+                        .addValueEventListener(getUsername);
 
             }
 
@@ -647,30 +643,27 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final String serverName = (String) dataSnapshot.child("_name").getValue();
-                String ownerID = (String) dataSnapshot.child("_name").getValue();
-                boolean isOwner = false;
-
-                if(userId.equals(ownerID)){
-                    isOwner = true;
-                }
-
-                final String isOwnerID = String.valueOf(isOwner);
+                final String ownerID = (String) dataSnapshot.child("_ownerID").getValue();
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String username = (String) dataSnapshot.getValue();
+                        String username = (String) dataSnapshot.child("_username").getValue();
+                        String profile = (String) dataSnapshot.child("_profileImageURL").getValue();
 
                         final String to = "/topics/system" + serverId;
 
                         final String body = username + message;
 
                         logHandler.printDatabaseResultLog(".getValue()", "Current Server's Name", "getServerName", serverName);
+                        logHandler.printDatabaseResultLog(".getValue()","Current Server's OwnerID","getServerName", ownerID);
                         logHandler.printDatabaseResultLog(".getValue()", "Current User's Name", "getUsername", username);
+                        logHandler.printDatabaseResultLog(".getValue()", "Current User's ProfileUrl", "getUsername", profile);
 
-                        logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body);
+                        logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body
+                                + ", ProfileURL: " + profile + ", ServerID: " + serverId + ", OwnerID:" + ownerID + ", Activity: " + "chats");
 
-                        Sender sender = new Sender(to, new NotificationModel(serverName, body, serverId, isOwnerID,"chats"));
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body, profile, serverId, ownerID,"chats"));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
 
                         threadResponseCall.enqueue(new Callback<ThreadResponse>() {
@@ -695,8 +688,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 databaseRef.child("users")
                         .child(currentUser.getUid())
-                        .child("_username")
-                        .addListenerForSingleValueEvent(getUsername);
+                        .addValueEventListener(getUsername);
 
             }
 
@@ -731,30 +723,27 @@ public abstract class BaseActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final String serverName = (String) dataSnapshot.child("_name").getValue();
-                String ownerID = (String) dataSnapshot.child("_name").getValue();
-                boolean isOwner = false;
-
-                if(userId.equals(ownerID)){
-                    isOwner = true;
-                }
-
-                final String isOwnerID = String.valueOf(isOwner);
+                final String ownerID = (String) dataSnapshot.child("_ownerID").getValue();
 
                 ValueEventListener getUsername = new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        String username = (String) dataSnapshot.getValue();
+                        String username = (String) dataSnapshot.child("_username").getValue();
+                        String profile = (String) dataSnapshot.child("_profileImageURL").getValue();
 
                         final String to = "/topics/posts" + serverId;
 
                         final String body = username + message;
 
                         logHandler.printDatabaseResultLog(".getValue()", "Current Server's Name", "getServerName", serverName);
+                        logHandler.printDatabaseResultLog(".getValue()","Current Server's OwnerID","getServerName", ownerID);
                         logHandler.printDatabaseResultLog(".getValue()", "Current User's Name", "getUsername", username);
+                        logHandler.printDatabaseResultLog(".getValue()", "Current User's ProfileUrl", "getUsername", profile);
 
-                        logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body);
+                        logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body
+                                + ", ProfileURL: " + profile + ", ServerID: " + serverId + ", OwnerID:" + ownerID + ", Activity: " + "posts");
 
-                        Sender sender = new Sender(to, new NotificationModel(serverName, body, serverId, isOwnerID,"posts"));
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body, profile, serverId, ownerID,"posts"));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
 
                         threadResponseCall.enqueue(new Callback<ThreadResponse>() {
@@ -779,8 +768,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                 databaseRef.child("users")
                         .child(currentUser.getUid())
-                        .child("_username")
-                        .addListenerForSingleValueEvent(getUsername);
+                        .addValueEventListener(getUsername);
 
             }
 

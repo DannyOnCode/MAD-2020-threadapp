@@ -11,8 +11,9 @@ package com.threadteam.thread.notifications;
 public class NotificationModel {
     private String title;
     private String body;
+    private String profile;
     private String serverID;
-    private String isOwner;
+    private String ownerID;
     private String activity;
 
     /**
@@ -20,20 +21,13 @@ public class NotificationModel {
      * @param title
      * @param body
      */
-    public NotificationModel(String title, String body, String serverID, String isOwner, String activity) {
+    public NotificationModel(String title, String body,String profile, String serverID, String ownerID, String activity) {
         this.title = title;
         this.body = body;
+        this.profile = profile;
         this.serverID = serverID;
-        this.isOwner = isOwner;
+        this.ownerID = ownerID;
         this.activity = activity;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
     }
 
     public String getTitle() {
@@ -44,6 +38,22 @@ public class NotificationModel {
         this.title = title;
     }
 
+    public String getBody() {
+        return body;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
+
     public String getServerID() {
         return serverID;
     }
@@ -52,12 +62,12 @@ public class NotificationModel {
         this.serverID = serverID;
     }
 
-    public String getIsOwner() {
-        return isOwner;
+    public String getOwnerID() {
+        return ownerID;
     }
 
-    public void setIsOwner(String isOwner) {
-        this.isOwner = isOwner;
+    public void setOwnerID(String ownerID) {
+        this.ownerID = ownerID;
     }
 
     public String getActivity() {

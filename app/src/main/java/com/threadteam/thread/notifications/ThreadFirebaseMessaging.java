@@ -7,6 +7,8 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -16,13 +18,17 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.threadteam.thread.R;
 import com.threadteam.thread.activities.ChatActivity;
 import com.threadteam.thread.activities.PostsActivity;
-import com.threadteam.thread.activities.ViewServersActivity;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -62,13 +68,18 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
 
         String title = remoteMessage.getData().get("title");
         String messageBody = remoteMessage.getData().get("body");
+        Bitmap bitmap = getBitmapFromURL(remoteMessage.getData().get("profile"));
         String serverId = remoteMessage.getData().get("serverID");
-        String isOwner = remoteMessage.getData().get("isOwner");
+        String ownerID = remoteMessage.getData().get("ownerID");
         String activity = remoteMessage.getData().get("activity");
-        boolean isowner = false;
+        boolean isOwner = false;
 
-        if(isOwner.equals("true")){
-            isowner = true;
+        Log.d(TAG,"ownerID: " + ownerID);
+        Log.d(TAG, "Current User: " + FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        if(FirebaseAuth.getInstance().getCurrentUser().getUid().equals(ownerID)){
+            isOwner = true;
+            Log.d(TAG, "Current User is owner");
         }
 
         Intent goToActivity;
@@ -80,7 +91,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
             stackBuilder = TaskStackBuilder.create(this);
             stackBuilder.addNextIntentWithParentStack(goToActivity);
             goToActivity.putExtra("SERVER_ID", serverId);
-            goToActivity.putExtra("IS_OWNER", isowner);
+            goToActivity.putExtra("IS_OWNER", isOwner);
             pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         }
         else if(activity.equals("chats")){
@@ -88,7 +99,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
             stackBuilder = TaskStackBuilder.create(this);
             stackBuilder.addNextIntentWithParentStack(goToActivity);
             goToActivity.putExtra("SERVER_ID", serverId);
-            goToActivity.putExtra("IS_OWNER", isowner);
+            goToActivity.putExtra("IS_OWNER", isOwner);
             pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         }
 
@@ -96,7 +107,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
         OreoNotification oreoNotification = new OreoNotification(this);
-        Notification.Builder builder = oreoNotification.getOreoNotification(title, messageBody, pendingIntent,
+        Notification.Builder builder = oreoNotification.getOreoNotification(title, messageBody, bitmap,pendingIntent,
                 defaultSound, R.drawable.thread_png);
 
         oreoNotification.getManager().notify(0, builder.build());
@@ -110,13 +121,14 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
 
         String title = remoteMessage.getData().get("title");
         String messageBody = remoteMessage.getData().get("body");
+        Bitmap bitmap = getBitmapFromURL(remoteMessage.getData().get("profile"));
         String serverId = remoteMessage.getData().get("serverID");
-        String isOwner = remoteMessage.getData().get("isOwner");
+        String ownerID = remoteMessage.getData().get("ownerID");
         String activity = remoteMessage.getData().get("activity");
-        boolean isowner = false;
+        boolean isOwner = false;
 
-        if(isOwner.equals("true")){
-            isowner = true;
+        if(FirebaseAuth.getInstance().getCurrentUser().getUid().equals(ownerID)){
+            isOwner = true;
         }
 
         Intent goToActivity;
@@ -128,7 +140,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
             stackBuilder = TaskStackBuilder.create(this);
             stackBuilder.addNextIntentWithParentStack(goToActivity);
             goToActivity.putExtra("SERVER_ID", serverId);
-            goToActivity.putExtra("IS_OWNER", isowner);
+            goToActivity.putExtra("IS_OWNER", isOwner);
             pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         }
         else if(activity.equals("chats")){
@@ -136,13 +148,14 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
             stackBuilder = TaskStackBuilder.create(this);
             stackBuilder.addNextIntentWithParentStack(goToActivity);
             goToActivity.putExtra("SERVER_ID", serverId);
-            goToActivity.putExtra("IS_OWNER", isowner);
+            goToActivity.putExtra("IS_OWNER", isOwner);
             pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
         }
 
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.thread_png)
+                .setLargeIcon(bitmap)
                 .setContentTitle(title)
                 .setContentText(messageBody)
                 .setAutoCancel(true)
@@ -167,5 +180,25 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
             }
         }
         return false;
+    }
+
+    /**
+     *  This function converts a imageURL to bitmap
+     * @param src
+     * @return
+     */
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

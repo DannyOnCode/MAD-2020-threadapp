@@ -7,6 +7,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 
@@ -72,11 +73,12 @@ public class OreoNotification extends ContextWrapper {
      */
 
     @TargetApi(Build.VERSION_CODES.O)
-    public  Notification.Builder getOreoNotification(String title, String body,
+    public  Notification.Builder getOreoNotification(String title, String body, Bitmap bitmap,
                                                      PendingIntent pendingIntent, Uri soundUri, int icon){
         return new Notification.Builder(getApplicationContext(), CHANNEL_ID)
                 .setPriority(Notification.PRIORITY_HIGH)
                 .setSmallIcon(icon)
+                .setLargeIcon(bitmap)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setStyle(new Notification.BigTextStyle()
