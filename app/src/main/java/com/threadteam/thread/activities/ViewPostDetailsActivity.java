@@ -372,6 +372,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
 
     @Override
     protected void onStop() {
+        adapter.postMessageList.clear();
         super.onStop();
     }
 
