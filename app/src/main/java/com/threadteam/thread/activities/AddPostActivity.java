@@ -181,11 +181,7 @@ public class AddPostActivity extends ServerBaseActivity {
 
         if(item.getItemId() == android.R.id.home) {
             logHandler.printLogWithMessage("User tapped on Back Button!");
-
-            Intent goToPost = new Intent(currentActivity, PostsActivity.class);
-            PutExtrasForServerIntent(goToPost);
-            currentActivity.startActivity(goToPost);
-            logHandler.printActivityIntentLog("Posts");
+            finish();
             return true;
         }
 
@@ -483,13 +479,9 @@ public class AddPostActivity extends ServerBaseActivity {
             databaseRef.child("posts").child(serverId).push().setValue(postDescriptions,new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                    Intent goToPost = new Intent(AddPostActivity.this, PostsActivity.class);
-                    PutExtrasForServerIntent(goToPost);
-                    currentActivity.startActivity(goToPost);
-                    logHandler.printLogWithMessage("Upload Post Data successful");
-                    logHandler.printActivityIntentLog("Post Activity");
                     Toast.makeText(AddPostActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
                     mProgressBar.setVisibility(View.INVISIBLE);
+                    finish();
                 }
             });
 

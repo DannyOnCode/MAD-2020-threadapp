@@ -87,6 +87,7 @@ public abstract class MainBaseActivity extends BaseActivity {
                 firebaseAuth.signOut();
 
                 Intent goToLogin = new Intent(currentActivity, LoginActivity.class);
+                goToLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(goToLogin);
                 logHandler.printActivityIntentLog("Login Activity");
                 return true;

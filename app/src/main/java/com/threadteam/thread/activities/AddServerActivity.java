@@ -338,9 +338,7 @@ public class AddServerActivity extends MainBaseActivity {
                 //User join Notification
                 sendSystemNotification(joinServerID,userId," has joined the server!");
                 logHandler.printLogWithMessage("Users in Server notified of new member!");
-
-
-                returnToViewServers();
+                finish();
 
                 finish();
             }
@@ -472,8 +470,6 @@ public class AddServerActivity extends MainBaseActivity {
         databaseRef.child("members").child(newServerId).child(currentUser.getUid()).setValue(0);
 
         logHandler.printLogWithMessage("New server details have been pushed to database; returning user back to ViewServers Activity!");
-        returnToViewServers();
-
         finish();
     }
 
@@ -485,17 +481,6 @@ public class AddServerActivity extends MainBaseActivity {
     private void displayError(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         logHandler.printLogWithMessage(message);
-    }
-
-    /**
-     * This function sends the user back to the View Servers Activity
-     */
-
-    private void returnToViewServers() {
-        Intent returnToViewServers = new Intent(currentActivity, ViewServersActivity.class);
-        returnToViewServers.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        startActivityIfNeeded(returnToViewServers, 0);
-        logHandler.printActivityIntentLog("ViewServers Activity");
     }
 
 }

@@ -546,11 +546,7 @@ public class ViewPostDetailsActivity extends ServerBaseActivity {
 
         if(item.getItemId() == android.R.id.home) {
             logHandler.printLogWithMessage("User tapped on Back Button!");
-
-            Intent goToPost = new Intent(currentActivity, PostsActivity.class);
-            PutExtrasForServerIntent(goToPost);
-            currentActivity.startActivity(goToPost);
-            logHandler.printActivityIntentLog("Posts");
+            finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

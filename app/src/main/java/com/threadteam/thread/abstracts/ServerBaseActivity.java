@@ -136,9 +136,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
 
             case android.R.id.home:
                 logHandler.printLogWithMessage("User tapped on Back Button!");
-                Intent returnToViewServers = new Intent(currentActivity, ViewServersActivity.class);
-                currentActivity.startActivity(returnToViewServers);
-                logHandler.printActivityIntentLog("View Servers");
+                returnToViewServers();
                 return true;
 
             case SHARE_SERVER_MENU_ITEM:
@@ -265,6 +263,10 @@ public abstract class ServerBaseActivity extends BaseActivity {
 
     private void returnToViewServers() {
         Intent returnToViewServers = new Intent(currentActivity, ViewServersActivity.class);
+
+        // Clear all server activities on top of the activity.
+        returnToViewServers.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
         startActivity(returnToViewServers);
         logHandler.printActivityIntentLog("View Servers Activity");
 
