@@ -51,7 +51,7 @@ public class ChatActivity extends ServerBaseActivity {
     private ChatMessageAdapter adapter;
 
     /** Flag for scrolling to the latest message upon a new message being sent. */
-    private Boolean scrollToLatestMessage = false;
+    private Boolean scrollToLatestMessage = true;
 
     /** Stores the current user's username. Used when sending messages. */
     private String username;
