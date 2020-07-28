@@ -364,9 +364,8 @@ public class EditProfileActivity extends MainBaseActivity {
                                         mProgressBar.setProgress(100);
                                     }
                                 },500);
-                                returnToViewProfile();
-                                logHandler.printActivityIntentLog("View Profile Activity");
                                 Toast.makeText(EditProfileActivity.this,"Updated successfully",Toast.LENGTH_LONG).show();
+                                finish();
                             }
                         });
 
@@ -404,8 +403,8 @@ public class EditProfileActivity extends MainBaseActivity {
                                 mProgressBar.setProgress(100);
                             }
                         }, 500);
-                        returnToViewProfile();
                         Toast.makeText(EditProfileActivity.this, "Updated successfully", Toast.LENGTH_LONG).show();
+                        finish();
                     }catch (Exception e){
                         logHandler.printDatabaseErrorLog(databaseError);
                     }
@@ -417,18 +416,11 @@ public class EditProfileActivity extends MainBaseActivity {
         }
     }
 
-
-    private void returnToViewProfile() {
-        Intent goToViewMembers = new Intent(currentActivity, ViewProfileActivity.class);
-        currentActivity.startActivity(goToViewMembers);
-        logHandler.printActivityIntentLog("View Profile");
-    }
-
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == android.R.id.home) {
             logHandler.printLogWithMessage("User tapped on Back Button!");
-            returnToViewProfile();
+            finish();
             return true;
         }
 

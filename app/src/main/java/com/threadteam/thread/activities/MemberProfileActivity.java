@@ -392,7 +392,7 @@ public class MemberProfileActivity extends ServerBaseActivity {
             logHandler.printGetExtrasResultLog(MEMBER_ID_KEY, "null");
 
             Toast.makeText(getApplicationContext(), "Something went wrong!", Toast.LENGTH_SHORT).show();
-            returnToViewMembers();
+            finish();
 
         } else {
             logHandler.printGetExtrasResultLog(MEMBER_ID_KEY, memberId);
@@ -433,23 +433,10 @@ public class MemberProfileActivity extends ServerBaseActivity {
 
         if(item.getItemId() == android.R.id.home) {
             logHandler.printLogWithMessage("User tapped on Back Button!");
-            returnToViewMembers();
+            finish();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    // ACTIVITY SPECIFIC METHODS
-
-    /**
-     * Returns the user back to the View Members activity
-     */
-
-    private void returnToViewMembers() {
-        Intent goToViewMembers = new Intent(currentActivity, ViewMembersActivity.class);
-        PutExtrasForServerIntent(goToViewMembers);
-        currentActivity.startActivity(goToViewMembers);
-        logHandler.printActivityIntentLog("View Members");
     }
 }

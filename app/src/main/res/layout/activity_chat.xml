@@ -45,7 +45,7 @@
             android:ems="10"
             android:fontFamily="sans-serif"
             android:hint="say something..."
-            android:inputType="text"
+            android:inputType="textMultiLine|text"
             android:maxLines="4"
             android:paddingLeft="12dp"
             android:paddingTop="4dp"
