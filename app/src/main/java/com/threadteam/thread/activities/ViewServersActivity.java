@@ -1,6 +1,7 @@
 package com.threadteam.thread.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
@@ -221,6 +222,9 @@ public class ViewServersActivity extends MainBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        SharedPreferences.Editor editor = getSharedPreferences("ChatActivity",MODE_PRIVATE).edit();
+        editor.putString("server",null);
+        editor.apply();
     }
 
     @Override

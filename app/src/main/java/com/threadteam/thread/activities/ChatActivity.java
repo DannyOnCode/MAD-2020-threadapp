@@ -3,6 +3,7 @@ package com.threadteam.thread.activities;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -290,6 +291,9 @@ public class ChatActivity extends ServerBaseActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        SharedPreferences.Editor editor = getSharedPreferences("ChatActivity",MODE_PRIVATE).edit();
+        editor.putString("server",serverId);
+        editor.apply();
     }
 
     @Override
@@ -305,6 +309,9 @@ public class ChatActivity extends ServerBaseActivity {
     @Override
     protected void onStop() {
         adapter.chatMessageList.clear();
+        SharedPreferences.Editor editor = getSharedPreferences("ChatActivity",MODE_PRIVATE).edit();
+        editor.putString("server",null);
+        editor.apply();
         super.onStop();
     }
 
