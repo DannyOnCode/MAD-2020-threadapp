@@ -268,7 +268,7 @@ public class MemberProfileActivity extends ServerBaseActivity {
                             if(adapter.serverList.get(i).get_id().equals(oldServer.get_id())) {
                                 adapter.serverList.remove(i);
                                 adapter.notifyDataSetChanged();
-                                break;
+                                return;
                             }
                         }
                     }
