@@ -230,11 +230,7 @@ public class EditProfileActivity extends MainBaseActivity {
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Moving activity
-                Intent goToViewProfile = new Intent(EditProfileActivity.this, ViewProfileActivity.class);
-                logHandler.printActivityIntentLog("View Profile Activity");
-                startActivity(goToViewProfile);
-
+                finish();
             }
         });
     }
