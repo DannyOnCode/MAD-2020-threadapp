@@ -33,6 +33,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
 import com.threadteam.thread.R;
 import com.threadteam.thread.abstracts.ServerBaseActivity;
 import com.threadteam.thread.models.Post;
@@ -303,10 +304,7 @@ public class AddPostActivity extends ServerBaseActivity {
      *  Opens Device File Explorer to search for image ONLY
      */
     private void openFileChooser(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent,PICK_IMAGE_REQUEST);
+        CropImage.activity().setMinCropWindowSize(0,0).start(AddPostActivity.this);
     }
 
     /**
@@ -319,9 +317,10 @@ public class AddPostActivity extends ServerBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null){
-            mImageUri = data.getData();
+        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK
+                && data != null){
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            mImageUri = result.getUri();
             mDisplayImage.setVisibility(View.VISIBLE);
             Picasso.get()
                     .load(mImageUri)
@@ -332,6 +331,9 @@ public class AddPostActivity extends ServerBaseActivity {
                     .into(mDisplayImage);
 
 
+        }
+        else{
+            Toast.makeText(this,"Error, try again",Toast.LENGTH_LONG).show();
         }
     }
 

@@ -39,6 +39,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.3.1'
 
 
+    //Added image cropper for crop profile image
+    implementation 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
     //Added Picasso for image upload and retrieval
     implementation 'com.squareup.picasso:picasso:2.71828'
 

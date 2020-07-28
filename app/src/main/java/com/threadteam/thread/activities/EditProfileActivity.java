@@ -31,6 +31,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
 import com.threadteam.thread.LogHandler;
 import com.threadteam.thread.R;
 import com.threadteam.thread.abstracts.MainBaseActivity;
@@ -230,11 +231,7 @@ public class EditProfileActivity extends MainBaseActivity {
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Moving activity
-                Intent goToViewProfile = new Intent(EditProfileActivity.this, ViewProfileActivity.class);
-                logHandler.printActivityIntentLog("View Profile Activity");
-                startActivity(goToViewProfile);
-
+                finish();
             }
         });
     }
@@ -268,10 +265,7 @@ public class EditProfileActivity extends MainBaseActivity {
      *  Opens Device File Explorer to search for image ONLY
      */
     private void openFileChooser(){
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent,PICK_IMAGE_REQUEST);
+        CropImage.activity().setAspectRatio(1,1).start(EditProfileActivity.this);
     }
 
 
@@ -285,9 +279,10 @@ public class EditProfileActivity extends MainBaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null){
-            mImageUri = data.getData();
+        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK
+                && data != null){
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            mImageUri = result.getUri();
             Picasso.get()
                     .load(mImageUri)
                     .fit()
@@ -297,6 +292,9 @@ public class EditProfileActivity extends MainBaseActivity {
                     .into(mDisplayImage);
 
 
+        }
+        else{
+            Toast.makeText(this,"Error, try again",Toast.LENGTH_LONG).show();
         }
     }
 
