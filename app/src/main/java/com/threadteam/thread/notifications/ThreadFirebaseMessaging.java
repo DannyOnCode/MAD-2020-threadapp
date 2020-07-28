@@ -166,7 +166,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
 
             Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
-                    .setSmallIcon(R.drawable.thread_png)
+                    .setSmallIcon(R.mipmap.thread_t)
                     .setLargeIcon(bitmap)
                     .setContentTitle(title)
                     .setContentText(messageBody)
