@@ -315,7 +315,6 @@ public class AddServerActivity extends MainBaseActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()){
                                         logHandler.printLogWithMessage("SUBSCRIBED TO /topics/posts" +server +" SUCCESSFULLY");
-
                                     }
                                     else{
                                         logHandler.printLogWithMessage("COULD NOT SUBSCRIBE");
