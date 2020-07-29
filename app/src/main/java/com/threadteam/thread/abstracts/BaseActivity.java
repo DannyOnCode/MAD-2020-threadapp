@@ -555,7 +555,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param message The message payload for the notification
      */
 
-    protected void sendNotification(final String serverId, final String userId, final String message){
+    protected void sendNotification(final String serverId, final String userId, final String message,final long Time){
         logHandler.printLogWithMessage("sendNotification invoked " + serverId  + ", " + userId + ", " + message);
 
         ValueEventListener getServerName = new ValueEventListener() {
@@ -575,6 +575,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         final String body = username + message;
 
+                        final String time = String.valueOf(Time);
+
                         logHandler.printDatabaseResultLog(".getValue()", "Current Server's Name", "getServerName", serverName);
                         logHandler.printDatabaseResultLog(".getValue()","Current Server's OwnerID","getServerName", ownerID);
                         logHandler.printDatabaseResultLog(".getValue()", "Current User's Name", "getUsername", username);
@@ -583,7 +585,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body
                                                                     + ", ProfileURL: " + profile + ", ServerID: " + serverId + ", OwnerID:" + ownerID + ", Activity: " + "chats");
 
-                        Sender sender = new Sender(to, new NotificationModel(serverName, body, profile, serverId, ownerID,"chats"));
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body, profile, serverId, ownerID,"chats",time));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
 
                         threadResponseCall.enqueue(new Callback<ThreadResponse>() {
@@ -636,7 +638,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param message The message payload for the notification
      */
 
-    protected void sendSystemNotification(final String serverId, final String userId, final String message){
+    protected void sendSystemNotification(final String serverId, final String userId, final String message,final long Time){
         logHandler.printLogWithMessage("sendSystemNotification invoked " + serverId  + ", " + userId + ", " + message);
 
         ValueEventListener getServerName = new ValueEventListener() {
@@ -655,6 +657,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         final String body = username + message;
 
+                        final String time = String.valueOf(Time);
+
+
                         logHandler.printDatabaseResultLog(".getValue()", "Current Server's Name", "getServerName", serverName);
                         logHandler.printDatabaseResultLog(".getValue()","Current Server's OwnerID","getServerName", ownerID);
                         logHandler.printDatabaseResultLog(".getValue()", "Current User's Name", "getUsername", username);
@@ -663,7 +668,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body
                                 + ", ProfileURL: " + profile + ", ServerID: " + serverId + ", OwnerID:" + ownerID + ", Activity: " + "chats");
 
-                        Sender sender = new Sender(to, new NotificationModel(serverName, body, profile, serverId, ownerID,"chats"));
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body, profile, serverId, ownerID,"chats",time));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
 
                         threadResponseCall.enqueue(new Callback<ThreadResponse>() {
@@ -716,7 +721,7 @@ public abstract class BaseActivity extends AppCompatActivity {
      * @param message The message payload for the notification
      */
 
-    protected void sendPostNotification(final String serverId, final String userId, final String message){
+    protected void sendPostNotification(final String serverId, final String userId, final String message,final long Time){
         logHandler.printLogWithMessage("sendPostsNotification invoked " + serverId  + ", " + userId + ", " + message);
 
         ValueEventListener getServerName = new ValueEventListener() {
@@ -735,6 +740,9 @@ public abstract class BaseActivity extends AppCompatActivity {
 
                         final String body = username + message;
 
+                        final String time = String.valueOf(Time);
+
+
                         logHandler.printDatabaseResultLog(".getValue()", "Current Server's Name", "getServerName", serverName);
                         logHandler.printDatabaseResultLog(".getValue()","Current Server's OwnerID","getServerName", ownerID);
                         logHandler.printDatabaseResultLog(".getValue()", "Current User's Name", "getUsername", username);
@@ -743,7 +751,7 @@ public abstract class BaseActivity extends AppCompatActivity {
                         logHandler.printLogWithMessage("Values sent to Api Service: to: " + to + ", Server Name: " + serverName + ", Message: " + body
                                 + ", ProfileURL: " + profile + ", ServerID: " + serverId + ", OwnerID:" + ownerID + ", Activity: " + "posts");
 
-                        Sender sender = new Sender(to, new NotificationModel(serverName, body, profile, serverId, ownerID,"posts"));
+                        Sender sender = new Sender(to, new NotificationModel(serverName, body, profile, serverId, ownerID,"posts",time));
                         Call<ThreadResponse> threadResponseCall = apiService.sendNotification(sender);
 
                         threadResponseCall.enqueue(new Callback<ThreadResponse>() {

@@ -538,7 +538,7 @@ public class ChatActivity extends ServerBaseActivity {
 
             AddExpForServerMember(currentUser.getUid(), serverId, 1, 60);
 
-            sendNotification(serverId, currentUser.getUid(), ": " + formattedMessage);
+            sendNotification(serverId, currentUser.getUid(), ": " + formattedMessage,System.currentTimeMillis());
             logHandler.printLogWithMessage("Notification sent to users in group! ");
 
         } else {

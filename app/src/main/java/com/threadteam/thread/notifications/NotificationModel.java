@@ -15,19 +15,21 @@ public class NotificationModel {
     private String serverID;
     private String ownerID;
     private String activity;
+    private String time;
 
     /**
      * NotificationModel class constructor
      * @param title
      * @param body
      */
-    public NotificationModel(String title, String body,String profile, String serverID, String ownerID, String activity) {
+    public NotificationModel(String title, String body,String profile, String serverID, String ownerID, String activity, String time) {
         this.title = title;
         this.body = body;
         this.profile = profile;
         this.serverID = serverID;
         this.ownerID = ownerID;
         this.activity = activity;
+        this.time = time;
     }
 
     public String getTitle() {
@@ -76,5 +78,13 @@ public class NotificationModel {
 
     public void setActivity(String activity) {
         this.activity = activity;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }

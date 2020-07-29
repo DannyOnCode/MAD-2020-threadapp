@@ -335,7 +335,7 @@ public class AddServerActivity extends MainBaseActivity {
                         .addValueEventListener(getNotificationSettings);
 
                 //User join Notification
-                sendSystemNotification(joinServerID,userId," has joined the server!");
+                sendSystemNotification(joinServerID,userId," has joined the server!", System.currentTimeMillis());
                 logHandler.printLogWithMessage("Users in Server notified of new member!");
                 finish();
 

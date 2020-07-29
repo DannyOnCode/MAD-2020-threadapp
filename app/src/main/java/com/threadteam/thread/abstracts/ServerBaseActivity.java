@@ -433,7 +433,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
                     });
 
                     //Send user left server notification in push notification
-                    sendSystemNotification(serverId, currentUID," has left the server! :(");
+                    sendSystemNotification(serverId, currentUID," has left the server! :(", System.currentTimeMillis());
                     logHandler.printLogWithMessage("Users in Server notified of leaving member!");
 
 
@@ -508,7 +508,7 @@ public abstract class ServerBaseActivity extends BaseActivity {
 
                         // Announce level up in chat
                         Utils.SendUserActionSystemMessage(logHandler, databaseRef, _userId, " has leveled up! " + oldLevel + " -> " + newLevel, _serverId);
-                        sendSystemNotification(serverId,_userId," has leveled up! " + oldLevel + " -> " + newLevel + " !");
+                        sendSystemNotification(serverId,_userId," has leveled up! " + oldLevel + " -> " + newLevel + " !", System.currentTimeMillis());
 
                         Toast.makeText(getApplicationContext(), "You leveled up! Current level: " + newLevel.toString(), Toast.LENGTH_SHORT).show();
                     }

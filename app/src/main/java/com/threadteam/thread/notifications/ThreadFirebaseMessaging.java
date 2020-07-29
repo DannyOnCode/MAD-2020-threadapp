@@ -20,17 +20,28 @@ import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.threadteam.thread.R;
 import com.threadteam.thread.activities.ChatActivity;
 import com.threadteam.thread.activities.PostsActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This notifications class handles the receiving of content from the Firebase Cloud messaging API and displaying to the user.
@@ -40,9 +51,9 @@ import java.util.List;
  * @since 2.0
  */
 
-
 public class ThreadFirebaseMessaging extends FirebaseMessagingService {
     private static final String TAG = "FirebaseMsgService";
+    boolean exists = false;
     /** Retrieves the content from the Firebase Cloud messaging API*/
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
@@ -50,16 +61,54 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
         if (remoteMessage.getData().size() > 0){
             Log.d(TAG,"Message data payload: " + remoteMessage.getData());
 
+            SharedPreferences sharedPreferences = getSharedPreferences("ChatActivity",MODE_PRIVATE);
+            String server = sharedPreferences.getString("server","");
 
+            SharedPreferences preferences = getSharedPreferences("msgs",MODE_PRIVATE);
+            Set<String> sets = new HashSet<String>(preferences.getStringSet("msgs",new HashSet<String>()));
+
+
+
+
+            String SERVERID = remoteMessage.getData().get("serverID");
+            String BODY = remoteMessage.getData().get("body");
+            String TIME = remoteMessage.getData().get("time");
+
+
+
+            final String UNIQUE = SERVERID + TIME + BODY;
+            Log.d(TAG,"UNIQUE IDENTIFY: " + UNIQUE);
+
+            sets = preferences.getStringSet("msgs",new HashSet<String>());
+
+            for (String msg:sets) {
+                Log.d(TAG, "MESSAGE: " + msg);
+
+                if (msg.equals(UNIQUE)){
+                    exists = true;
+                    Log.d(TAG, "EXISTS");
+
+                }
+            }
 
             //Only send notifications if app is not in foreground
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    sendOreoNotification(remoteMessage);
-                } else {
-                    sendNotification(remoteMessage);
+            if(!exists) {
+                sets.add(UNIQUE);
+                preferences.edit().putStringSet("msgs",sets).apply();
+                Log.d(TAG, "ADDED UNIQUE");
+                if (!SERVERID.equals(server)) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        sendOreoNotification(remoteMessage);
+                    } else {
+                        sendNotification(remoteMessage);
+                    }
                 }
+            }
 
+            exists = false;
         }
+
+
     }
 
     /**
@@ -67,15 +116,10 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
      * @param remoteMessage
      */
     private void sendOreoNotification(RemoteMessage remoteMessage){
-        String serverId = remoteMessage.getData().get("serverID");
-        SharedPreferences sharedPreferences = getSharedPreferences("ChatActivity",MODE_PRIVATE);
-        String server = sharedPreferences.getString("server","");
-        Log.d(TAG,"IsSERVER? :" + server );
-
-        if(!server.equals(serverId)) {
 
             String title = remoteMessage.getData().get("title");
             String messageBody = remoteMessage.getData().get("body");
+            String serverId = remoteMessage.getData().get("serverID");
             Bitmap bitmap = getBitmapFromURL(remoteMessage.getData().get("profile"));
             String ownerID = remoteMessage.getData().get("ownerID");
             String activity = remoteMessage.getData().get("activity");
@@ -118,23 +162,19 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
                     defaultSound, R.drawable.thread_png);
 
             oreoNotification.getManager().notify(0, builder.build());
-        }
+
     }
 
     /** This function sends the notification to user's device if it is running  Android 7/Nougat and below
      * @param remoteMessage
      * */
     private void sendNotification(RemoteMessage remoteMessage) {
-        String serverId = remoteMessage.getData().get("serverID");
-        SharedPreferences sharedPreferences = getSharedPreferences("ChatActivity",MODE_PRIVATE);
-        String server = sharedPreferences.getString("server","");
-        Log.d(TAG,"IsSERVER? :" + server );
 
-        if(!server.equals(serverId)) {
 
 
             String title = remoteMessage.getData().get("title");
             String messageBody = remoteMessage.getData().get("body");
+            String serverId = remoteMessage.getData().get("serverID");
             Bitmap bitmap = getBitmapFromURL(remoteMessage.getData().get("profile"));
             String ownerID = remoteMessage.getData().get("ownerID");
             String activity = remoteMessage.getData().get("activity");
@@ -177,7 +217,7 @@ public class ThreadFirebaseMessaging extends FirebaseMessagingService {
             NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
             notificationManager.notify(0, builder.build());
-        }
+
     }
 
     /** This function checks if the App is in foreground of user's device

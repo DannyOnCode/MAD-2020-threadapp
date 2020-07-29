@@ -443,7 +443,7 @@ public class AddPostActivity extends ServerBaseActivity {
                         });
 
                         //Notify users of new post
-                        sendPostNotification(serverId,currentUser.getUid()," uploaded a new post!");
+                        sendPostNotification(serverId,currentUser.getUid()," uploaded a new post!", System.currentTimeMillis());
 
                         AddExpForServerMember(currentUser.getUid(), serverId, 3, 60);
 
@@ -488,7 +488,7 @@ public class AddPostActivity extends ServerBaseActivity {
             });
 
             //Notify users of new post
-            sendPostNotification(serverId,currentUser.getUid()," uploaded a new post!");
+            sendPostNotification(serverId,currentUser.getUid()," uploaded a new post!", System.currentTimeMillis());
         }
     }
 }
