@@ -28,6 +28,10 @@ Not to worry, all images and texts are stored on our server.
 INSTANT NOTIFICATIONS!
 Never miss out on new texts and posts with our instant notifications. You can customise what notifications you will like to recieve.
 
+## guides.
+
+See [Thread Guides](https://github.com/orbitalsqwib/MAD-2020-threadapp/blob/master/Thread%20Guides.pdf) for more info.
+
 ## documentation.
 
 **The documentation for this application was made using JavaDoc.**\
