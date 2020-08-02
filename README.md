@@ -28,6 +28,12 @@ Not to worry, all images and texts are stored on our server.
 INSTANT NOTIFICATIONS!
 Never miss out on new texts and posts with our instant notifications. You can customise what notifications you will like to recieve.
 
+## documentation.
+
+The documentation for this application was made using JavaDoc.
+A generated copy can be found hosted [here](https://orbitalsqwib.github.io/MAD-2020-threadapp/).
+(Done for Stage 2)
+
 ## technologies.
 
 ### firebase.
