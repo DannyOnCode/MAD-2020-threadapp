@@ -30,9 +30,8 @@ Never miss out on new texts and posts with our instant notifications. You can cu
 
 ## documentation.
 
-The documentation for this application was made using JavaDoc.
-A generated copy can be found hosted [here](https://orbitalsqwib.github.io/MAD-2020-threadapp/).
-(Done for Stage 2)
+**The documentation for this application was made using JavaDoc.**\
+_A generated copy can be found hosted [here](https://orbitalsqwib.github.io/MAD-2020-threadapp/). (Done for Stage 2)_
 
 ## technologies.
 
